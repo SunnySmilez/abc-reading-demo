@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>03a 标准模式转化页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; background:linear-gradient(135deg,#E8F4FD 0%,#D4E8F7 100%); }
+
+/* 顶部模式标签 */
+.mode-header { height:48px; background:linear-gradient(90deg,var(--abc-blue),#3A7BC8); display:flex; align-items:center; padding:0 20px; gap:12px; }
+.mode-header .mode-icon { font-size:20px; }
+.mode-header h2 { color:#fff; font-size:16px; font-weight:700; flex:1; }
+.mode-header .mode-tag { background:rgba(255,255,255,.2); color:#fff; font-size:11px; padding:3px 10px; border-radius:10px; }
+
+/* 内容区 */
+.conv-main { flex:1; display:flex; padding:12px 16px; gap:16px; overflow:hidden; }
+
+/* 左侧 - 产品亮点 */
+.left-highlights { width:280px; display:flex; flex-direction:column; gap:8px; }
+.highlight-card { background:#fff; border-radius:14px; padding:12px; display:flex; align-items:center; gap:10px; }
+.highlight-icon { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.highlight-icon.listen { background:linear-gradient(135deg,#BBDEFB,#90CAF9); }
+.highlight-icon.speak { background:linear-gradient(135deg,#C8E6C9,#A5D6A7); }
+.highlight-icon.read { background:linear-gradient(135deg,#FFE0B2,#FFCC80); }
+.highlight-icon.practice { background:linear-gradient(135deg,#E1BEE7,#CE93D8); }
+.highlight-text h4 { font-size:12px; color:#333; font-weight:600; }
+.highlight-text p { font-size:10px; color:#888; margin-top:1px; }
+
+.flow-visual { background:#fff; border-radius:14px; padding:10px 12px; text-align:center; }
+.flow-visual .title { font-size:11px; color:#888; margin-bottom:6px; }
+.flow-steps { display:flex; align-items:center; justify-content:center; gap:4px; }
+.flow-step { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.flow-step .step-icon { width:32px; height:32px; border-radius:50%; background:var(--abc-blue); color:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; }
+.flow-step .step-label { font-size:9px; color:#666; }
+.flow-arrow { color:#ccc; font-size:12px; margin-top:-10px; }
+
+/* 中间 - 主推商品 */
+.center-main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.main-sku { background:#fff; border-radius:20px; padding:20px 24px; text-align:center; width:260px; border:3px solid var(--abc-blue); position:relative; box-shadow:0 6px 24px rgba(74,144,217,.15); }
+.main-sku .badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,var(--abc-blue),#3A7BC8); color:#fff; font-size:11px; padding:4px 16px; border-radius:12px; font-weight:600; white-space:nowrap; }
+.main-sku .sku-icon { font-size:36px; margin:8px 0; }
+.main-sku .sku-name { font-size:18px; font-weight:700; color:#333; }
+.main-sku .sku-price { font-size:36px; font-weight:800; color:var(--abc-blue); margin:6px 0; }
+.main-sku .sku-price .yuan { font-size:16px; }
+.main-sku .sku-unit { font-size:12px; color:#888; margin-top:-4px; }
+.main-sku .sku-perday { font-size:12px; color:var(--abc-green); font-weight:600; margin:8px 0; }
+.main-sku .sku-features { display:flex; flex-direction:column; gap:3px; text-align:left; margin:8px 0; }
+.main-sku .sku-features span { font-size:11px; color:#555; }
+.buy-btn { width:100%; padding:12px; border-radius:24px; border:none; background:linear-gradient(135deg,var(--abc-blue),#3A7BC8); color:#fff; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(74,144,217,.3); transition:all .2s; }
+.buy-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(74,144,217,.4); }
+
+/* 右侧 - 其他SKU */
+.right-skus { width:200px; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.alt-sku { background:#fff; border-radius:14px; padding:12px; cursor:pointer; transition:all .2s; border:2px solid #eee; }
+.alt-sku:hover { border-color:var(--abc-blue); transform:translateY(-1px); }
+.alt-sku .sku-top { display:flex; justify-content:space-between; align-items:center; }
+.alt-sku .sku-name { font-size:13px; font-weight:600; color:#333; }
+.alt-sku .sku-price { font-size:18px; font-weight:700; color:var(--abc-blue); }
+.alt-sku .sku-price .unit { font-size:10px; font-weight:400; color:#888; }
+.alt-sku .sku-desc { font-size:10px; color:#888; margin-top:4px; }
+.alt-sku .sku-tag { display:inline-block; font-size:9px; padding:2px 6px; border-radius:6px; background:#E8F5E9; color:#2E7D32; margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <div class="mode-header">
+    <span class="mode-icon">🟢</span>
+    <h2>标准模式 · 均衡学习，稳步成长</h2>
+    <span class="mode-tag">听说读练全覆盖</span>
+  </div>
+
+  <div class="conv-main">
+    <!-- 左侧亮点 -->
+    <div class="left-highlights">
+      <div class="highlight-card">
+        <div class="highlight-icon listen">👂</div>
+        <div class="highlight-text"><h4>听 · 沉浸式磨耳朵</h4><p>纯正美音，培养语感</p></div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon speak">🗣</div>
+        <div class="highlight-text"><h4>说 · AI跟读评分</h4><p>实时打分，纠正发音</p></div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon read">📖</div>
+        <div class="highlight-text"><h4>读 · 2600+分级绘本</h4><p>RAZ原版，aa-Z级别覆盖</p></div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon practice">✏️</div>
+        <div class="highlight-text"><h4>练 · 趣味巩固练习</h4><p>游戏化复习，加深记忆</p></div>
+      </div>
+      <div class="flow-visual">
+        <div class="title">每本绘本学习流程</div>
+        <div class="flow-steps">
+          <div class="flow-step"><div class="step-icon">👂</div><div class="step-label">听</div></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step"><div class="step-icon">🗣</div><div class="step-label">说</div></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step"><div class="step-icon">📖</div><div class="step-label">读</div></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step"><div class="step-icon">✏️</div><div class="step-label">练</div></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step"><div class="step-icon">⭐</div><div class="step-label">掌握</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 中间主推 -->
+    <div class="center-main">
+      <div class="main-sku">
+        <div class="badge">⭐ 性价比首选 · 主推</div>
+        <div class="sku-icon">📘</div>
+        <div class="sku-name">1年畅学卡</div>
+        <div class="sku-price"><span class="yuan">¥</span>498</div>
+        <div class="sku-perday">每天不到 ¥1.4 · 养成好习惯</div>
+        <div class="sku-features">
+          <span>✅ 2600+绘本全解锁</span>
+          <span>✅ 听说读练完整流程</span>
+          <span>✅ AI跟读智能评分</span>
+          <span>✅ 学情报告定期推送</span>
+        </div>
+        <button class="buy-btn" onclick="location.href='10-store.html'">立即订阅 ¥498/年 →</button>
+      </div>
+    </div>
+
+    <!-- 右侧其他 -->
+    <div class="right-skus">
+      <div class="alt-sku">
+        <div class="sku-top">
+          <span class="sku-name">📚 2年卡</span>
+          <span class="sku-price">¥898</span>
+        </div>
+        <div class="sku-desc">两年畅学，从启蒙到毕业</div>
+        <span class="sku-tag">省¥98</span>
+      </div>
+      <div class="alt-sku">
+        <div class="sku-top">
+          <span class="sku-name">🗓 包月</span>
+          <span class="sku-price">¥98<span class="unit">/月</span></span>
+        </div>
+        <div class="sku-desc">按月付费，随时取消</div>
+        <span class="sku-tag">iOS可用</span>
+      </div>
+      <div class="alt-sku" onclick="location.href='04-low-barrier.html'" style="border-color:var(--abc-orange);background:#FFFBF0;">
+        <div class="sku-top">
+          <span class="sku-name">🎁 先体验</span>
+          <span class="sku-price" style="color:var(--abc-orange);">¥9.9</span>
+        </div>
+        <div class="sku-desc">7天全功能体验</div>
+        <span class="sku-tag" style="background:#FFF3E0;color:#E65100;">低门槛入门</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+</body>
+</html>

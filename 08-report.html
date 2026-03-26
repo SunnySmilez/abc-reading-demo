@@ -2,11 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=932">
 <title>ABC Reading - 学情报告</title>
 <link rel="stylesheet" href="common.css">
 <style>
-.page { background:linear-gradient(135deg,#F8FAFF 0%,#E8F0FE 100%); display:flex; flex-direction:column; }
+.device-frame { width:932px; height:430px; }
+.page { background:linear-gradient(135deg,#F8FAFF 0%,#E8F0FE 100%); display:flex; flex-direction:column; width:100%; height:100%; }
 .report-header { height:50px; background:linear-gradient(90deg,var(--abc-blue),#3A7BC8); display:flex; align-items:center; padding:0 20px; }
 .report-header h2 { color:#fff; font-size:16px; flex:1; }
 .report-tabs { display:flex; gap:8px; }
@@ -143,12 +144,17 @@
 </div>
 </div>
 <div class="page-switcher">
-  <a href="index.html">📋 目录</a>
-  <a href="05-home-standard.html">标准首页</a>
-  <a href="06-home-fun.html">趣味首页</a>
-  <a href="07-home-progress.html">进度首页</a>
-  <a href="08-report.html" class="active">学情报告</a>
-  <a href="09-profile.html">个人中心</a>
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html" class="active">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
 </div>
 <script>
 function switchDay(d){

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>03c 目标模式转化页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; background:linear-gradient(135deg,#E8F5E9 0%,#C8E6C9 100%); }
+
+.mode-header { height:48px; background:linear-gradient(90deg,#2ECC71,#27AE60); display:flex; align-items:center; padding:0 20px; gap:12px; }
+.mode-header .mode-icon { font-size:20px; }
+.mode-header h2 { color:#fff; font-size:16px; font-weight:700; flex:1; }
+.mode-header .mode-tag { background:rgba(255,255,255,.2); color:#fff; font-size:11px; padding:3px 10px; border-radius:10px; }
+
+.conv-main { flex:1; display:flex; padding:12px 16px; gap:16px; overflow:hidden; }
+
+/* 左侧 - 数据可视化 */
+.left-data { width:300px; display:flex; flex-direction:column; gap:8px; }
+.data-card { background:#fff; border-radius:14px; padding:12px; }
+.data-card h4 { font-size:12px; color:#2E7D32; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:4px; }
+
+/* 进度预测 */
+.level-progress { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+.level-node { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.level-circle { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; }
+.level-circle.current { background:#2ECC71; box-shadow:0 0 0 3px rgba(46,204,113,.3); }
+.level-circle.future { background:#A5D6A7; }
+.level-circle.target { background:#FFD93D; color:#333; }
+.level-label { font-size:9px; color:#888; }
+.level-line { flex:1; height:3px; background:linear-gradient(90deg,#2ECC71,#A5D6A7); border-radius:2px; }
+
+/* 数据指标 */
+.metric-row { display:flex; gap:6px; }
+.metric-item { flex:1; background:#F1F8E9; border-radius:10px; padding:8px; text-align:center; }
+.metric-value { font-size:16px; font-weight:700; color:#2E7D32; }
+.metric-label { font-size:9px; color:#66BB6A; margin-top:1px; }
+
+/* 效果对比 */
+.compare-row { display:flex; gap:8px; margin-top:4px; }
+.compare-item { flex:1; text-align:center; }
+.compare-item .bar-wrap { height:60px; display:flex; align-items:flex-end; justify-content:center; }
+.compare-item .bar { width:36px; border-radius:6px 6px 0 0; transition:height .5s; }
+.compare-item .bar.before { background:#C8E6C9; height:24px; }
+.compare-item .bar.after { background:#2ECC71; height:52px; }
+.compare-item .label { font-size:9px; color:#888; margin-top:4px; }
+.compare-item .value { font-size:11px; font-weight:600; color:#2E7D32; }
+
+.prediction-card { background:linear-gradient(135deg,#C8E6C9,#A5D6A7); border-radius:14px; padding:12px; text-align:center; }
+.prediction-card .title { font-size:12px; font-weight:600; color:#1B5E20; }
+.prediction-card .detail { font-size:11px; color:#2E7D32; margin-top:4px; line-height:1.6; }
+
+/* 中间 - 主推 */
+.center-main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.main-sku { background:#fff; border-radius:20px; padding:20px 24px; text-align:center; width:260px; border:3px solid #2ECC71; position:relative; box-shadow:0 6px 24px rgba(46,204,113,.15); }
+.main-sku .badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#2ECC71,#27AE60); color:#fff; font-size:11px; padding:4px 16px; border-radius:12px; font-weight:600; white-space:nowrap; }
+.main-sku .sku-icon { font-size:36px; margin:8px 0; }
+.main-sku .sku-name { font-size:18px; font-weight:700; color:#333; }
+.main-sku .sku-price { font-size:36px; font-weight:800; color:#2ECC71; margin:6px 0; }
+.main-sku .sku-price .yuan { font-size:16px; }
+.main-sku .sku-subtitle { font-size:12px; color:#2ECC71; font-weight:600; margin:4px 0 8px; }
+.main-sku .sku-features { display:flex; flex-direction:column; gap:3px; text-align:left; margin:8px 0; }
+.main-sku .sku-features span { font-size:11px; color:#555; }
+.buy-btn { width:100%; padding:12px; border-radius:24px; border:none; background:linear-gradient(135deg,#2ECC71,#27AE60); color:#fff; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(46,204,113,.3); transition:all .2s; }
+.buy-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(46,204,113,.4); }
+
+/* 右侧 */
+.right-skus { width:200px; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.alt-sku { background:#fff; border-radius:14px; padding:12px; cursor:pointer; transition:all .2s; border:2px solid #eee; }
+.alt-sku:hover { border-color:#2ECC71; transform:translateY(-1px); }
+.alt-sku .sku-top { display:flex; justify-content:space-between; align-items:center; }
+.alt-sku .sku-name { font-size:13px; font-weight:600; color:#333; }
+.alt-sku .sku-price { font-size:18px; font-weight:700; color:#2ECC71; }
+.alt-sku .sku-price .unit { font-size:10px; font-weight:400; color:#888; }
+.alt-sku .sku-desc { font-size:10px; color:#888; margin-top:4px; }
+.alt-sku .sku-tag { display:inline-block; font-size:9px; padding:2px 6px; border-radius:6px; background:#E8F5E9; color:#2E7D32; margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <div class="mode-header">
+    <span class="mode-icon">🔵</span>
+    <h2>目标模式 · 看得见进步，效果最大化</h2>
+    <span class="mode-tag">数据驱动学习</span>
+  </div>
+
+  <div class="conv-main">
+    <!-- 左侧数据 -->
+    <div class="left-data">
+      <div class="data-card">
+        <h4>🎯 级别进阶路线</h4>
+        <div class="level-progress">
+          <div class="level-node"><div class="level-circle current">B</div><div class="level-label">当前</div></div>
+          <div class="level-line"></div>
+          <div class="level-node"><div class="level-circle future">C</div><div class="level-label">45天</div></div>
+          <div class="level-line"></div>
+          <div class="level-node"><div class="level-circle future">D</div><div class="level-label">4月</div></div>
+          <div class="level-line"></div>
+          <div class="level-node"><div class="level-circle future">E</div><div class="level-label">7月</div></div>
+          <div class="level-line"></div>
+          <div class="level-node"><div class="level-circle target">G</div><div class="level-label">🎯目标</div></div>
+        </div>
+        <div class="metric-row">
+          <div class="metric-item"><div class="metric-value">365天</div><div class="metric-label">达到G级预计</div></div>
+          <div class="metric-item"><div class="metric-value">5级</div><div class="metric-label">需跨越级别</div></div>
+        </div>
+      </div>
+      <div class="data-card">
+        <h4>📊 2年效果预测</h4>
+        <div class="compare-row">
+          <div class="compare-item">
+            <div class="bar-wrap"><div class="bar before"></div></div>
+            <div class="value">186</div>
+            <div class="label">现在词汇</div>
+          </div>
+          <div class="compare-item">
+            <div class="bar-wrap"><div class="bar after" style="height:36px;"></div></div>
+            <div class="value">800+</div>
+            <div class="label">1年后</div>
+          </div>
+          <div class="compare-item">
+            <div class="bar-wrap"><div class="bar after"></div></div>
+            <div class="value">2000+</div>
+            <div class="label">2年后</div>
+          </div>
+        </div>
+      </div>
+      <div class="prediction-card">
+        <div class="title">🏆 按目标模式坚持2年</div>
+        <div class="detail">阅读量 <strong>1200+本</strong> · 词汇量 <strong>2000+</strong><br>达到小学毕业英语水平(G级)</div>
+      </div>
+    </div>
+
+    <!-- 中间主推 -->
+    <div class="center-main">
+      <div class="main-sku">
+        <div class="badge">🏆 效果最大化 · 主推</div>
+        <div class="sku-icon">📚</div>
+        <div class="sku-name">2年畅学卡</div>
+        <div class="sku-price"><span class="yuan">¥</span>898</div>
+        <div class="sku-subtitle">长期坚持效果最好 · 省98元</div>
+        <div class="sku-features">
+          <span>✅ 2600+绘本全解锁</span>
+          <span>✅ 完整学情报告+进度预测</span>
+          <span>✅ 级别进阶路线规划</span>
+          <span>✅ 词汇量增长追踪</span>
+          <span>✅ 跟读评分对比分析</span>
+        </div>
+        <button class="buy-btn" onclick="location.href='10-store.html'">立即开通 ¥898/2年 →</button>
+      </div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="right-skus">
+      <div class="alt-sku">
+        <div class="sku-top">
+          <span class="sku-name">📘 1年卡</span>
+          <span class="sku-price">¥498</span>
+        </div>
+        <div class="sku-desc">一年见效，看见进步</div>
+        <span class="sku-tag">性价比</span>
+      </div>
+      <div class="alt-sku">
+        <div class="sku-top">
+          <span class="sku-name">🗓 包月</span>
+          <span class="sku-price">¥98<span class="unit">/月</span></span>
+        </div>
+        <div class="sku-desc">按月付费，灵活选择</div>
+        <span class="sku-tag">iOS可用</span>
+      </div>
+      <div class="alt-sku" onclick="location.href='04-low-barrier.html'" style="border-color:var(--abc-orange);background:#FFFBF0;">
+        <div class="sku-top">
+          <span class="sku-name">🎁 9.9验证</span>
+          <span class="sku-price" style="color:var(--abc-orange);">¥9.9</span>
+        </div>
+        <div class="sku-desc">7天验证学习效果</div>
+        <span class="sku-tag" style="background:#FFF3E0;color:#E65100;">看效果再决定</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+</body>
+</html>

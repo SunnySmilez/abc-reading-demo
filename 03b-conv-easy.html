@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>03b 省心模式转化页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; background:linear-gradient(135deg,#F3E5F5 0%,#E8DEF8 100%); }
+
+.mode-header { height:48px; background:linear-gradient(90deg,var(--abc-purple),#7E57C2); display:flex; align-items:center; padding:0 20px; gap:12px; }
+.mode-header .mode-icon { font-size:20px; }
+.mode-header h2 { color:#fff; font-size:16px; font-weight:700; flex:1; }
+.mode-header .mode-tag { background:rgba(255,255,255,.2); color:#fff; font-size:11px; padding:3px 10px; border-radius:10px; }
+
+.conv-main { flex:1; display:flex; padding:12px 16px; gap:16px; overflow:hidden; }
+
+/* 左侧 - 省心亮点：自动化场景 */
+.left-scene { width:300px; display:flex; flex-direction:column; gap:8px; }
+.scene-card { background:#fff; border-radius:14px; padding:12px 14px; position:relative; }
+.scene-card .scene-title { font-size:12px; font-weight:600; color:#5E35B1; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+.scene-timeline { display:flex; flex-direction:column; gap:0; }
+.timeline-item { display:flex; align-items:flex-start; gap:10px; position:relative; padding-bottom:8px; }
+.timeline-item:last-child { padding-bottom:0; }
+.timeline-dot { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; position:relative; z-index:1; }
+.timeline-dot.purple { background:var(--abc-purple); color:#fff; }
+.timeline-dot.light { background:#E1BEE7; color:#7B1FA2; }
+.timeline-line { position:absolute; left:11px; top:24px; width:2px; height:calc(100% - 16px); background:#E1BEE7; }
+.timeline-item:last-child .timeline-line { display:none; }
+.timeline-content { flex:1; }
+.timeline-content .time { font-size:10px; color:#9C27B0; font-weight:600; }
+.timeline-content .desc { font-size:11px; color:#555; margin-top:1px; }
+.timeline-content .auto-tag { display:inline-block; font-size:9px; background:#F3E5F5; color:#7B1FA2; padding:1px 6px; border-radius:6px; margin-top:2px; }
+
+.parent-free { background:linear-gradient(135deg,#F3E5F5,#E8DEF8); border-radius:14px; padding:12px; text-align:center; }
+.parent-free .big-emoji { font-size:32px; }
+.parent-free .title { font-size:13px; font-weight:700; color:#5E35B1; margin-top:4px; }
+.parent-free .desc { font-size:11px; color:#7E57C2; margin-top:2px; }
+
+/* 中间 - 主推SKU */
+.center-main { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.main-sku { background:#fff; border-radius:20px; padding:20px 24px; text-align:center; width:260px; border:3px solid var(--abc-purple); position:relative; box-shadow:0 6px 24px rgba(155,89,182,.15); }
+.main-sku .badge { position:absolute; top:-12px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,var(--abc-purple),#7E57C2); color:#fff; font-size:11px; padding:4px 16px; border-radius:12px; font-weight:600; white-space:nowrap; }
+.main-sku .sku-icon { font-size:36px; margin:8px 0; }
+.main-sku .sku-name { font-size:18px; font-weight:700; color:#333; }
+.main-sku .sku-price { font-size:36px; font-weight:800; color:var(--abc-purple); margin:6px 0; }
+.main-sku .sku-price .yuan { font-size:16px; }
+.main-sku .sku-price .unit { font-size:14px; font-weight:400; color:#888; }
+.main-sku .sku-subtitle { font-size:12px; color:var(--abc-purple); font-weight:600; margin:4px 0 8px; }
+.main-sku .sku-features { display:flex; flex-direction:column; gap:3px; text-align:left; margin:8px 0; }
+.main-sku .sku-features span { font-size:11px; color:#555; }
+.buy-btn { width:100%; padding:12px; border-radius:24px; border:none; background:linear-gradient(135deg,var(--abc-purple),#7E57C2); color:#fff; font-size:15px; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(155,89,182,.3); transition:all .2s; }
+.buy-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(155,89,182,.4); }
+
+/* 右侧 */
+.right-skus { width:200px; display:flex; flex-direction:column; gap:8px; justify-content:center; }
+.alt-sku { background:#fff; border-radius:14px; padding:12px; cursor:pointer; transition:all .2s; border:2px solid #eee; }
+.alt-sku:hover { border-color:var(--abc-purple); transform:translateY(-1px); }
+.alt-sku .sku-top { display:flex; justify-content:space-between; align-items:center; }
+.alt-sku .sku-name { font-size:13px; font-weight:600; color:#333; }
+.alt-sku .sku-price { font-size:18px; font-weight:700; color:var(--abc-purple); }
+.alt-sku .sku-price .unit { font-size:10px; font-weight:400; color:#888; }
+.alt-sku .sku-desc { font-size:10px; color:#888; margin-top:4px; }
+.alt-sku .sku-tag { display:inline-block; font-size:9px; padding:2px 6px; border-radius:6px; background:#F3E5F5; color:#7B1FA2; margin-top:4px; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <div class="mode-header">
+    <span class="mode-icon">💜</span>
+    <h2>省心模式 · 孩子自己学，家长不操心</h2>
+    <span class="mode-tag">APP全程引导</span>
+  </div>
+
+  <div class="conv-main">
+    <!-- 左侧场景 -->
+    <div class="left-scene">
+      <div class="scene-card">
+        <div class="scene-title">📱 一天的学习，全自动</div>
+        <div class="scene-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot purple">🔔</div>
+            <div class="timeline-line"></div>
+            <div class="timeline-content">
+              <div class="time">16:00 APP自动推送</div>
+              <div class="desc">"小明，今天的绘本来啦！"</div>
+              <div class="auto-tag">🤖 自动提醒</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot light">📖</div>
+            <div class="timeline-line"></div>
+            <div class="timeline-content">
+              <div class="time">16:05 孩子打开APP</div>
+              <div class="desc">今日1本绘本，APP引导完成听说读练</div>
+              <div class="auto-tag">🤖 自动引导</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot light">⭐</div>
+            <div class="timeline-line"></div>
+            <div class="timeline-content">
+              <div class="time">16:20 学习完成</div>
+              <div class="desc">获得星星奖励，今日任务打卡</div>
+              <div class="auto-tag">🤖 自动打卡</div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot purple">📊</div>
+            <div class="timeline-content">
+              <div class="time">20:00 家长收到报告</div>
+              <div class="desc">今日学习卡推送到手机</div>
+              <div class="auto-tag">🤖 自动推送</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="parent-free">
+        <div class="big-emoji">☕</div>
+        <div class="title">家长全程不用干预</div>
+        <div class="desc">提醒→引导→打卡→报告，全自动闭环</div>
+      </div>
+    </div>
+
+    <!-- 中间主推 -->
+    <div class="center-main">
+      <div class="main-sku">
+        <div class="badge">💜 先试一个月 · 零压力</div>
+        <div class="sku-icon">🗓</div>
+        <div class="sku-name">连续包月</div>
+        <div class="sku-price"><span class="yuan">¥</span>98<span class="unit">/月</span></div>
+        <div class="sku-subtitle">满意再续，不满随时取消</div>
+        <div class="sku-features">
+          <span>✅ 全部绘本不限量</span>
+          <span>✅ APP全程自动引导</span>
+          <span>✅ 每日学习提醒推送</span>
+          <span>✅ 学情报告自动推送</span>
+          <span>✅ 随时可取消，无捆绑</span>
+        </div>
+        <button class="buy-btn" onclick="location.href='10-store.html'">先订一个月试试 ¥98 →</button>
+      </div>
+    </div>
+
+    <!-- 右侧 -->
+    <div class="right-skus">
+      <div class="alt-sku">
+        <div class="sku-top">
+          <span class="sku-name">📘 1年卡</span>
+          <span class="sku-price">¥498</span>
+        </div>
+        <div class="sku-desc">一年省心，平均1.4元/天</div>
+        <span class="sku-tag">性价比</span>
+      </div>
+      <div class="alt-sku">
+        <div class="sku-top">
+          <span class="sku-name">📚 2年卡</span>
+          <span class="sku-price">¥898</span>
+        </div>
+        <div class="sku-desc">两年不操心，省98元</div>
+        <span class="sku-tag">省¥98</span>
+      </div>
+      <div class="alt-sku" onclick="location.href='04-low-barrier.html'" style="border-color:var(--abc-orange);background:#FFFBF0;">
+        <div class="sku-top">
+          <span class="sku-name">🎁 9.9体验</span>
+          <span class="sku-price" style="color:var(--abc-orange);">¥9.9</span>
+        </div>
+        <div class="sku-desc">7天全功能体验</div>
+        <span class="sku-tag" style="background:#FFF3E0;color:#E65100;">超低门槛</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+</body>
+</html>
