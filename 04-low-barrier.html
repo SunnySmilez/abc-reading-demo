@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>04 低门槛SKU页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; background:var(--abc-bg); }
+
+.mode-tabs { display:flex; background:#fff; border-bottom:2px solid #eee; padding:0 20px; flex-shrink:0; }
+.mtab { flex:1; text-align:center; padding:10px 0; font-size:13px; color:#888; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .2s; }
+.mtab.active { font-weight:700; }
+.mtab.active.standard { color:var(--abc-blue); border-bottom-color:var(--abc-blue); }
+.mtab.active.easy { color:var(--abc-purple); border-bottom-color:var(--abc-purple); }
+.mtab.active.goal { color:var(--abc-green); border-bottom-color:var(--abc-green); }
+
+.low-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+.low-header { text-align:center; margin-bottom:20px; }
+.low-header h2 { font-size:18px; color:var(--abc-dark); }
+.low-header .sub { font-size:12px; color:#888; margin-top:4px; }
+
+.low-cards { display:flex; gap:16px; margin-bottom:16px; }
+.low-card { width:240px; background:#fff; border-radius:16px; padding:24px 20px; text-align:center; cursor:pointer; transition:all .2s; border:2px solid #eee; position:relative; }
+.low-card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,.08); }
+.low-card.selected { border-color:var(--abc-orange); box-shadow:0 4px 20px rgba(245,166,35,.2); }
+.low-card .hot { position:absolute; top:-8px; right:12px; background:var(--abc-red); color:#fff; font-size:10px; padding:2px 8px; border-radius:10px; }
+.low-card .icon { font-size:36px; margin-bottom:8px; }
+.low-card .name { font-size:15px; font-weight:600; color:#333; }
+.low-card .price { font-size:28px; font-weight:700; color:var(--abc-orange); margin:8px 0; }
+.low-card .price .unit { font-size:13px; font-weight:400; color:#888; }
+.low-card .features { font-size:11px; color:#666; line-height:1.8; text-align:left; margin-top:10px; }
+.low-card .features li { list-style:none; }
+.low-card .features li::before { content:'✓ '; color:var(--abc-green); }
+
+.low-footer { text-align:center; }
+.low-footer .btn { padding:12px 60px; font-size:15px; background:linear-gradient(135deg,var(--abc-orange),#E09000); border:none; color:#fff; border-radius:24px; cursor:pointer; font-weight:700; box-shadow:0 4px 16px rgba(245,166,35,.3); }
+.low-footer .note { font-size:10px; color:#aaa; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <div class="mode-tabs">
+    <div class="mtab easy active" onclick="switchLow('easy',this)">💜 省心模式话术</div>
+    <div class="mtab standard" onclick="switchLow('standard',this)">🟢 标准模式话术</div>
+    <div class="mtab goal" onclick="switchLow('goal',this)">🔵 目标模式话术</div>
+  </div>
+
+  <!-- 省心 -->
+  <div class="low-body tab-content active" id="low-easy">
+    <div class="low-header">
+      <h2>9块9让孩子自己学7天，不用操心</h2>
+      <div class="sub">零压力开始，孩子能自己学再决定</div>
+    </div>
+    <div class="low-cards">
+      <div class="low-card selected" onclick="selectLow(this)">
+        <div class="hot">🔥 限时</div>
+        <div class="icon">🎁</div>
+        <div class="name">7天体验卡</div>
+        <div class="price">¥9.9 <span class="unit">/7天</span></div>
+        <ul class="features">
+          <li>全部绘本不限量</li>
+          <li>完整学习流程</li>
+          <li>学习报告推送</li>
+          <li>APP全程引导，不用盯</li>
+        </ul>
+      </div>
+      <div class="low-card" onclick="selectLow(this)">
+        <div class="icon">💎</div>
+        <div class="name">首月优惠卡</div>
+        <div class="price">¥29.9 <span class="unit">/首月</span></div>
+        <ul class="features">
+          <li>全部绘本不限量</li>
+          <li>完整学习流程</li>
+          <li>学习报告推送</li>
+          <li>一个月充分体验</li>
+        </ul>
+      </div>
+    </div>
+    <div class="low-footer">
+      <button class="btn">立即开通 →</button>
+      <div class="note">体验期后98元/月自动续费，可随时取消</div>
+    </div>
+  </div>
+
+  <!-- 标准 -->
+  <div class="low-body tab-content" id="low-standard">
+    <div class="low-header">
+      <h2>先体验7天，帮孩子养成学习习惯</h2>
+      <div class="sub">每天20分钟，7天养成好习惯</div>
+    </div>
+    <div class="low-cards">
+      <div class="low-card selected" onclick="selectLow(this)">
+        <div class="hot">🔥 限时</div>
+        <div class="icon">🎁</div>
+        <div class="name">7天体验卡</div>
+        <div class="price">¥9.9 <span class="unit">/7天</span></div>
+        <ul class="features">
+          <li>全部绘本不限量</li>
+          <li>每天2本系统推荐</li>
+          <li>培养阅读习惯</li>
+          <li>学习进度追踪</li>
+        </ul>
+      </div>
+      <div class="low-card" onclick="selectLow(this)">
+        <div class="icon">💎</div>
+        <div class="name">首月优惠卡</div>
+        <div class="price">¥29.9 <span class="unit">/首月</span></div>
+        <ul class="features">
+          <li>全部绘本不限量</li>
+          <li>完整学习流程</li>
+          <li>30天习惯养成</li>
+          <li>学情报告推送</li>
+        </ul>
+      </div>
+    </div>
+    <div class="low-footer">
+      <button class="btn">立即开通 →</button>
+      <div class="note">体验期后98元/月自动续费，可随时取消</div>
+    </div>
+  </div>
+
+  <!-- 目标 -->
+  <div class="low-body tab-content" id="low-goal">
+    <div class="low-header">
+      <h2>9.9元验证学习效果，看见孩子进步</h2>
+      <div class="sub">7天学习数据+进步报告，效果看得见</div>
+    </div>
+    <div class="low-cards">
+      <div class="low-card selected" onclick="selectLow(this)">
+        <div class="hot">🔥 限时</div>
+        <div class="icon">🎁</div>
+        <div class="name">7天体验卡</div>
+        <div class="price">¥9.9 <span class="unit">/7天</span></div>
+        <ul class="features">
+          <li>全部绘本不限量</li>
+          <li>7天完整学情报告</li>
+          <li>跟读评分+词汇追踪</li>
+          <li>级别进步可视化</li>
+        </ul>
+      </div>
+      <div class="low-card" onclick="selectLow(this)">
+        <div class="icon">💎</div>
+        <div class="name">首月优惠卡</div>
+        <div class="price">¥29.9 <span class="unit">/首月</span></div>
+        <ul class="features">
+          <li>全部绘本不限量</li>
+          <li>30天深度学情分析</li>
+          <li>效果对比报告</li>
+          <li>进度预测</li>
+        </ul>
+      </div>
+    </div>
+    <div class="low-footer">
+      <button class="btn">立即开通 →</button>
+      <div class="note">体验期后98元/月自动续费，可随时取消</div>
+    </div>
+  </div>
+</div>
+
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html" class="active">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+
+<script>
+function switchLow(mode, el) {
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.low-body').forEach(c => c.classList.remove('active'));
+  document.getElementById('low-'+mode).classList.add('active');
+}
+function selectLow(card) {
+  const parent = card.closest('.low-body');
+  parent.querySelectorAll('.low-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+</script>
+</body>
+</html>

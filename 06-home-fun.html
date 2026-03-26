@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>06 趣味首页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; background:linear-gradient(180deg,#E8F4FD 0%,#FFF8E1 100%); }
+
+.home-header { height:40px; background:linear-gradient(135deg,#FF8A65,#FF7043); display:flex; align-items:center; padding:0 16px; flex-shrink:0; }
+.home-header .logo { font-size:14px; font-weight:700; color:#fff; }
+.home-header .greeting { margin-left:auto; font-size:12px; color:rgba(255,255,255,.9); }
+.home-header .avatar { width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.3); display:flex; align-items:center; justify-content:center; font-size:14px; margin-left:8px; }
+
+.home-main { flex:1; display:flex; padding:10px 12px; gap:10px; overflow:hidden; }
+
+/* 左侧 - 带角色引导 */
+.left-panel { flex:2; display:flex; flex-direction:column; gap:8px; position:relative; }
+.mascot { position:absolute; top:-2px; right:4px; font-size:36px; animation:bounce 2s ease-in-out infinite; z-index:10; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.mascot-bubble { position:absolute; top:4px; right:44px; background:#fff; padding:4px 10px; border-radius:12px 12px 0 12px; font-size:10px; color:#333; box-shadow:0 2px 8px rgba(0,0,0,.08); z-index:10; }
+
+.task-title { font-size:13px; font-weight:600; color:#E65100; display:flex; align-items:center; gap:6px; }
+.task-title .stars { font-size:12px; }
+
+.books-row { display:flex; gap:8px; flex:1; }
+.book-card { flex:1; border-radius:16px; overflow:hidden; cursor:pointer; transition:all .25s; display:flex; flex-direction:column; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.book-card:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 6px 16px rgba(0,0,0,.12); }
+.book-cover { flex:1; display:flex; align-items:center; justify-content:center; font-size:44px; position:relative; }
+.book-cover.c1 { background:linear-gradient(135deg,#FFD54F,#FFB74D); }
+.book-cover.c2 { background:linear-gradient(135deg,#AED581,#81C784); }
+.book-cover.c3 { background:linear-gradient(135deg,#90CAF9,#64B5F6); }
+.book-cover .fun-badge { position:absolute; bottom:4px; left:4px; background:rgba(255,255,255,.85); padding:2px 8px; border-radius:10px; font-size:9px; }
+.book-info { padding:6px 8px; }
+.book-info .name { font-size:11px; font-weight:600; color:#333; }
+.book-info .level { font-size:10px; color:#888; }
+
+/* 右侧 - 趣味模块 */
+.right-panel { flex:1; display:flex; flex-direction:column; gap:8px; }
+.fun-card { border-radius:14px; padding:12px; cursor:pointer; transition:all .2s; }
+.fun-card:hover { transform:translateY(-1px); }
+
+.challenge-card { background:linear-gradient(135deg,#FFE082,#FFD54F); }
+.challenge-card .title { font-size:12px; font-weight:700; color:#E65100; }
+.challenge-card .desc { font-size:10px; color:#BF360C; margin-top:3px; }
+.challenge-card .reward { font-size:20px; margin-top:6px; }
+
+.badge-card { background:#fff; border-radius:14px; padding:10px 12px; }
+.badge-card .title { font-size:11px; font-weight:600; color:#333; margin-bottom:6px; }
+.badges { display:flex; gap:6px; }
+.badge-item { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.badge-item.earned { background:#FFF9C4; }
+.badge-item.locked { background:#f0f0f0; opacity:.4; }
+
+.surprise-card { background:linear-gradient(135deg,#CE93D8,#BA68C8); border-radius:14px; padding:10px 12px; cursor:pointer; }
+.surprise-card .title { font-size:11px; font-weight:600; color:#fff; }
+.surprise-card .desc { font-size:10px; color:rgba(255,255,255,.85); margin-top:2px; }
+.surprise-card .gift { font-size:22px; margin-top:4px; text-align:center; animation:pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+.game-card { background:linear-gradient(135deg,#4FC3F7,#29B6F6); border-radius:14px; padding:10px 12px; cursor:pointer; position:relative; }
+.game-card .title { font-size:11px; font-weight:600; color:#fff; }
+.game-card .desc { font-size:10px; color:rgba(255,255,255,.85); margin-top:2px; }
+.game-card .note { position:absolute; top:4px; right:6px; font-size:8px; background:rgba(0,0,0,.2); color:#fff; padding:1px 6px; border-radius:6px; }
+
+.bottom-tabs { height:40px; background:#fff; border-top:1px solid #eee; display:flex; flex-shrink:0; }
+.btab { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:9px; color:#aaa; cursor:pointer; gap:1px; }
+.btab .icon { font-size:16px; }
+.btab.active { color:#FF7043; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <div class="home-header">
+    <span class="logo">🎨 ABC Reading</span>
+    <span class="greeting">Hi, 小明！今天学什么呀？ ✨</span>
+    <div class="avatar">😄</div>
+  </div>
+
+  <div class="home-main">
+    <div class="left-panel">
+      <div class="mascot">🦊</div>
+      <div class="mascot-bubble">嘿！今天读这本吧～</div>
+      <div class="task-title">🌟 今日绘本 <span class="stars">⭐⭐⭐</span></div>
+      <div class="books-row">
+        <div class="book-card">
+          <div class="book-cover c1">🐵<div class="fun-badge">🔥 热门</div></div>
+          <div class="book-info"><div class="name">Five Little Monkeys</div><div class="level">Level A</div></div>
+        </div>
+        <div class="book-card">
+          <div class="book-cover c2">🦁<div class="fun-badge">⭐ 新</div></div>
+          <div class="book-info"><div class="name">Lion and Mouse</div><div class="level">Level A</div></div>
+        </div>
+        <div class="book-card">
+          <div class="book-cover c3">🐠<div class="fun-badge">❤️ 推荐</div></div>
+          <div class="book-info"><div class="name">Under the Sea</div><div class="level">Level B</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="fun-card challenge-card">
+        <div class="title">🎯 趣味挑战</div>
+        <div class="desc">连续3天完成任务赢奖励！</div>
+        <div class="reward">🏆 2/3</div>
+      </div>
+      <div class="badge-card">
+        <div class="title">🏅 成就徽章</div>
+        <div class="badges">
+          <div class="badge-item earned">📖</div>
+          <div class="badge-item earned">⭐</div>
+          <div class="badge-item earned">🎤</div>
+          <div class="badge-item locked">🏆</div>
+          <div class="badge-item locked">💎</div>
+        </div>
+      </div>
+      <div class="fun-card surprise-card">
+        <div class="title">🎁 每日惊喜</div>
+        <div class="desc">今天的神秘礼物是…</div>
+        <div class="gift">🎁</div>
+      </div>
+      <div class="fun-card game-card">
+        <div class="title">🎮 游戏乐园</div>
+        <div class="desc">太空冒险等你来！</div>
+        <div class="note">若关闭→成就系统</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-tabs">
+    <div class="btab active"><span class="icon">📚</span>绘本馆</div>
+    <div class="btab"><span class="icon">🎯</span>拓展</div>
+    <div class="btab"><span class="icon">🌍</span>社区</div>
+    <div class="btab" onclick="location.href='09-profile.html'"><span class="icon">👤</span>我的</div>
+  </div>
+</div>
+
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html" class="active">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+</body>
+</html>

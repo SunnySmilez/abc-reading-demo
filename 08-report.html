@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC Reading - 学情报告</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.page { background:linear-gradient(135deg,#F8FAFF 0%,#E8F0FE 100%); display:flex; flex-direction:column; }
+.report-header { height:50px; background:linear-gradient(90deg,var(--abc-blue),#3A7BC8); display:flex; align-items:center; padding:0 20px; }
+.report-header h2 { color:#fff; font-size:16px; flex:1; }
+.report-tabs { display:flex; gap:8px; }
+.report-tab { padding:4px 14px; border-radius:12px; font-size:12px; cursor:pointer; color:rgba(255,255,255,.7); background:rgba(255,255,255,.1); border:none; }
+.report-tab.active { background:rgba(255,255,255,.25); color:#fff; font-weight:600; }
+
+.main-content { flex:1; display:flex; padding:12px; gap:12px; overflow:hidden; }
+.left-col { flex:1; display:flex; flex-direction:column; gap:10px; }
+.right-col { flex:1; display:flex; flex-direction:column; gap:10px; }
+
+.card { background:#fff; border-radius:14px; padding:12px; }
+.card h4 { font-size:12px; color:#333; margin-bottom:8px; display:flex; align-items:center; gap:4px; }
+
+.chart-bar { display:flex; align-items:end; gap:6px; height:80px; padding-top:4px; }
+.bar-group { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.bar { width:24px; border-radius:4px 4px 0 0; transition:height .3s; }
+.bar-label { font-size:9px; color:#888; }
+.bar-value { font-size:9px; color:#333; font-weight:600; }
+
+.stat-row { display:flex; gap:8px; }
+.stat-item { flex:1; text-align:center; background:#F8FAFF; border-radius:10px; padding:8px 4px; }
+.stat-num { font-size:20px; font-weight:700; color:var(--abc-blue); }
+.stat-txt { font-size:10px; color:#888; margin-top:2px; }
+
+.prediction { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-radius:12px; padding:12px; text-align:center; }
+.prediction .pred-title { font-size:13px; font-weight:600; color:#2e7d32; }
+.prediction .pred-detail { font-size:11px; color:#388e3c; margin-top:4px; }
+
+.convert-bar { height:48px; background:#fff; border-top:1px solid #eee; display:flex; align-items:center; justify-content:space-between; padding:0 20px; }
+.convert-text { font-size:12px; color:#666; }
+.convert-btn { padding:8px 24px; border-radius:20px; border:none; background:var(--abc-orange); color:#fff; font-size:13px; font-weight:600; cursor:pointer; }
+
+.version-toggle { display:flex; gap:6px; margin-bottom:8px; }
+.ver-btn { padding:3px 10px; border-radius:8px; font-size:11px; cursor:pointer; border:1px solid #ddd; background:#fff; color:#666; }
+.ver-btn.active { background:var(--abc-blue); color:#fff; border-color:var(--abc-blue); }
+
+.hidden { display:none; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+<div class="page">
+  <div class="report-header">
+    <h2>📈 学情报告</h2>
+    <div class="report-tabs">
+      <button class="report-tab active" onclick="switchDay(3)">D3报告</button>
+      <button class="report-tab" onclick="switchDay(5)">D5报告</button>
+    </div>
+  </div>
+
+  <div style="padding:8px 12px 0;">
+    <div class="version-toggle">
+      <button class="ver-btn active" onclick="switchVer('full')">完整流程版</button>
+      <button class="ver-btn" onclick="switchVer('read')">纯阅读版</button>
+    </div>
+  </div>
+
+  <!-- 完整流程版 -->
+  <div id="ver-full" class="main-content">
+    <div class="left-col">
+      <div class="card">
+        <h4>📊 跟读分数趋势</h4>
+        <div class="chart-bar" id="chart-score">
+          <div class="bar-group"><div class="bar" style="height:60px;background:var(--abc-blue);"></div><div class="bar-label">D1</div><div class="bar-value">78</div></div>
+          <div class="bar-group"><div class="bar" style="height:68px;background:var(--abc-blue);"></div><div class="bar-label">D2</div><div class="bar-value">82</div></div>
+          <div class="bar-group"><div class="bar" style="height:76px;background:var(--abc-green);"></div><div class="bar-label">D3</div><div class="bar-value">87</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h4>📚 学习轨迹</h4>
+        <div class="stat-row">
+          <div class="stat-item"><div class="stat-num" id="books-full">6</div><div class="stat-txt">完成绘本</div></div>
+          <div class="stat-item"><div class="stat-num" id="time-full">68</div><div class="stat-txt">学习分钟</div></div>
+          <div class="stat-item"><div class="stat-num" id="words-full">36</div><div class="stat-txt">掌握单词</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="card">
+        <h4>📈 词汇量增长</h4>
+        <div class="chart-bar">
+          <div class="bar-group"><div class="bar" style="height:30px;background:#FFD93D;"></div><div class="bar-label">D1</div><div class="bar-value">12</div></div>
+          <div class="bar-group"><div class="bar" style="height:50px;background:#FFD93D;"></div><div class="bar-label">D2</div><div class="bar-value">24</div></div>
+          <div class="bar-group"><div class="bar" style="height:70px;background:var(--abc-orange);"></div><div class="bar-label">D3</div><div class="bar-value">36</div></div>
+        </div>
+      </div>
+      <div class="prediction" id="pred-full">
+        <div class="pred-title">🎯 进度预测</div>
+        <div class="pred-detail">按此节奏，<strong>45天</strong>可达到 C级<br>约 <strong>8个月</strong> 达到小学毕业水平(G级)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 纯阅读版 -->
+  <div id="ver-read" class="main-content hidden">
+    <div class="left-col">
+      <div class="card">
+        <h4>📚 阅读量统计</h4>
+        <div class="chart-bar">
+          <div class="bar-group"><div class="bar" style="height:40px;background:var(--abc-purple);"></div><div class="bar-label">D1</div><div class="bar-value">3本</div></div>
+          <div class="bar-group"><div class="bar" style="height:56px;background:var(--abc-purple);"></div><div class="bar-label">D2</div><div class="bar-value">4本</div></div>
+          <div class="bar-group"><div class="bar" style="height:72px;background:var(--abc-purple);"></div><div class="bar-label">D3</div><div class="bar-value">5本</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h4>📖 阅读数据</h4>
+        <div class="stat-row">
+          <div class="stat-item"><div class="stat-num">12</div><div class="stat-txt">阅读绘本</div></div>
+          <div class="stat-item"><div class="stat-num">54</div><div class="stat-txt">接触单词</div></div>
+          <div class="stat-item"><div class="stat-num">B级</div><div class="stat-txt">当前级别</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="right-col">
+      <div class="card">
+        <h4>📈 词汇接触量</h4>
+        <div class="chart-bar">
+          <div class="bar-group"><div class="bar" style="height:30px;background:#a29bfe;"></div><div class="bar-label">D1</div><div class="bar-value">18</div></div>
+          <div class="bar-group"><div class="bar" style="height:52px;background:#a29bfe;"></div><div class="bar-label">D2</div><div class="bar-value">36</div></div>
+          <div class="bar-group"><div class="bar" style="height:70px;background:#6c5ce7;"></div><div class="bar-label">D3</div><div class="bar-value">54</div></div>
+        </div>
+      </div>
+      <div class="prediction">
+        <div class="pred-title">🎯 级别进度</div>
+        <div class="pred-detail">B级已完成 <strong>35%</strong><br>按此阅读速度，<strong>30天</strong> 可升入 C级</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="convert-bar">
+    <div class="convert-text">继续学习，效果更明显 →</div>
+    <button class="convert-btn" onclick="location.href='03-conversion.html'">查看年卡方案 ¥498起</button>
+  </div>
+</div>
+</div>
+<div class="page-switcher">
+  <a href="index.html">📋 目录</a>
+  <a href="05-home-standard.html">标准首页</a>
+  <a href="06-home-fun.html">趣味首页</a>
+  <a href="07-home-progress.html">进度首页</a>
+  <a href="08-report.html" class="active">学情报告</a>
+  <a href="09-profile.html">个人中心</a>
+</div>
+<script>
+function switchDay(d){
+  document.querySelectorAll('.report-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  if(d===5){
+    document.getElementById('chart-score').innerHTML=`
+      <div class="bar-group"><div class="bar" style="height:48px;background:var(--abc-blue);"></div><div class="bar-label">D1</div><div class="bar-value">78</div></div>
+      <div class="bar-group"><div class="bar" style="height:55px;background:var(--abc-blue);"></div><div class="bar-label">D2</div><div class="bar-value">82</div></div>
+      <div class="bar-group"><div class="bar" style="height:62px;background:var(--abc-blue);"></div><div class="bar-label">D3</div><div class="bar-value">87</div></div>
+      <div class="bar-group"><div class="bar" style="height:70px;background:var(--abc-blue);"></div><div class="bar-label">D4</div><div class="bar-value">89</div></div>
+      <div class="bar-group"><div class="bar" style="height:78px;background:var(--abc-green);"></div><div class="bar-label">D5</div><div class="bar-value">91</div></div>`;
+    document.getElementById('books-full').textContent='10';
+    document.getElementById('time-full').textContent='115';
+    document.getElementById('words-full').textContent='58';
+    document.getElementById('pred-full').innerHTML='<div class="pred-title">🎯 5天学习成果</div><div class="pred-detail">跟读进步 <strong>+13分</strong>，词汇量 <strong>+58个</strong><br>按此节奏 <strong>半年</strong> 达到小学毕业水平(G级)</div>';
+  } else {
+    document.getElementById('chart-score').innerHTML=`
+      <div class="bar-group"><div class="bar" style="height:60px;background:var(--abc-blue);"></div><div class="bar-label">D1</div><div class="bar-value">78</div></div>
+      <div class="bar-group"><div class="bar" style="height:68px;background:var(--abc-blue);"></div><div class="bar-label">D2</div><div class="bar-value">82</div></div>
+      <div class="bar-group"><div class="bar" style="height:76px;background:var(--abc-green);"></div><div class="bar-label">D3</div><div class="bar-value">87</div></div>`;
+    document.getElementById('books-full').textContent='6';
+    document.getElementById('time-full').textContent='68';
+    document.getElementById('words-full').textContent='36';
+    document.getElementById('pred-full').innerHTML='<div class="pred-title">🎯 进度预测</div><div class="pred-detail">按此节奏，<strong>45天</strong>可达到 C级<br>约 <strong>8个月</strong> 达到小学毕业水平(G级)</div>';
+  }
+}
+function switchVer(v){
+  document.querySelectorAll('.ver-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('ver-full').classList.toggle('hidden',v!=='full');
+  document.getElementById('ver-read').classList.toggle('hidden',v!=='read');
+}
+</script>
+</body>
+</html>

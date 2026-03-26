@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC Reading - 商店</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.page { background:#F8FAFF; display:flex; flex-direction:column; }
+.store-header { height:50px; background:linear-gradient(135deg,var(--abc-blue),#3A7BC8); display:flex; align-items:center; justify-content:center; }
+.store-header h2 { color:#fff; font-size:16px; }
+
+.products { flex:1; padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; }
+
+.product-card { background:#fff; border-radius:16px; padding:18px; border:2px solid #eee; cursor:pointer; transition:all .2s; position:relative; overflow:hidden; }
+.product-card:hover { border-color:var(--abc-blue); }
+.product-card.selected { border-color:var(--abc-blue); background:rgba(74,144,217,.03); }
+.product-card.recommended::before { content:"推荐"; position:absolute; top:0; right:0; background:var(--abc-orange); color:#fff; font-size:10px; padding:2px 10px; border-radius:0 14px 0 10px; }
+
+.product-top { display:flex; justify-content:space-between; align-items:flex-start; }
+.product-name { font-size:16px; font-weight:700; color:#333; }
+.product-price { font-size:24px; font-weight:800; color:var(--abc-blue); }
+.product-price .unit { font-size:12px; font-weight:400; color:#888; }
+.product-price .yuan { font-size:14px; }
+
+.product-tags { display:flex; gap:6px; margin:10px 0; flex-wrap:wrap; }
+.ptag { font-size:11px; padding:3px 8px; border-radius:6px; background:#F0F4FF; color:var(--abc-blue); }
+
+.product-desc { font-size:12px; color:#888; line-height:1.5; }
+
+.product-btn { width:100%; padding:12px; border-radius:24px; border:none; font-size:15px; font-weight:600; cursor:pointer; margin-top:12px; transition:all .2s; }
+.btn-primary-full { background:var(--abc-blue); color:#fff; }
+.btn-secondary-full { background:#f0f0f0; color:#666; }
+
+.save-badge { display:inline-block; background:#e8f5e9; color:#2e7d32; font-size:10px; padding:1px 6px; border-radius:4px; margin-left:6px; }
+
+.bottom-info { padding:12px 16px; background:#fff; border-top:1px solid #eee; text-align:center; }
+.bottom-info p { font-size:10px; color:#bbb; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="device-frame portrait">
+<div class="page">
+  <div class="store-header">
+    <h2>🛒 商品中心</h2>
+  </div>
+  <div class="products">
+
+    <div class="product-card recommended" onclick="selectProduct(this)">
+      <div class="product-top">
+        <div>
+          <div class="product-name">2年畅学卡 <span class="save-badge">省98元</span></div>
+        </div>
+        <div class="product-price"><span class="yuan">¥</span>898</div>
+      </div>
+      <div class="product-tags">
+        <span class="ptag">📚 2600+绘本全解锁</span>
+        <span class="ptag">🎯 效果最大化</span>
+        <span class="ptag">💰 平均1.23元/天</span>
+      </div>
+      <div class="product-desc">两年畅学，陪伴孩子从启蒙到小学毕业水平。含完整学习流程、学情报告、全部拓展功能。</div>
+      <button class="product-btn btn-primary-full">立即开通 ¥898</button>
+    </div>
+
+    <div class="product-card selected" onclick="selectProduct(this)">
+      <div class="product-top">
+        <div>
+          <div class="product-name">1年畅学卡</div>
+        </div>
+        <div class="product-price"><span class="yuan">¥</span>498</div>
+      </div>
+      <div class="product-tags">
+        <span class="ptag">📚 全部绘本</span>
+        <span class="ptag">✨ 最受欢迎</span>
+        <span class="ptag">💰 1.36元/天</span>
+      </div>
+      <div class="product-desc">一年期畅学卡，性价比之选。含完整学习流程、学情报告、全部拓展功能。</div>
+      <button class="product-btn btn-primary-full">立即开通 ¥498</button>
+    </div>
+
+    <div class="product-card" onclick="selectProduct(this)">
+      <div class="product-top">
+        <div>
+          <div class="product-name">连续包月</div>
+        </div>
+        <div class="product-price"><span class="yuan">¥</span>98<span class="unit">/月</span></div>
+      </div>
+      <div class="product-tags">
+        <span class="ptag">📱 仅iOS</span>
+        <span class="ptag">🔄 随时取消</span>
+        <span class="ptag">💡 先试一个月</span>
+      </div>
+      <div class="product-desc">按月付费，灵活无压力。自动续费，可随时在设置中取消。</div>
+      <button class="product-btn btn-secondary-full">订阅 ¥98/月</button>
+    </div>
+
+    <div class="product-card" onclick="selectProduct(this)">
+      <div class="product-top">
+        <div>
+          <div class="product-name">0元3天试用</div>
+        </div>
+        <div class="product-price" style="color:var(--abc-green);"><span class="yuan">¥</span>0</div>
+      </div>
+      <div class="product-tags">
+        <span class="ptag">📱 仅iOS</span>
+        <span class="ptag">🎁 免费体验</span>
+        <span class="ptag">→ 续费498/年</span>
+      </div>
+      <div class="product-desc">Apple原生试用，0元体验3天完整功能。试用结束自动转为连续包年498元/年。</div>
+      <button class="product-btn btn-secondary-full">免费试用3天</button>
+    </div>
+
+  </div>
+  <div class="bottom-info">
+    <p>订阅将通过iTunes账户扣费 · 到期前24小时自动续费<br>可在"设置-订阅"中管理或取消 · <a href="#" style="color:var(--abc-blue);">隐私政策</a> · <a href="#" style="color:var(--abc-blue);">用户协议</a></p>
+  </div>
+</div>
+</div>
+<div class="page-switcher">
+  <a href="index.html">📋 目录</a>
+  <a href="03-conversion.html">转化页</a>
+  <a href="04-low-barrier.html">低门槛</a>
+  <a href="10-store.html" class="active">商店</a>
+  <a href="09-profile.html">个人中心</a>
+</div>
+<script>
+function selectProduct(el){
+  document.querySelectorAll('.product-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+</script>
+</body>
+</html>

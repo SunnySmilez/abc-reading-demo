@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>01 冷启定制页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; }
+
+/* 视频区 */
+.video-section { flex:1; background:linear-gradient(135deg,#1a1a2e,#2C3E50); display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer; }
+.video-section .play-btn { width:72px; height:72px; background:rgba(255,255,255,.2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:36px; backdrop-filter:blur(10px); transition:all .3s; }
+.video-section .play-btn:hover { background:rgba(255,255,255,.35); transform:scale(1.08); }
+.video-overlay { position:absolute; top:16px; left:16px; color:rgba(255,255,255,.7); font-size:12px; }
+.video-overlay .badge { background:rgba(255,255,255,.15); padding:3px 10px; border-radius:12px; font-size:11px; }
+.video-progress { position:absolute; bottom:0; left:0; right:0; height:3px; background:rgba(255,255,255,.1); }
+.video-progress-bar { height:100%; background:var(--abc-orange); width:0; transition:width 2s linear; }
+.skip-btn { position:absolute; bottom:12px; right:16px; background:rgba(255,255,255,.2); color:#fff; border:none; padding:5px 14px; border-radius:14px; font-size:11px; cursor:pointer; backdrop-filter:blur(6px); }
+
+/* 定制页 */
+.customize-section { position:absolute; top:0; left:0; right:0; bottom:0; background:var(--abc-bg); overflow-y:auto; transform:translateY(100%); transition:transform .5s ease; z-index:50; padding:16px 20px; }
+.customize-section.show { transform:translateY(0); }
+
+.section-label { font-size:13px; font-weight:700; color:var(--abc-dark); margin:12px 0 8px; }
+.section-label:first-child { margin-top:0; }
+
+/* 模式选择 */
+.modes { display:flex; gap:10px; margin-bottom:10px; }
+.modes .mode-card { flex:1; padding:10px 8px; }
+.modes .mode-card .mode-icon { font-size:24px; margin-bottom:4px; }
+.modes .mode-card .mode-name { font-size:13px; }
+.modes .mode-card .mode-desc { font-size:10px; }
+.custom-badge { display:inline-block; background:var(--abc-orange); color:#fff; font-size:10px; padding:1px 6px; border-radius:8px; margin-left:4px; }
+
+/* 定制项 */
+.customize-items { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.customize-item { background:#fff; border-radius:12px; padding:10px 12px; }
+.customize-item.disabled { opacity:.45; pointer-events:none; }
+.item-label { font-size:11px; color:#888; margin-bottom:6px; display:flex; align-items:center; gap:4px; }
+.item-label .hint { font-size:10px; color:var(--abc-orange); }
+.options { display:flex; flex-wrap:wrap; gap:4px; }
+.opt { padding:4px 10px; border-radius:14px; font-size:11px; background:#f0f2f5; color:#666; cursor:pointer; transition:all .15s; border:1.5px solid transparent; }
+.opt:hover { background:#e8ebef; }
+.opt.active { background:var(--abc-blue); color:#fff; border-color:var(--abc-blue); }
+.opt.active.green { background:var(--abc-green); border-color:var(--abc-green); }
+.opt.active.purple { background:var(--abc-purple); border-color:var(--abc-purple); }
+
+/* 底部按钮 */
+.bottom-bar { margin-top:12px; text-align:center; padding-bottom:4px; }
+.start-btn { width:80%; padding:12px; font-size:15px; border-radius:24px; border:none; background:linear-gradient(135deg,var(--abc-blue),#3A7BC8); color:#fff; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(74,144,217,.35); transition:all .2s; }
+.start-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(74,144,217,.45); }
+</style>
+</head>
+<body>
+<div class="device-frame" id="frame">
+  <!-- 视频区 -->
+  <div class="video-section" id="videoSection" onclick="playVideo()">
+    <div class="video-overlay">
+      <span class="badge">RAZ 介绍视频</span>
+    </div>
+    <div class="play-btn" id="playBtn">▶</div>
+    <div class="video-progress"><div class="video-progress-bar" id="progressBar"></div></div>
+    <button class="skip-btn" onclick="event.stopPropagation();showCustomize()">跳过视频 →</button>
+  </div>
+
+  <!-- 定制页 -->
+  <div class="customize-section" id="customizeSection">
+    <div class="section-label">选择学习模式 <span id="customBadge" class="custom-badge" style="display:none">自定义</span></div>
+    <div class="modes">
+      <div class="mode-card standard" id="mode-standard" onclick="selectMode('standard')">
+        <div class="mode-icon">🟢</div>
+        <div class="mode-name">标准模式</div>
+        <div class="mode-desc">均衡学习，稳步成长</div>
+      </div>
+      <div class="mode-card easy" id="mode-easy" onclick="selectMode('easy')">
+        <div class="mode-icon">💜</div>
+        <div class="mode-name">省心模式</div>
+        <div class="mode-desc">孩子自己学，不操心</div>
+      </div>
+      <div class="mode-card goal" id="mode-goal" onclick="selectMode('goal')">
+        <div class="mode-icon">🔵</div>
+        <div class="mode-name">目标模式</div>
+        <div class="mode-desc">效果清晰，看见进步</div>
+      </div>
+    </div>
+
+    <div class="section-label">个性化定制</div>
+    <div class="customize-items">
+      <div class="customize-item" id="item-studyMode">
+        <div class="item-label">📖 绘本学习模式</div>
+        <div class="options">
+          <span class="opt" data-key="studyMode" data-val="full" onclick="pickOpt(this)">完整流程(听说读练)</span>
+          <span class="opt" data-key="studyMode" data-val="read" onclick="pickOpt(this)">纯阅读</span>
+        </div>
+      </div>
+      <div class="customize-item" id="item-order">
+        <div class="item-label">🔀 绘本学习顺序</div>
+        <div class="options">
+          <span class="opt" data-key="order" data-val="fun" onclick="pickOpt(this)">趣味优先</span>
+          <span class="opt" data-key="order" data-val="knowledge" onclick="pickOpt(this)">知识点交付</span>
+        </div>
+      </div>
+      <div class="customize-item" id="item-daily">
+        <div class="item-label">📅 每日学习量</div>
+        <div class="options">
+          <span class="opt" data-key="daily" data-val="1" onclick="pickOpt(this)">轻松1本</span>
+          <span class="opt" data-key="daily" data-val="2" onclick="pickOpt(this)">适中2本</span>
+          <span class="opt" data-key="daily" data-val="3" onclick="pickOpt(this)">挑战3本</span>
+        </div>
+      </div>
+      <div class="customize-item" id="item-scoring">
+        <div class="item-label">🎤 跟读打分 <span class="hint" id="scoringHint" style="display:none">纯阅读无跟读</span></div>
+        <div class="options">
+          <span class="opt" data-key="scoring" data-val="easy" onclick="pickOpt(this)">鼓励优先</span>
+          <span class="opt" data-key="scoring" data-val="normal" onclick="pickOpt(this)">标准</span>
+          <span class="opt" data-key="scoring" data-val="strict" onclick="pickOpt(this)">严格</span>
+        </div>
+      </div>
+      <div class="customize-item" id="item-game">
+        <div class="item-label">🎮 游戏时长</div>
+        <div class="options">
+          <span class="opt" data-key="game" data-val="unlimited" onclick="pickOpt(this)">不限</span>
+          <span class="opt" data-key="game" data-val="30" onclick="pickOpt(this)">30分钟</span>
+          <span class="opt" data-key="game" data-val="15" onclick="pickOpt(this)">15分钟</span>
+          <span class="opt" data-key="game" data-val="off" onclick="pickOpt(this)">关闭</span>
+        </div>
+      </div>
+      <div class="customize-item" id="item-homepage">
+        <div class="item-label">🏠 首页风格</div>
+        <div class="options">
+          <span class="opt" data-key="homepage" data-val="standard" onclick="pickOpt(this)">标准</span>
+          <span class="opt" data-key="homepage" data-val="fun" onclick="pickOpt(this)">趣味</span>
+          <span class="opt" data-key="homepage" data-val="progress" onclick="pickOpt(this)">进度导向</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="start-btn" onclick="location.href='02-trial.html'">开始体验 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- 页面切换栏 -->
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html" class="active">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+
+<script>
+// 预设组合
+const presets = {
+  standard: { studyMode:'full', order:'fun', daily:'2', scoring:'normal', game:'15', homepage:'standard' },
+  easy:     { studyMode:'full', order:'fun', daily:'1', scoring:'easy',   game:'unlimited', homepage:'fun' },
+  goal:     { studyMode:'full', order:'knowledge', daily:'3', scoring:'strict', game:'off', homepage:'progress' }
+};
+
+let currentMode = 'standard';
+let currentSettings = {...presets.standard};
+let isCustom = false;
+let videoPlaying = false;
+
+function playVideo() {
+  if (videoPlaying) return;
+  videoPlaying = true;
+  document.getElementById('playBtn').textContent = '⏸';
+  const bar = document.getElementById('progressBar');
+  bar.style.transition = 'width 3s linear';
+  bar.style.width = '100%';
+  setTimeout(showCustomize, 3000);
+}
+
+function showCustomize() {
+  document.getElementById('customizeSection').classList.add('show');
+  selectMode('standard');
+}
+
+function selectMode(mode) {
+  currentMode = mode;
+  isCustom = false;
+  document.getElementById('customBadge').style.display = 'none';
+  document.querySelectorAll('.modes .mode-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('mode-'+mode).classList.add('active');
+  currentSettings = {...presets[mode]};
+  applySettings();
+}
+
+function applySettings() {
+  document.querySelectorAll('.opt').forEach(o => {
+    o.classList.remove('active','green','purple');
+    if (o.dataset.val === currentSettings[o.dataset.key]) {
+      o.classList.add('active');
+    }
+  });
+  // 纯阅读时禁用跟读打分
+  const scoringItem = document.getElementById('item-scoring');
+  const hint = document.getElementById('scoringHint');
+  if (currentSettings.studyMode === 'read') {
+    scoringItem.classList.add('disabled');
+    hint.style.display = 'inline';
+  } else {
+    scoringItem.classList.remove('disabled');
+    hint.style.display = 'none';
+  }
+}
+
+function pickOpt(el) {
+  const key = el.dataset.key;
+  const val = el.dataset.val;
+  currentSettings[key] = val;
+  // 检查是否偏离当前模式预设
+  const preset = presets[currentMode];
+  let diff = false;
+  for (let k in preset) {
+    if (currentSettings[k] !== preset[k]) { diff = true; break; }
+  }
+  if (diff) {
+    isCustom = true;
+    document.getElementById('customBadge').style.display = 'inline';
+    document.querySelectorAll('.modes .mode-card').forEach(c => c.classList.remove('active'));
+  }
+  applySettings();
+}
+
+// 默认选中标准模式
+selectMode('standard');
+</script>
+</body>
+</html>

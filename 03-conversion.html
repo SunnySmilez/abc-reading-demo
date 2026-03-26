@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=932">
+<title>03 正价转化页 - ABC Reading</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.device-frame { display:flex; flex-direction:column; background:var(--abc-bg); }
+
+/* 模式tab */
+.mode-tabs { display:flex; gap:0; background:#fff; border-bottom:2px solid #eee; padding:0 20px; flex-shrink:0; }
+.mtab { flex:1; text-align:center; padding:10px 0; font-size:13px; color:#888; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .2s; }
+.mtab.active { font-weight:700; }
+.mtab.active.standard { color:var(--abc-blue); border-bottom-color:var(--abc-blue); }
+.mtab.active.easy { color:var(--abc-purple); border-bottom-color:var(--abc-purple); }
+.mtab.active.goal { color:var(--abc-green); border-bottom-color:var(--abc-green); }
+
+/* 内容区 */
+.conv-body { flex:1; overflow-y:auto; padding:16px 24px; display:flex; flex-direction:column; }
+.conv-header { text-align:center; margin-bottom:16px; }
+.conv-header h2 { font-size:18px; color:var(--abc-dark); }
+.conv-header .sub { font-size:12px; color:#888; margin-top:4px; }
+
+/* 商品卡片 */
+.sku-list { display:flex; gap:12px; justify-content:center; flex:1; align-items:center; }
+.sku-card { width:200px; background:#fff; border-radius:16px; padding:20px 16px; text-align:center; cursor:pointer; transition:all .2s; border:2px solid #eee; position:relative; }
+.sku-card:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,.08); }
+.sku-card.selected { border-color:var(--abc-blue); box-shadow:0 4px 20px rgba(74,144,217,.2); }
+.sku-card.recommended { border-color:var(--abc-orange); }
+.sku-badge { position:absolute; top:-8px; left:50%; transform:translateX(-50%); background:var(--abc-orange); color:#fff; font-size:10px; padding:2px 10px; border-radius:10px; white-space:nowrap; }
+.sku-card .icon { font-size:32px; margin-bottom:8px; }
+.sku-card .name { font-size:14px; font-weight:600; color:#333; }
+.sku-card .price { font-size:24px; font-weight:700; color:var(--abc-blue); margin:6px 0; }
+.sku-card .price .unit { font-size:12px; font-weight:400; }
+.sku-card .desc { font-size:11px; color:#888; line-height:1.5; }
+.sku-card .tag { display:inline-block; background:#E8F5E9; color:#2E7D32; font-size:10px; padding:2px 8px; border-radius:8px; margin-top:6px; }
+
+.buy-bar { text-align:center; padding:8px 0; flex-shrink:0; }
+.buy-bar .btn { padding:12px 60px; font-size:15px; }
+</style>
+</head>
+<body>
+<div class="device-frame">
+  <!-- 模式Tab -->
+  <div class="mode-tabs">
+    <div class="mtab standard active" onclick="switchMode('standard',this)">🟢 标准模式</div>
+    <div class="mtab easy" onclick="switchMode('easy',this)">💜 省心模式</div>
+    <div class="mtab goal" onclick="switchMode('goal',this)">🔵 目标模式</div>
+  </div>
+
+  <!-- 标准模式 -->
+  <div class="conv-body tab-content active" id="tab-standard">
+    <div class="conv-header">
+      <h2>每天20分钟，均衡学习稳步成长</h2>
+      <div class="sub">完整课程体系，听说读练全覆盖</div>
+    </div>
+    <div class="sku-list">
+      <div class="sku-card recommended selected" onclick="selectSku(this)">
+        <div class="sku-badge">⭐ 主推</div>
+        <div class="icon">📘</div>
+        <div class="name">1年卡</div>
+        <div class="price">¥498</div>
+        <div class="desc">每天不到1.4元<br>养成学习好习惯</div>
+        <div class="tag">性价比首选</div>
+      </div>
+      <div class="sku-card" onclick="selectSku(this)">
+        <div class="icon">📚</div>
+        <div class="name">2年卡</div>
+        <div class="price">¥898</div>
+        <div class="desc">省98元<br>长期学习更划算</div>
+        <div class="tag">省¥98</div>
+      </div>
+      <div class="sku-card" onclick="selectSku(this)">
+        <div class="icon">🗓</div>
+        <div class="name">连续包月</div>
+        <div class="price">¥98<span class="unit">/月</span></div>
+        <div class="desc">按月付费<br>随时可取消</div>
+        <div class="tag">iOS可用</div>
+      </div>
+    </div>
+    <div class="buy-bar"><button class="btn btn-primary">立即订阅 →</button></div>
+  </div>
+
+  <!-- 省心模式 -->
+  <div class="conv-body tab-content" id="tab-easy">
+    <div class="conv-header">
+      <h2>孩子自己学，轻松不操心</h2>
+      <div class="sub">APP全程引导，不用家长盯，到时间自动提醒</div>
+    </div>
+    <div class="sku-list">
+      <div class="sku-card recommended selected" onclick="selectSku(this)">
+        <div class="sku-badge">⭐ 推荐</div>
+        <div class="icon">📘</div>
+        <div class="name">1年卡</div>
+        <div class="price">¥498</div>
+        <div class="desc">一年省心<br>孩子自驱学习</div>
+        <div class="tag">省心首选</div>
+      </div>
+      <div class="sku-card" onclick="selectSku(this)">
+        <div class="sku-badge">先试一个月</div>
+        <div class="icon">🗓</div>
+        <div class="name">连续包月</div>
+        <div class="price">¥98<span class="unit">/月</span></div>
+        <div class="desc">先试一个月<br>满意再续费</div>
+        <div class="tag">零压力开始</div>
+      </div>
+      <div class="sku-card" onclick="selectSku(this)">
+        <div class="icon">📚</div>
+        <div class="name">2年卡</div>
+        <div class="price">¥898</div>
+        <div class="desc">两年省心<br>一次搞定</div>
+        <div class="tag">省¥98</div>
+      </div>
+    </div>
+    <div class="buy-bar"><button class="btn btn-purple">立即订阅 →</button></div>
+  </div>
+
+  <!-- 目标模式 -->
+  <div class="conv-body tab-content" id="tab-goal">
+    <div class="conv-header">
+      <h2>看得见的进步，效果最大化</h2>
+      <div class="sub">学情报告+进度可视化，XX天达到X级别</div>
+    </div>
+    <div class="sku-list">
+      <div class="sku-card recommended selected" onclick="selectSku(this)">
+        <div class="sku-badge">🏆 效果最大化</div>
+        <div class="icon">📚</div>
+        <div class="name">2年卡</div>
+        <div class="price">¥898</div>
+        <div class="desc">长期坚持效果最好<br>系统化进阶</div>
+        <div class="tag">效果首选</div>
+      </div>
+      <div class="sku-card" onclick="selectSku(this)">
+        <div class="icon">📘</div>
+        <div class="name">1年卡</div>
+        <div class="price">¥498</div>
+        <div class="desc">一年见效<br>看见孩子进步</div>
+        <div class="tag">性价比</div>
+      </div>
+      <div class="sku-card" onclick="selectSku(this)">
+        <div class="icon">🗓</div>
+        <div class="name">连续包月</div>
+        <div class="price">¥98<span class="unit">/月</span></div>
+        <div class="desc">按月付费<br>灵活选择</div>
+        <div class="tag">iOS可用</div>
+      </div>
+    </div>
+    <div class="buy-bar"><button class="btn btn-green">立即订阅 →</button></div>
+  </div>
+</div>
+
+<div class="page-switcher">
+  <a href="index.html">🏠</a>
+  <a href="01-onboarding.html">1.定制</a>
+  <a href="02-trial.html">2.体验</a>
+  <a href="03-conversion.html" class="active">3.转化</a>
+  <a href="04-low-barrier.html">4.低门槛</a>
+  <a href="05-home-standard.html">5.标准首页</a>
+  <a href="06-home-fun.html">6.趣味</a>
+  <a href="07-home-progress.html">7.进度</a>
+  <a href="08-report.html">8.报告</a>
+  <a href="09-profile.html">9.我的</a>
+  <a href="10-store.html">10.商店</a>
+</div>
+
+<script>
+function switchMode(mode, el) {
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.conv-body').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-'+mode).classList.add('active');
+}
+function selectSku(card) {
+  const parent = card.closest('.conv-body');
+  parent.querySelectorAll('.sku-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+}
+</script>
+</body>
+</html>
