@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Reading 伴读班主任直播课 - 老师视角</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Animations */
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes handRaise {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-20deg); }
+            75% { transform: rotate(20deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        @keyframes scorePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #f59e0b; }
+            100% { transform: scale(1); }
+        }
+        
+        .animate-pulse-ring {
+            animation: pulse-ring 1.5s ease-out infinite;
+        }
+        
+        .wave-bar {
+            animation: wave 1s ease-in-out infinite;
+        }
+        
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        
+        .animate-float {
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .hand-raise {
+            animation: handRaise 0.5s ease-in-out;
+        }
+        
+        .score-pop {
+            animation: scorePop 0.5s ease-in-out;
+        }
+        
+        /* Glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        /* Gradient backgrounds */
+        .bg-gradient-education {
+            background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 50%, #fef3c7 100%);
+        }
+        
+        /* Stage progress */
+        .stage-node {
+            transition: all 0.3s ease;
+        }
+        .stage-node.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .stage-node.completed {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        /* Student card hover */
+        .student-card {
+            transition: all 0.3s ease;
+        }
+        .student-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .student-card.hand-raised {
+            border-color: #fbbf24;
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+        }
+        
+        /* Recording animation */
+        .recording-ring {
+            position: relative;
+        }
+        .recording-ring::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid #ef4444;
+            animation: pulse-ring 1.5s ease-out infinite;
+        }
+        
+        /* Interactive button press */
+        .btn-press:active {
+            transform: scale(0.95);
+        }
+        
+        /* Progress bar animation */
+        .progress-fill {
+            transition: width 1s ease-in-out;
+        }
+        
+        /* Mode transition */
+        .mode-transition {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Puzzle Game Styles */
+        .puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(2, 120px);
+            grid-template-rows: repeat(2, 120px);
+            gap: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 12px;
+            margin: 0 auto;
+        }
+        .puzzle-slot {
+            width: 120px;
+            height: 120px;
+            border: 3px dashed #94a3b8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            background: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            position: relative;
+        }
+        .puzzle-slot.over {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+            transform: scale(1.05);
+        }
+        .puzzle-slot.filled {
+            border-style: solid;
+            border-color: #10b981;
+            background: rgba(255,255,255,0.95);
+        }
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            cursor: grab;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.15s;
+            user-select: none;
+        }
+        .puzzle-piece:active {
+            cursor: grabbing;
+            transform: scale(1.1) rotate(3deg);
+        }
+        
+        /* Student speaking video overlay */
+        .student-speaking-overlay {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 16px;
+            border: 3px solid #10b981;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 30;
+            display: none;
+        }
+        .student-speaking-overlay.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .speaking-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-ring 1.5s ease-out infinite;
+        }
+    
+        /* Navigation Panel Styles */
+        #navMenu {
+            transform: scale(0);
+            opacity: 0;
+        }
+        #navMenu.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .nav-btn {
+            border: 2px solid transparent;
+        }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border-color: transparent;
+        }
+        .nav-btn.active span:first-child {
+            background: white;
+            color: #3b82f6;
+        }
+        .nav-btn.active i {
+            color: white;
+        }
+        kbd {
+            font-family: monospace;
+        }
+
+    </style>
+</head>
+<body class="bg-gradient-education min-h-screen overflow-hidden">
+    <!-- Main Container -->
+    <div class="h-screen flex flex-col">
+        
+        <!-- Top Bar -->
+        <header class="glass border-b border-white/50 px-6 py-3 flex items-center justify-between shadow-sm z-20">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-gray-800 text-lg">aa级别 - 字母A的发音</h1>
+                        <p class="text-xs text-gray-500">ABC Reading 伴读营</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <!-- Current Stage & Timer -->
+                <div class="bg-white/80 rounded-full px-5 py-2 flex items-center gap-3 shadow-sm border border-blue-100">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span id="currentStageName" class="font-medium text-gray-700">绘本带读</span>
+                    <span class="text-gray-300">|</span>
+                    <span id="stageTimer" class="font-mono font-bold text-blue-600 text-lg">08:00</span>
+                </div>
+                
+                <!-- Network Status -->
+                <div class="flex items-center gap-2 text-gray-600">
+                    <i class="fas fa-wifi text-green-500"></i>
+                    <span class="text-sm">网络良好</span>
+                </div>
+                
+                <!-- Settings -->
+                <button class="w-10 h-10 rounded-full bg-white/80 hover:bg-white flex items-center justify-center transition-colors shadow-sm border border-gray-200">
+                    <i class="fas fa-cog text-gray-600"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Main Content Area -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- Left/Center: Teacher Video & Courseware -->
+            <main id="mainArea" class="flex-1 flex flex-col p-4 gap-4 mode-transition">
+                
+                <!-- Mode Toggle -->
+                <div class="flex justify-center">
+                    <div class="bg-white/90 rounded-full p-1 flex gap-1 shadow-md border border-gray-200">
+                        <button id="teachModeBtn" onclick="switchMode('teach')" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-500 text-white shadow-sm">
+                            <i class="fas fa-chalkboard-teacher mr-1"></i>讲解模式
+                        </button>
+                        <button id="interactModeBtn" onclick="switchMode('interact')" class="px-4 py-1.5 rounded-full text-sm font-medium transition-all text-gray-600 hover:bg-gray-100">
+                            <i class="fas fa-users mr-1"></i>互动模式
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Teacher Video Area -->
+                <div id="teacherArea" class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white flex-1 min-h-0 mode-transition">
+                    <!-- Teacher Video Placeholder -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <div class="text-center text-white">
+                                <div class="w-32 h-32 mx-auto mb-4 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/30">
+                                    <i class="fas fa-user-tie text-6xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold">王老师</h3>
+                                <p class="text-white/80 mt-2">正在授课中...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Teacher Info Overlay -->
+                    <div class="absolute top-4 left-4 flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm">王</div>
+                        <span class="text-white font-medium text-sm">王老师</span>
+                        <span class="px-1.5 py-0.5 bg-red-500 rounded text-white text-xs">直播中</span>
+                    </div>
+                    
+                    <!-- Recording Indicator -->
+                    <div class="absolute top-4 right-4 flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5">
+                        <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                        <span class="text-white text-sm">REC</span>
+                    </div>
+                    
+                    <!-- Speaking Animation (hidden by default) -->
+                    <div id="teacherSpeaking" class="absolute bottom-4 left-1/2 -translate-x-1/2 hidden">
+                        <div class="flex items-end gap-1 h-8">
+                            <div class="w-1.5 bg-white/80 rounded-full wave-bar" style="height: 20px;"></div>
+                            <div class="w-1.5 bg-white/80 rounded-full wave-bar" style="height: 32px;"></div>
+                            <div class="w-1.5 bg-white/80 rounded-full wave-bar" style="height: 24px;"></div>
+                            <div class="w-1.5 bg-white/80 rounded-full wave-bar" style="height: 28px;"></div>
+                            <div class="w-1.5 bg-white/80 rounded-full wave-bar" style="height: 16px;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Student Speaking Overlay (shown when student is selected) -->
+                    <div id="studentSpeakingOverlay" class="student-speaking-overlay">
+                        <div class="speaking-indicator">
+                            <i class="fas fa-microphone text-white text-xs"></i>
+                        </div>
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-3xl mb-2" id="speakingStudentAvatar">
+                            👦
+                        </div>
+                        <span class="text-white font-medium" id="speakingStudentName">小明</span>
+                        <span class="text-green-400 text-sm mt-1">正在发言...</span>
+                        <div class="flex items-end gap-1 h-6 mt-2">
+                            <div class="w-1 bg-green-400 rounded-full wave-bar" style="height: 12px;"></div>
+                            <div class="w-1 bg-green-400 rounded-full wave-bar" style="height: 20px;"></div>
+                            <div class="w-1 bg-green-400 rounded-full wave-bar" style="height: 16px;"></div>
+                            <div class="w-1 bg-green-400 rounded-full wave-bar" style="height: 18px;"></div>
+                        </div>
+                        <button onclick="closeStudentSpeaking()" class="absolute top-2 left-2 w-6 h-6 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white text-xs transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Courseware Area -->
+                <div id="coursewareArea" class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mode-transition" style="height: 45%;">
+                    <div class="h-full flex flex-col">
+                        <!-- Courseware Header -->
+                        <div class="px-4 py-2 bg-gradient-to-r from-blue-50 to-green-50 border-b border-gray-100 flex items-center justify-between">
+                            <span class="font-medium text-gray-700 text-sm"><i class="fas fa-book mr-2 text-blue-500"></i>绘本内容</span>
+                            <div class="flex gap-2">
+                                <button onclick="prevPage()" class="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center shadow-sm transition-colors">
+                                    <i class="fas fa-chevron-left text-gray-600 text-sm"></i>
+                                </button>
+                                <span id="pageIndicator" class="text-sm text-gray-600 flex items-center">1 / 3</span>
+                                <button onclick="nextPage()" class="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center shadow-sm transition-colors">
+                                    <i class="fas fa-chevron-right text-gray-600 text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Courseware Content -->
+                        <div id="coursewareContent" class="flex-1 p-6 relative overflow-hidden">
+                            <!-- Page 1: Cover with Apple -->
+                            <div class="courseware-page absolute inset-0 p-6 flex flex-col items-center justify-center" data-page="1">
+                                <div class="w-40 h-40 bg-gradient-to-br from-red-400 to-red-600 rounded-3xl shadow-2xl flex items-center justify-center mb-6 transform hover:scale-105 transition-transform">
+                                    <span class="text-8xl">🍎</span>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-2">An apple</h2>
+                                <p class="text-gray-600 text-lg">一个苹果</p>
+                                <div class="mt-6 flex items-center gap-2 text-blue-600 bg-blue-50 px-4 py-2 rounded-full">
+                                    <i class="fas fa-volume-up"></i>
+                                    <span class="text-sm">/æ/ - 点击跟读</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Page 2: Word Learning -->
+                            <div class="courseware-page absolute inset-0 p-6 hidden" data-page="2">
+                                <div class="flex gap-6 h-full">
+                                    <div class="flex-1 flex flex-col justify-center">
+                                        <div class="bg-red-100 rounded-2xl p-6 mb-4 text-center">
+                                            <span class="text-6xl">🍎</span>
+                                        </div>
+                                        <p class="text-xl text-gray-700 leading-relaxed text-center">
+                                            <span class="text-2xl font-bold text-red-500">A</span> is for <span class="font-bold text-red-500">Apple</span>.
+                                        </p>
+                                        <p class="text-lg text-gray-600 mt-2 text-center">A 代表苹果</p>
+                                    </div>
+                                    <div class="flex-1 bg-gradient-to-b from-blue-50 to-white rounded-2xl p-6 flex flex-col justify-center">
+                                        <h3 class="font-bold text-gray-800 mb-4">单词学习</h3>
+                                        <div class="space-y-3">
+                                            <div class="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm">
+                                                <span class="text-2xl">🍎</span>
+                                                <div>
+                                                    <p class="font-bold text-gray-800">Apple</p>
+                                                    <p class="text-sm text-gray-500">苹果</p>
+                                                </div>
+                                                <button class="ml-auto w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                    <i class="fas fa-volume-up text-sm"></i>
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm">
+                                                <span class="text-2xl">🐜</span>
+                                                <div>
+                                                    <p class="font-bold text-gray-800">Ant</p>
+                                                    <p class="text-sm text-gray-500">蚂蚁</p>
+                                                </div>
+                                                <button class="ml-auto w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                                    <i class="fas fa-volume-up text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Page 3: Puzzle Game -->
+                            <div class="courseware-page absolute inset-0 p-6 hidden" data-page="3">
+                                <div class="h-full flex flex-col items-center justify-center">
+                                    <h3 class="text-xl font-bold text-gray-800 mb-4">🧩 拼图游戏：拼出单词 APPLE</h3>
+                                    <div class="flex gap-8 items-start">
+                                        <div class="puzzle-board" id="puzzleBoard">
+                                            <div class="puzzle-slot" data-slot="0" data-letter="A"><span class="text-gray-400 text-sm absolute top-2 left-2">1</span></div>
+                                            <div class="puzzle-slot" data-slot="1" data-letter="P"><span class="text-gray-400 text-sm absolute top-2 left-2">2</span></div>
+                                            <div class="puzzle-slot" data-slot="2" data-letter="P"><span class="text-gray-400 text-sm absolute top-2 left-2">3</span></div>
+                                            <div class="puzzle-slot" data-slot="3" data-letter="L"><span class="text-gray-400 text-sm absolute top-2 left-2">4</span></div>
+                                            <div class="puzzle-slot" data-slot="4" data-letter="E"><span class="text-gray-400 text-sm absolute top-2 left-2">5</span></div>
+                                        </div>
+                                        <div class="flex flex-col items-center">
+                                            <p class="text-sm text-gray-600 mb-3">拖拽字母到正确位置</p>
+                                            <div class="flex flex-wrap gap-2 justify-center" id="puzzlePieces">
+                                                <!-- Pieces will be generated by JS -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="puzzleProgress" class="mt-4 text-sm text-gray-600">已拼入 0 / 5 块</div>
+                                    <div id="puzzleSuccess" class="hidden mt-4 bg-green-100 text-green-700 px-4 py-2 rounded-full">
+                                        🎉 拼图完成！积分 +30
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Right: Students Area -->
+            <aside id="studentsArea" class="w-80 bg-white/90 backdrop-blur-sm border-l border-gray-200 flex flex-col mode-transition">
+                <!-- Students Header -->
+                <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <h3 class="font-bold text-gray-700"><i class="fas fa-users mr-2 text-blue-500"></i>学生列表 (6人)</h3>
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">全员在线</span>
+                </div>
+                
+                <!-- Students Grid -->
+                <div class="flex-1 p-4 overflow-y-auto">
+                    <div id="studentsGrid" class="grid grid-cols-2 gap-3">
+                        <!-- Student cards will be generated by JS -->
+                    </div>
+                </div>
+                
+                <!-- Score Ranking -->
+                <div class="p-4 border-t border-gray-100 bg-gradient-to-b from-white to-blue-50">
+                    <h4 class="font-bold text-gray-700 text-sm mb-3"><i class="fas fa-trophy mr-2 text-yellow-500"></i>积分排行</h4>
+                    <div id="scoreRanking" class="space-y-2">
+                        <!-- Ranking items will be generated by JS -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Bottom Area: Interaction & Progress -->
+        <footer class="bg-white border-t border-gray-200 px-6 py-3">
+            <!-- Stage Progress -->
+            <div class="mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm text-gray-500">课程进度</span>
+                    <span id="overallProgress" class="text-sm font-medium text-blue-600">16%</span>
+                </div>
+                <div class="relative">
+                    <!-- Progress Bar Background -->
+                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full bg-gradient-to-r from-blue-500 via-green-500 to-orange-500 progress-fill" style="width: 16%"></div>
+                    </div>
+                    <!-- Stage Nodes -->
+                    <div class="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between">
+                        <button onclick="jumpToStage(0)" class="stage-node w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-bold shadow-lg active" data-stage="0">1</button>
+                        <button onclick="jumpToStage(1)" class="stage-node w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold shadow" data-stage="1">2</button>
+                        <button onclick="jumpToStage(2)" class="stage-node w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold shadow" data-stage="2">3</button>
+                        <button onclick="jumpToStage(3)" class="stage-node w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold shadow" data-stage="3">4</button>
+                        <button onclick="jumpToStage(4)" class="stage-node w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold shadow" data-stage="4">5</button>
+                        <button onclick="jumpToStage(5)" class="stage-node w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-xs font-bold shadow" data-stage="5">6</button>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-2 text-xs text-gray-500">
+                    <span>暖场</span>
+                    <span>带读</span>
+                    <span>互动</span>
+                    <span>跟读</span>
+                    <span>小测验</span>
+                    <span>总结</span>
+                </div>
+            </div>
+            
+            <!-- Interaction Area -->
+            <div class="flex items-center gap-4">
+                <!-- Chat Messages -->
+                <div class="flex-1 bg-gray-50 rounded-xl p-3 h-20 overflow-y-auto" id="chatArea">
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-start gap-2">
+                            <span class="font-medium text-blue-600">王老师:</span>
+                            <span class="text-gray-700">小朋友们好！今天我们要学习字母A的发音~</span>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="font-medium text-green-600">小明:</span>
+                            <span class="text-gray-700">老师好！🙋</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleAnswerPanel()" class="btn-press w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg hover:shadow-xl transition-all flex flex-col items-center justify-center">
+                        <i class="fas fa-check-square text-lg"></i>
+                        <span class="text-xs mt-0.5">答题</span>
+                    </button>
+                    
+                    <button onclick="startRecording()" id="recordBtn" class="btn-press w-12 h-12 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-lg hover:shadow-xl transition-all flex flex-col items-center justify-center">
+                        <i class="fas fa-microphone text-lg"></i>
+                        <span class="text-xs mt-0.5">跟读</span>
+                    </button>
+                    
+                    <button onclick="sendEmoji()" class="btn-press w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-pink-600 text-white shadow-lg hover:shadow-xl transition-all flex flex-col items-center justify-center">
+                        <i class="fas fa-smile text-lg"></i>
+                        <span class="text-xs mt-0.5">表情</span>
+                    </button>
+                </div>
+                
+                <!-- Chat Input -->
+                <div class="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2">
+                    <input type="text" id="chatInput" placeholder="发送消息..." class="bg-transparent border-none outline-none text-sm w-32"
+                           onkeypress="if(event.key==='Enter') sendChat()">
+                    <button onclick="sendChat()" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- Answer Panel Modal -->
+    <div id="answerPanel" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-6 shadow-2xl max-w-md w-full mx-4 transform scale-100 transition-transform">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">选择你的答案</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="submitAnswer('A')" class="py-4 rounded-xl bg-blue-50 border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-100 transition-all text-xl font-bold text-blue-700">A</button>
+                <button onclick="submitAnswer('B')" class="py-4 rounded-xl bg-green-50 border-2 border-green-200 hover:border-green-500 hover:bg-green-100 transition-all text-xl font-bold text-green-700">B</button>
+                <button onclick="submitAnswer('C')" class="py-4 rounded-xl bg-orange-50 border-2 border-orange-200 hover:border-orange-500 hover:bg-orange-100 transition-all text-xl font-bold text-orange-700">C</button>
+                <button onclick="submitAnswer('D')" class="py-4 rounded-xl bg-purple-50 border-2 border-purple-200 hover:border-purple-500 hover:bg-purple-100 transition-all text-xl font-bold text-purple-700">D</button>
+            </div>
+            <button onclick="toggleAnswerPanel()" class="mt-4 w-full py-2 text-gray-500 hover:text-gray-700 transition-colors">取消</button>
+        </div>
+    </div>
+    
+    <!-- Recording Modal -->
+    <div id="recordingModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 shadow-2xl text-center">
+            <div class="w-20 h-20 mx-auto mb-4 recording-ring rounded-full bg-red-100 flex items-center justify-center">
+                <i class="fas fa-microphone text-red-500 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">正在录音...</h3>
+            <p class="text-gray-500 mb-4">请跟读：Apple</p>
+            <div class="flex items-center justify-center gap-1 h-8 mb-4">
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 10px;"></div>
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 20px;"></div>
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 30px;"></div>
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 25px;"></div>
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 15px;"></div>
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 28px;"></div>
+                <div class="w-1.5 bg-red-400 rounded-full wave-bar" style="height: 18px;"></div>
+            </div>
+            <button onclick="stopRecording()" class="px-6 py-2 bg-gray-200 rounded-full text-gray-700 hover:bg-gray-300 transition-colors">停止录音</button>
+        </div>
+    </div>
+    
+    <!-- Emoji Panel -->
+    <div id="emojiPanel" class="fixed bottom-24 right-6 bg-white rounded-2xl shadow-2xl p-4 hidden z-40 border border-gray-200">
+        <div class="grid grid-cols-5 gap-2">
+            <button onclick="selectEmoji('👍')" class="text-2xl hover:scale-125 transition-transform p-1">👍</button>
+            <button onclick="selectEmoji('❤️')" class="text-2xl hover:scale-125 transition-transform p-1">❤️</button>
+            <button onclick="selectEmoji('🎉')" class="text-2xl hover:scale-125 transition-transform p-1">🎉</button>
+            <button onclick="selectEmoji('⭐')" class="text-2xl hover:scale-125 transition-transform p-1">⭐</button>
+            <button onclick="selectEmoji('🔥')" class="text-2xl hover:scale-125 transition-transform p-1">🔥</button>
+            <button onclick="selectEmoji('👏')" class="text-2xl hover:scale-125 transition-transform p-1">👏</button>
+            <button onclick="selectEmoji('😊')" class="text-2xl hover:scale-125 transition-transform p-1">😊</button>
+            <button onclick="selectEmoji('🤔')" class="text-2xl hover:scale-125 transition-transform p-1">🤔</button>
+            <button onclick="selectEmoji('💪')" class="text-2xl hover:scale-125 transition-transform p-1">💪</button>
+            <button onclick="selectEmoji('🌟')" class="text-2xl hover:scale-125 transition-transform p-1">🌟</button>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const students = [
+            { id: 1, name: '小明', avatar: '👦', score: 120, color: 'bg-blue-400', handRaised: false },
+            { id: 2, name: '小红', avatar: '👧', score: 135, color: 'bg-pink-400', handRaised: false },
+            { id: 3, name: '小华', avatar: '👦', score: 110, color: 'bg-green-400', handRaised: false },
+            { id: 4, name: '小丽', avatar: '👧', score: 145, color: 'bg-purple-400', handRaised: false },
+            { id: 5, name: '小强', avatar: '👦', score: 95, color: 'bg-orange-400', handRaised: false },
+            { id: 6, name: '小芳', avatar: '👧', score: 130, color: 'bg-teal-400', handRaised: false }
+        ];
+        
+        const stages = [
+            { name: '暖场问候', duration: 2 * 60 },
+            { name: '绘本带读', duration: 8 * 60 },
+            { name: '互动练习', duration: 8 * 60 },
+            { name: '开口跟读', duration: 6 * 60 },
+            { name: '小测验', duration: 4 * 60 },
+            { name: '总结激励', duration: 2 * 60 }
+        ];
+        
+        // Puzzle data
+        const puzzleLetters = ['A', 'P', 'P', 'L', 'E'];
+        let filledSlots = {};
+        let dragPieceId = null;
+        
+        // State
+        let currentStage = 1;
+        let currentPage = 1;
+        let totalPages = 3;
+        let mode = 'teach';
+        let timer = null;
+        let timeRemaining = stages[1].duration;
+        let isRecording = false;
+        let currentSpeakingStudent = null;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStudents();
+            renderRanking();
+            initPuzzleGame();
+            startTimer();
+            simulateStudentActivity();
+        });
+        
+        // Render students grid with hand raise on avatar
+        function renderStudents() {
+            const grid = document.getElementById('studentsGrid');
+            grid.innerHTML = students.map(s => `
+                <div class="student-card bg-white rounded-xl p-3 border-2 ${s.handRaised ? 'border-yellow-400 shadow-yellow-200 hand-raised' : 'border-gray-100'} shadow-sm relative overflow-hidden cursor-pointer" 
+                     id="student-${s.id}" onclick="selectStudent(${s.id})">
+                    ${s.handRaised ? '<div class="absolute top-1 right-1 text-yellow-500 text-lg animate-bounce">✋</div>' : ''}
+                    <div class="flex flex-col items-center">
+                        <div class="w-14 h-14 ${s.color} rounded-full flex items-center justify-center text-3xl mb-2 shadow-inner relative">
+                            ${s.avatar}
+                            ${s.handRaised ? '<div class="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center text-xs">✋</div>' : ''}
+                        </div>
+                        <span class="font-medium text-gray-700 text-sm">${s.name}</span>
+                        <div class="flex items-center gap-1 mt-1">
+                            <i class="fas fa-star text-yellow-400 text-xs"></i>
+                            <span class="text-xs text-gray-500 score-display" id="score-${s.id}">${s.score}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Select student to speak
+        function selectStudent(studentId) {
+            const student = students.find(s => s.id === studentId);
+            if (!student) return;
+            
+            currentSpeakingStudent = student;
+            const overlay = document.getElementById('studentSpeakingOverlay');
+            document.getElementById('speakingStudentAvatar').textContent = student.avatar;
+            document.getElementById('speakingStudentName').textContent = student.name;
+            overlay.classList.add('active');
+            
+            // Add chat message
+            addChatMessage(student.name, '老师，我在！', 'text-green-600');
+        }
+        
+        // Close student speaking overlay
+        function closeStudentSpeaking() {
+            document.getElementById('studentSpeakingOverlay').classList.remove('active');
+            currentSpeakingStudent = null;
+        }
+        
+        // Render ranking
+        function renderRanking() {
+            const ranking = document.getElementById('scoreRanking');
+            const sorted = [...students].sort((a, b) => b.score - a.score);
+            ranking.innerHTML = sorted.slice(0, 3).map((s, i) => `
+                <div class="flex items-center gap-3 bg-white rounded-lg p-2 shadow-sm">
+                    <div class="w-6 h-6 rounded-full ${i === 0 ? 'bg-yellow-400' : i === 1 ? 'bg-gray-300' : 'bg-orange-300'} flex items-center justify-center text-white text-xs font-bold">
+                        ${i + 1}
+                    </div>
+                    <div class="w-8 h-8 ${s.color} rounded-full flex items-center justify-center text-lg">${s.avatar}</div>
+                    <span class="flex-1 font-medium text-gray-700 text-sm">${s.name}</span>
+                    <span class="font-bold text-orange-500" id="rank-score-${s.id}">${s.score}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Mode switch
+        function switchMode(newMode) {
+            mode = newMode;
+            const teachBtn = document.getElementById('teachModeBtn');
+            const interactBtn = document.getElementById('interactModeBtn');
+            const teacherArea = document.getElementById('teacherArea');
+            const coursewareArea = document.getElementById('coursewareArea');
+            const studentsArea = document.getElementById('studentsArea');
+            
+            if (mode === 'teach') {
+                teachBtn.classList.add('bg-blue-500', 'text-white', 'shadow-sm');
+                teachBtn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+                interactBtn.classList.remove('bg-blue-500', 'text-white', 'shadow-sm');
+                interactBtn.classList.add('text-gray-600', 'hover:bg-gray-100');
+                
+                teacherArea.style.display = 'block';
+                coursewareArea.style.height = '45%';
+                studentsArea.style.width = '20rem';
+            } else {
+                interactBtn.classList.add('bg-blue-500', 'text-white', 'shadow-sm');
+                interactBtn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+                teachBtn.classList.remove('bg-blue-500', 'text-white', 'shadow-sm');
+                teachBtn.classList.add('text-gray-600', 'hover:bg-gray-100');
+                
+                teacherArea.style.display = 'none';
+                coursewareArea.style.height = '100%';
+                studentsArea.style.width = '16rem';
+            }
+        }
+        
+        // Timer
+        function startTimer() {
+            timer = setInterval(() => {
+                timeRemaining--;
+                if (timeRemaining <= 0) {
+                    nextStage();
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeRemaining / 60);
+            const secs = timeRemaining % 60;
+            document.getElementById('stageTimer').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Stage management
+        function nextStage() {
+            if (currentStage < stages.length - 1) {
+                currentStage++;
+                timeRemaining = stages[currentStage].duration;
+                updateStageUI();
+            }
+        }
+        
+        function jumpToStage(stageIndex) {
+            currentStage = stageIndex;
+            timeRemaining = stages[currentStage].duration;
+            updateStageUI();
+        }
+        
+        function updateStageUI() {
+            document.getElementById('currentStageName').textContent = stages[currentStage].name;
+            
+            // Update progress bar
+            const progress = ((currentStage) / (stages.length - 1)) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('overallProgress').textContent = `${Math.round(progress)}%`;
+            
+            // Update stage nodes
+            document.querySelectorAll('.stage-node').forEach((node, i) => {
+                node.classList.remove('active', 'completed');
+                if (i < currentStage) {
+                    node.classList.add('completed');
+                    node.innerHTML = '<i class="fas fa-check text-xs"></i>';
+                } else if (i === currentStage) {
+                    node.classList.add('active');
+                    node.textContent = i + 1;
+                } else {
+                    node.textContent = i + 1;
+                }
+            });
+        }
+        
+        // Courseware navigation
+        function prevPage() {
+            if (currentPage > 1) {
+                document.querySelector(`[data-page="${currentPage}"]`).classList.add('hidden');
+                currentPage--;
+                document.querySelector(`[data-page="${currentPage}"]`).classList.remove('hidden');
+                document.getElementById('pageIndicator').textContent = `${currentPage} / ${totalPages}`;
+            }
+        }
+        
+        function nextPage() {
+            if (currentPage < totalPages) {
+                document.querySelector(`[data-page="${currentPage}"]`).classList.add('hidden');
+                currentPage++;
+                document.querySelector(`[data-page="${currentPage}"]`).classList.remove('hidden');
+                document.getElementById('pageIndicator').textContent = `${currentPage} / ${totalPages}`;
+            }
+        }
+        
+        // Puzzle Game
+        function initPuzzleGame() {
+            const piecesContainer = document.getElementById('puzzlePieces');
+            const shuffled = [...puzzleLetters].map((letter, index) => ({ letter, index })).sort(() => Math.random() - 0.5);
+            
+            piecesContainer.innerHTML = shuffled.map((item, i) => `
+                <div class="puzzle-piece" draggable="true" data-letter="${item.letter}" data-index="${item.index}" id="piece-${i}">
+                    ${item.letter}
+                </div>
+            `).join('');
+            
+            // Add drag events to pieces
+            document.querySelectorAll('.puzzle-piece').forEach(piece => {
+                piece.addEventListener('dragstart', onPuzzleDragStart);
+            });
+            
+            // Add drop events to slots
+            document.querySelectorAll('.puzzle-slot').forEach(slot => {
+                slot.addEventListener('dragover', onPuzzleDragOver);
+                slot.addEventListener('dragleave', onPuzzleDragLeave);
+                slot.addEventListener('drop', onPuzzleDrop);
+            });
+        }
+        
+        function onPuzzleDragStart(e) {
+            dragPieceId = e.target.dataset.letter;
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        
+        function onPuzzleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('over');
+        }
+        
+        function onPuzzleDragLeave(e) {
+            e.currentTarget.classList.remove('over');
+        }
+        
+        function onPuzzleDrop(e) {
+            e.preventDefault();
+            const slot = e.currentTarget;
+            slot.classList.remove('over');
+            
+            const slotLetter = slot.dataset.letter;
+            const draggedLetter = dragPieceId;
+            
+            if (slotLetter === draggedLetter && !filledSlots[slot.dataset.slot]) {
+                slot.innerHTML = `<span class="text-4xl font-bold text-green-600">${draggedLetter}</span>`;
+                slot.classList.add('filled');
+                filledSlots[slot.dataset.slot] = true;
+                
+                // Remove the piece
+                const piece = document.querySelector(`[data-letter="${draggedLetter}"]:not(.filled)`);
+                if (piece) {
+                    piece.style.display = 'none';
+                }
+                
+                updatePuzzleProgress();
+            } else if (slotLetter !== draggedLetter) {
+                // Wrong placement animation
+                slot.style.transform = 'translateX(5px)';
+                setTimeout(() => slot.style.transform = '', 200);
+            }
+        }
+        
+        function updatePuzzleProgress() {
+            const count = Object.keys(filledSlots).length;
+            document.getElementById('puzzleProgress').textContent = `已拼入 ${count} / 5 块`;
+            
+            if (count === 5) {
+                document.getElementById('puzzleSuccess').classList.remove('hidden');
+                addChatMessage('系统', '🎉 拼图完成！所有学生获得积分 +30', 'text-green-600');
+                students.forEach(s => s.score += 30);
+                renderStudents();
+                renderRanking();
+            }
+        }
+        
+        // Answer panel
+        function toggleAnswerPanel() {
+            const panel = document.getElementById('answerPanel');
+            panel.classList.toggle('hidden');
+            panel.classList.toggle('flex');
+        }
+        
+        function submitAnswer(answer) {
+            addChatMessage('我', `我的答案是：${answer}`, 'text-blue-600');
+            toggleAnswerPanel();
+            
+            const points = Math.floor(Math.random() * 10) + 5;
+            setTimeout(() => {
+                addChatMessage('系统', `回答提交成功！积分 +${points}`, 'text-green-600');
+                addScore(points);
+            }, 1000);
+        }
+        
+        // Recording
+        function startRecording() {
+            isRecording = true;
+            document.getElementById('recordingModal').classList.remove('hidden');
+            document.getElementById('recordingModal').classList.add('flex');
+            document.getElementById('recordBtn').classList.add('ring-4', 'ring-orange-300');
+        }
+        
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('recordingModal').classList.add('hidden');
+            document.getElementById('recordingModal').classList.remove('flex');
+            document.getElementById('recordBtn').classList.remove('ring-4', 'ring-orange-300');
+            
+            addChatMessage('系统', '录音完成！发音很棒！积分 +15', 'text-green-600');
+            addScore(15);
+        }
+        
+        // Emoji
+        function sendEmoji() {
+            const panel = document.getElementById('emojiPanel');
+            panel.classList.toggle('hidden');
+        }
+        
+        function selectEmoji(emoji) {
+            addChatMessage('我', emoji, 'text-blue-600');
+            document.getElementById('emojiPanel').classList.add('hidden');
+        }
+        
+        // Chat
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (msg) {
+                addChatMessage('我', msg, 'text-blue-600');
+                input.value = '';
+            }
+        }
+        
+        function addChatMessage(sender, msg, colorClass) {
+            const chatArea = document.getElementById('chatArea');
+            const div = document.createElement('div');
+            div.className = 'flex items-start gap-2';
+            div.innerHTML = `
+                <span class="font-medium ${colorClass}">${sender}:</span>
+                <span class="text-gray-700">${msg}</span>
+            `;
+            chatArea.appendChild(div);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        // Add score
+        function addScore(points) {
+            const randomStudent = students[Math.floor(Math.random() * students.length)];
+            randomStudent.score += points;
+            
+            const scoreEl = document.getElementById(`score-${randomStudent.id}`);
+            if (scoreEl) {
+                scoreEl.textContent = randomStudent.score;
+                scoreEl.classList.add('score-pop');
+                setTimeout(() => scoreEl.classList.remove('score-pop'), 500);
+            }
+            
+            const rankScoreEl = document.getElementById(`rank-score-${randomStudent.id}`);
+            if (rankScoreEl) {
+                rankScoreEl.textContent = randomStudent.score;
+                rankScoreEl.classList.add('score-pop');
+                setTimeout(() => rankScoreEl.classList.remove('score-pop'), 500);
+            }
+            
+            renderRanking();
+        }
+        
+        // Simulate student activity
+        function simulateStudentActivity() {
+            // Random hand raises
+            setInterval(() => {
+                const randomStudent = students[Math.floor(Math.random() * students.length)];
+                if (Math.random() > 0.7) {
+                    randomStudent.handRaised = !randomStudent.handRaised;
+                    renderStudents();
+                    
+                    if (randomStudent.handRaised) {
+                        addChatMessage(randomStudent.name, '我举手了！✋', 'text-green-600');
+                    }
+                }
+            }, 5000);
+            
+            // Random chat messages
+            const messages = [
+                '老师，我会了！',
+                '这个好有趣！',
+                '再来一遍~',
+                '我明白了！',
+                '👍',
+                '🌟',
+                '太棒了！'
+            ];
+            
+            setInterval(() => {
+                if (Math.random() > 0.8) {
+                    const randomStudent = students[Math.floor(Math.random() * students.length)];
+                    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                    addChatMessage(randomStudent.name, randomMsg, 'text-green-600');
+                }
+            }, 8000);
+            
+            // Random score changes
+            setInterval(() => {
+                if (Math.random() > 0.6) {
+                    const points = Math.floor(Math.random() * 5) + 1;
+                    addScore(points);
+                }
+            }, 10000);
+        }
+    </script>
+
+    <!-- Stage Navigation Panel -->
+    <div id="navPanel" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+        <!-- Toggle Button -->
+        <button onclick="toggleNavPanel()" class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center transition-all hover:scale-110" title="显示/隐藏导航 (H)">
+            <i class="fas fa-layer-group text-lg"></i>
+        </button>
+        
+        <!-- Navigation Menu -->
+        <div id="navMenu" class="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border border-blue-100 p-4 min-w-[200px] transition-all duration-300 transform origin-bottom-right">
+            <div class="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                <span class="font-bold text-gray-700 text-sm">环节导航</span>
+                <span class="text-xs text-gray-400">快捷键: 1-5</span>
+            </div>
+            <div class="space-y-2">
+                <button onclick="jumpToStage(0)" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center gap-2 hover:bg-blue-50" data-stage="0">
+                    <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="flex-1">绘本带读</span>
+                    <i class="fas fa-book text-blue-400 text-xs"></i>
+                </button>
+                <button onclick="jumpToStage(1)" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center gap-2 hover:bg-green-50" data-stage="1">
+                    <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="flex-1">互动游戏</span>
+                    <i class="fas fa-gamepad text-green-400 text-xs"></i>
+                </button>
+                <button onclick="jumpToStage(2)" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center gap-2 hover:bg-purple-50" data-stage="2">
+                    <span class="w-6 h-6 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">3</span>
+                    <span class="flex-1">小组讨论</span>
+                    <i class="fas fa-users text-purple-400 text-xs"></i>
+                </button>
+                <button onclick="jumpToStage(3)" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center gap-2 hover:bg-orange-50" data-stage="3">
+                    <span class="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">4</span>
+                    <span class="flex-1">个人展示</span>
+                    <i class="fas fa-star text-orange-400 text-xs"></i>
+                </button>
+                <button onclick="jumpToStage(4)" class="nav-btn w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center gap-2 hover:bg-pink-50" data-stage="4">
+                    <span class="w-6 h-6 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-xs font-bold">5</span>
+                    <span class="flex-1">总结回顾</span>
+                    <i class="fas fa-clipboard-check text-pink-400 text-xs"></i>
+                </button>
+            </div>
+            <div class="mt-3 pt-2 border-t border-gray-100 flex gap-2">
+                <button onclick="prevStage()" class="flex-1 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-xs transition-colors" title="上一环节 (P)">
+                    <i class="fas fa-chevron-left mr-1"></i>上一环节
+                </button>
+                <button onclick="nextStage()" class="flex-1 py-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-600 text-xs transition-colors" title="下一环节 (N)">
+                    下一环节<i class="fas fa-chevron-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Demo Mode Banner -->
+    <div id="demoBanner" class="fixed top-20 left-1/2 -translate-x-1/2 z-40 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full shadow-lg flex items-center gap-4 text-sm">
+        <span class="font-medium">🎮 演示模式</span>
+        <span class="text-white/80">|</span>
+        <span class="text-white/90">快捷键: <kbd class="bg-white/20 px-1.5 py-0.5 rounded text-xs">1-5</kbd> 跳转 <kbd class="bg-white/20 px-1.5 py-0.5 rounded text-xs">N</kbd> 下一环节 <kbd class="bg-white/20 px-1.5 py-0.5 rounded text-xs">P</kbd> 上一环节 <kbd class="bg-white/20 px-1.5 py-0.5 rounded text-xs">H</kbd> 隐藏导航</span>
+        <button onclick="document.getElementById('demoBanner').style.display='none'" class="ml-2 text-white/60 hover:text-white">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+</body>
+</html>
