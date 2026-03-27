@@ -2,157 +2,91 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=430, initial-scale=1.0">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
 <title>搭桥连词成句 · RAZ伴读营</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
-.top-bar{width:430px;height:44px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
-.top-bar .title{font-size:13px;font-weight:600;}
-.top-bar .hint{font-size:11px;color:#4ECDC4;}
-.scene-visual{width:430px;height:200px;background:linear-gradient(180deg,#0a1628,#0a2a3a);position:relative;flex-shrink:0;overflow:hidden;}
-.river{position:absolute;bottom:0;width:100%;height:80px;background:linear-gradient(180deg,rgba(78,205,196,.15),rgba(78,205,196,.05));border-top:2px solid rgba(78,205,196,.2);}
-.river-wave{position:absolute;width:200%;height:100%;background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(78,205,196,.05) 60px,rgba(78,205,196,.05) 120px);animation:riverFlow 6s linear infinite;}
-.bank-left{position:absolute;left:0;bottom:70px;width:60px;height:50px;background:linear-gradient(135deg,#2a5a2a,#1a3a1a);border-radius:0 20px 0 0;}
-.bank-right{position:absolute;right:0;bottom:70px;width:60px;height:50px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);border-radius:20px 0 0 0;}
-.character{position:absolute;left:20px;bottom:110px;font-size:36px;transition:left 1s ease-in-out;}
-.bridge-slots{position:absolute;bottom:76px;left:70px;right:70px;display:flex;gap:4px;justify-content:center;}
-.bridge-plank{width:50px;height:24px;border-radius:4px;border:2px dashed rgba(255,230,109,.3);background:rgba(255,230,109,.05);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#FFE66D;transition:all .3s;cursor:pointer;}
-.bridge-plank.filled{border-style:solid;border-color:#FFE66D;background:rgba(255,230,109,.15);}
-.bridge-plank.correct{border-color:#34c759;background:rgba(52,199,89,.15);color:#34c759;}
-.bridge-plank.wrong{border-color:#ff3b30;background:rgba(255,59,48,.1);color:#ff3b30;animation:shake .4s;}
-.question-area{padding:16px 14px;flex-shrink:0;text-align:center;}
-.q-label{font-size:13px;color:#888;margin-bottom:6px;}
-.q-sentence{font-size:18px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:1px;}
-.word-pool{padding:10px 14px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;flex-shrink:0;}
-.word-chip{padding:10px 18px;border-radius:12px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.1);font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
+.top-bar{width:1194px;height:40px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.top-bar .title{font-size:14px;font-weight:600;}
+.top-bar .hint{font-size:12px;color:#4ECDC4;}
+.main{display:flex;flex:1;overflow:hidden;}
+.scene-visual{width:600px;height:100%;background:linear-gradient(180deg,#0a1628,#0a2a3a);position:relative;flex-shrink:0;overflow:hidden;}
+.river{position:absolute;bottom:0;width:100%;height:120px;background:linear-gradient(180deg,rgba(78,205,196,.12),rgba(78,205,196,.04));border-top:2px solid rgba(78,205,196,.15);}
+.river-wave{position:absolute;width:200%;height:100%;background:repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(78,205,196,.04) 80px,rgba(78,205,196,.04) 160px);animation:rf 6s linear infinite;}
+.bank-left{position:absolute;left:0;bottom:108px;width:80px;height:60px;background:linear-gradient(135deg,#2a5a2a,#1a3a1a);border-radius:0 24px 0 0;}
+.bank-right{position:absolute;right:0;bottom:108px;width:80px;height:60px;background:linear-gradient(135deg,#1a3a1a,#2a5a2a);border-radius:24px 0 0 0;}
+.character{position:absolute;left:24px;bottom:160px;font-size:44px;transition:left 1s ease-in-out;}
+.bridge-slots{position:absolute;bottom:115px;left:90px;right:90px;display:flex;gap:6px;justify-content:center;}
+.bridge-plank{width:64px;height:28px;border-radius:5px;border:2px dashed rgba(255,230,109,.3);background:rgba(255,230,109,.04);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#FFE66D;transition:all .3s;cursor:pointer;}
+.bridge-plank.filled{border-style:solid;border-color:#FFE66D;background:rgba(255,230,109,.12);}
+.bridge-plank.correct{border-color:#34c759;background:rgba(52,199,89,.12);color:#34c759;}
+.bridge-plank.wrong{border-color:#ff3b30;background:rgba(255,59,48,.08);color:#ff3b30;animation:shake .4s;}
+.right-panel{flex:1;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.06);padding:20px;align-items:center;justify-content:center;}
+.q-label{font-size:14px;color:#888;margin-bottom:8px;}
+.q-ghost{font-size:18px;color:rgba(255,255,255,.2);margin-bottom:20px;letter-spacing:1px;}
+.word-pool{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:24px;}
+.word-chip{padding:12px 22px;border-radius:14px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.1);font-size:17px;font-weight:600;cursor:pointer;transition:all .15s;user-select:none;}
 .word-chip:active{transform:scale(.93);}
-.word-chip.used{opacity:.2;pointer-events:none;transform:scale(.9);}
-.word-chip:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);}
-.result-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
-.result-msg{display:none;font-size:22px;font-weight:700;}
+.word-chip.used{opacity:.15;pointer-events:none;transform:scale(.9);}
+.result-msg{display:none;font-size:22px;font-weight:700;margin-bottom:4px;}
 .result-sub{display:none;font-size:13px;color:#888;}
-.action-row{display:flex;gap:10px;margin-top:8px;}
+.action-row{display:flex;gap:10px;margin-top:12px;}
 .action-row button{padding:10px 24px;border:none;border-radius:12px;font-size:14px;cursor:pointer;display:none;}
 .btn-retry{background:rgba(255,230,109,.12);color:#FFE66D;}
 .btn-next{background:linear-gradient(135deg,#4ECDC4,#44b3ab);color:#fff;}
-.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
-.scene-axis::-webkit-scrollbar{display:none;}
-.axis-track{display:flex;align-items:center;min-width:max-content;position:relative;padding:0 4px;}
-.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;}
-.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
-.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
-.axis-node .node-label{font-size:9px;color:#555;}
+.bottom-axis{display:flex;align-items:center;padding:6px 14px;border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
+.bottom-axis::-webkit-scrollbar{display:none;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 8px;cursor:pointer;flex-shrink:0;}
+.axis-node .node-dot{width:8px;height:8px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;}
+.axis-node .node-label{font-size:8px;color:#555;}
 .axis-node.active .node-label{color:#FFE66D;font-weight:600;}
-.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
-.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;flex-shrink:0;}
-@keyframes riverFlow{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.back-link{display:block;text-align:center;padding:5px 0;font-size:11px;color:#555;text-decoration:none;flex-shrink:0;}
+@keyframes rf{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
 </style>
 </head>
 <body>
 <div class="top-bar"><span class="title">🌉 搭桥连词成句</span><span class="hint">按顺序排列单词</span></div>
-<div class="scene-visual">
-  <div class="bank-left"></div>
-  <div class="bank-right"></div>
-  <div class="river"><div class="river-wave"></div></div>
-  <div class="character" id="character">🧒</div>
-  <div class="bridge-slots" id="bridgeSlots"></div>
-</div>
-<div class="question-area">
-  <p class="q-label">把单词排成正确的句子 👇</p>
-  <p class="q-sentence" id="ghostSentence">The cat sat on the mat.</p>
-</div>
-<div class="word-pool" id="wordPool"></div>
-<div class="result-area">
-  <div class="result-msg" id="resultMsg"></div>
-  <div class="result-sub" id="resultSub"></div>
-  <div class="action-row">
-    <button class="btn-retry" id="retryBtn" onclick="initGame()">🔄 重新排列</button>
-    <button class="btn-next" id="nextBtn">➡️ 下一题</button>
+<div class="main">
+  <div class="scene-visual">
+    <div class="bank-left"></div><div class="bank-right"></div>
+    <div class="river"><div class="river-wave"></div></div>
+    <div class="character" id="char">🧒</div>
+    <div class="bridge-slots" id="bs"></div>
+  </div>
+  <div class="right-panel">
+    <p class="q-label">把单词排成正确的句子 👇</p>
+    <p class="q-ghost">The cat sat on the mat.</p>
+    <div class="word-pool" id="wp"></div>
+    <div class="result-msg" id="rm"></div>
+    <div class="result-sub" id="rs"></div>
+    <div class="action-row"><button class="btn-retry" id="retryBtn" onclick="initG()">🔄 重新排列</button><button class="btn-next" id="nextBtn">➡️ 下一题</button></div>
   </div>
 </div>
-<div class="scene-axis">
-  <div class="axis-track"><div class="axis-line"></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
-    <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
-  </div>
+<div class="bottom-axis">
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+  <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
 </div>
 <a class="back-link" href="index.html">← 返回目录</a>
 <script>
-const answer=['The','cat','sat','on','the','mat.'];
-let placed=[];
-function initGame(){
-  placed=[];
-  document.getElementById('resultMsg').style.display='none';
-  document.getElementById('resultSub').style.display='none';
-  document.getElementById('retryBtn').style.display='none';
-  document.getElementById('nextBtn').style.display='none';
-  document.getElementById('character').style.left='20px';
-  const bs=document.getElementById('bridgeSlots');
-  bs.innerHTML='';
-  answer.forEach((_,i)=>{
-    const p=document.createElement('div');p.className='bridge-plank';p.dataset.idx=i;
-    p.onclick=()=>removePlank(i);bs.appendChild(p);
-  });
-  const wp=document.getElementById('wordPool');wp.innerHTML='';
-  const shuffled=[...answer].sort(()=>Math.random()-.5);
-  shuffled.forEach((w,i)=>{
-    const c=document.createElement('div');c.className='word-chip';c.textContent=w;c.dataset.word=w;c.dataset.idx=i;
-    c.onclick=()=>placeWord(c);wp.appendChild(c);
-  });
-}
-function placeWord(chip){
-  if(chip.classList.contains('used'))return;
-  const nextIdx=placed.length;
-  if(nextIdx>=answer.length)return;
-  chip.classList.add('used');
-  const plank=document.querySelectorAll('.bridge-plank')[nextIdx];
-  plank.textContent=chip.textContent;plank.classList.add('filled');
-  placed.push({word:chip.textContent,chip:chip});
-  const progress=(nextIdx+1)/answer.length;
-  document.getElementById('character').style.left=(20+progress*280)+'px';
-  if(placed.length===answer.length)checkAnswer();
-}
-function removePlank(idx){
-  if(idx>=placed.length)return;
-  const removed=placed.splice(idx);
-  removed.forEach(r=>r.chip.classList.remove('used'));
-  document.querySelectorAll('.bridge-plank').forEach((p,i)=>{
-    if(i>=idx){p.textContent='';p.classList.remove('filled','correct','wrong');}
-  });
-  placed.forEach((p,i)=>{const plank=document.querySelectorAll('.bridge-plank')[i];plank.textContent=p.word;plank.classList.add('filled');});
-  const progress=placed.length/answer.length;
-  document.getElementById('character').style.left=(20+progress*280)+'px';
-}
-function checkAnswer(){
-  const correct=placed.every((p,i)=>p.word===answer[i]);
-  document.querySelectorAll('.bridge-plank').forEach((p,i)=>p.classList.add(placed[i].word===answer[i]?'correct':'wrong'));
-  if(correct){
-    document.getElementById('resultMsg').textContent='🎉 Perfect! 句子正确!';
-    document.getElementById('resultMsg').style.color='#34c759';
-    document.getElementById('nextBtn').style.display='inline-block';
-    document.getElementById('character').style.left='350px';
-  } else {
-    document.getElementById('resultMsg').textContent='😅 顺序不太对~';
-    document.getElementById('resultMsg').style.color='#ff3b30';
-    document.getElementById('retryBtn').style.display='inline-block';
-  }
-  document.getElementById('resultMsg').style.display='block';
-  document.getElementById('resultSub').textContent='正确句子: '+answer.join(' ');
-  document.getElementById('resultSub').style.display='block';
-}
+const ans=['The','cat','sat','on','the','mat.'];let placed=[];
+function initG(){placed=[];document.getElementById('rm').style.display='none';document.getElementById('rs').style.display='none';document.getElementById('retryBtn').style.display='none';document.getElementById('nextBtn').style.display='none';document.getElementById('char').style.left='24px';const bs=document.getElementById('bs');bs.innerHTML='';ans.forEach((_,i)=>{const p=document.createElement('div');p.className='bridge-plank';p.dataset.idx=i;p.onclick=()=>remP(i);bs.appendChild(p);});const wp=document.getElementById('wp');wp.innerHTML='';[...ans].sort(()=>Math.random()-.5).forEach((w,i)=>{const c=document.createElement('div');c.className='word-chip';c.textContent=w;c.dataset.word=w;c.onclick=()=>placeW(c);wp.appendChild(c);});}
+function placeW(chip){if(chip.classList.contains('used'))return;const ni=placed.length;if(ni>=ans.length)return;chip.classList.add('used');const plank=document.querySelectorAll('.bridge-plank')[ni];plank.textContent=chip.textContent;plank.classList.add('filled');placed.push({word:chip.textContent,chip});document.getElementById('char').style.left=(24+((ni+1)/ans.length)*440)+'px';if(placed.length===ans.length)checkAns();}
+function remP(idx){if(idx>=placed.length)return;placed.splice(idx).forEach(r=>r.chip.classList.remove('used'));document.querySelectorAll('.bridge-plank').forEach((p,i)=>{if(i>=idx){p.textContent='';p.classList.remove('filled','correct','wrong');}});placed.forEach((p,i)=>{const pl=document.querySelectorAll('.bridge-plank')[i];pl.textContent=p.word;pl.classList.add('filled');});document.getElementById('char').style.left=(24+(placed.length/ans.length)*440)+'px';}
+function checkAns(){const ok=placed.every((p,i)=>p.word===ans[i]);document.querySelectorAll('.bridge-plank').forEach((p,i)=>p.classList.add(placed[i].word===ans[i]?'correct':'wrong'));if(ok){document.getElementById('rm').textContent='🎉 Perfect!';document.getElementById('rm').style.color='#34c759';document.getElementById('nextBtn').style.display='inline-block';document.getElementById('char').style.left='490px';}else{document.getElementById('rm').textContent='😅 顺序不太对~';document.getElementById('rm').style.color='#ff3b30';document.getElementById('retryBtn').style.display='inline-block';}document.getElementById('rm').style.display='block';document.getElementById('rs').textContent='正确: '+ans.join(' ');document.getElementById('rs').style.display='block';}
 function setScene(el){document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
-initGame();
+initG();
 </script>
 </body>
 </html>

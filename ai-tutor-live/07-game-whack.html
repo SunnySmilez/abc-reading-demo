@@ -2,141 +2,92 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=430, initial-scale=1.0">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
 <title>打地鼠选词 · RAZ伴读营</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
-.top-bar{width:430px;height:44px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
-.top-bar .title{font-size:13px;font-weight:600;}
-.score-bar{display:flex;align-items:center;gap:12px;font-size:13px;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
+.top-bar{width:1194px;height:40px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.top-bar .title{font-size:14px;font-weight:600;}
+.score-bar{display:flex;gap:16px;font-size:14px;}
 .score-bar .score{color:#FFE66D;font-weight:700;}
 .score-bar .timer{color:#FF6B6B;font-weight:700;}
-.prompt{text-align:center;padding:16px;flex-shrink:0;}
+.prompt{text-align:center;padding:10px;flex-shrink:0;}
 .prompt .label{font-size:13px;color:#888;}
-.prompt .target{font-size:28px;font-weight:800;color:#FFE66D;margin-top:6px;}
-.prompt .meaning{font-size:14px;color:#4ECDC4;margin-top:4px;}
-.game-field{flex:1;position:relative;padding:20px;}
-.hole{position:absolute;width:110px;height:130px;display:flex;flex-direction:column;align-items:center;}
-.hole-ground{width:110px;height:30px;background:radial-gradient(ellipse,#3a2a1a,#2a1a0a);border-radius:50%;position:absolute;bottom:0;}
-.mole{width:80px;height:80px;border-radius:50% 50% 10px 10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;position:absolute;bottom:20px;transition:all .3s;background:linear-gradient(180deg,#8B6914,#6B4914);border:3px solid #a08030;opacity:0;transform:translateY(40px);}
+.prompt .target{font-size:32px;font-weight:800;color:#FFE66D;margin-top:4px;}
+.prompt .meaning{font-size:15px;color:#4ECDC4;margin-top:2px;}
+.game-field{flex:1;position:relative;padding:10px 40px;}
+.hole{position:absolute;width:130px;height:140px;display:flex;flex-direction:column;align-items:center;}
+.hole-ground{width:130px;height:30px;background:radial-gradient(ellipse,#3a2a1a,#2a1a0a);border-radius:50%;position:absolute;bottom:0;}
+.mole{width:90px;height:90px;border-radius:50% 50% 10px 10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;cursor:pointer;position:absolute;bottom:22px;transition:all .3s;background:linear-gradient(180deg,#8B6914,#6B4914);border:3px solid #a08030;opacity:0;transform:translateY(40px);}
 .mole.show{opacity:1;transform:translateY(0);}
-.mole .face{position:absolute;top:-28px;font-size:24px;}
+.mole .face{position:absolute;top:-28px;font-size:26px;}
 .mole:active{transform:scale(.9);}
 .mole.hit-correct{background:#34c759 !important;border-color:#2aa048 !important;}
 .mole.hit-wrong{background:#ff3b30 !important;border-color:#cc2a24 !important;}
-.hole:nth-child(1){top:40px;left:30px;}
-.hole:nth-child(2){top:40px;left:160px;}
-.hole:nth-child(3){top:40px;right:30px;}
-.hole:nth-child(4){top:220px;left:70px;}
-.hole:nth-child(5){top:220px;right:70px;}
-.hole:nth-child(6){top:380px;left:30px;}
-.hole:nth-child(7){top:380px;left:160px;}
-.hole:nth-child(8){top:380px;right:30px;}
-.combo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:40px;font-weight:900;color:#FFE66D;text-shadow:0 0 20px rgba(255,230,109,.5);opacity:0;pointer-events:none;transition:all .3s;z-index:100;}
+.hole:nth-child(1){top:20px;left:60px;}
+.hole:nth-child(2){top:20px;left:260px;}
+.hole:nth-child(3){top:20px;left:460px;}
+.hole:nth-child(4){top:20px;left:660px;}
+.hole:nth-child(5){top:20px;left:860px;}
+.hole:nth-child(6){top:200px;left:160px;}
+.hole:nth-child(7){top:200px;left:360px;}
+.hole:nth-child(8){top:200px;left:560px;}
+.hole:nth-child(9){top:200px;left:760px;}
+.hole:nth-child(10){top:380px;left:60px;}
+.hole:nth-child(11){top:380px;left:360px;}
+.hole:nth-child(12){top:380px;left:660px;}
+.combo{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:44px;font-weight:900;color:#FFE66D;text-shadow:0 0 20px rgba(255,230,109,.5);opacity:0;pointer-events:none;z-index:100;transition:all .3s;}
 .combo.show{opacity:1;transform:translate(-50%,-60%);}
-.game-over{display:none;position:fixed;inset:0;background:rgba(10,10,26,.9);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+.game-over{display:none;position:fixed;inset:0;background:rgba(10,10,26,.9);z-index:200;flex-direction:column;align-items:center;justify-content:center;}
 .game-over.show{display:flex;}
-.game-over .final-score{font-size:60px;font-weight:900;background:linear-gradient(135deg,#FFE66D,#FF6B6B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.game-over .final-label{font-size:16px;color:#888;margin-top:4px;}
-.game-over .replay-btn{margin-top:20px;padding:12px 36px;border:none;border-radius:14px;background:linear-gradient(135deg,#FF6B6B,#ff8e8e);color:#fff;font-size:16px;font-weight:600;cursor:pointer;}
-.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
-.scene-axis::-webkit-scrollbar{display:none;}
-.axis-track{display:flex;align-items:center;min-width:max-content;position:relative;padding:0 4px;}
-.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;}
-.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
-.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
-.axis-node .node-label{font-size:9px;color:#555;}
+.game-over .final-score{font-size:64px;font-weight:900;background:linear-gradient(135deg,#FFE66D,#FF6B6B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.game-over .final-label{font-size:18px;color:#888;margin-top:4px;}
+.game-over .replay-btn{margin-top:20px;padding:14px 40px;border:none;border-radius:14px;background:linear-gradient(135deg,#FF6B6B,#ff8e8e);color:#fff;font-size:16px;font-weight:600;cursor:pointer;}
+.bottom-axis{display:flex;align-items:center;padding:6px 14px;border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
+.bottom-axis::-webkit-scrollbar{display:none;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 8px;cursor:pointer;flex-shrink:0;}
+.axis-node .node-dot{width:8px;height:8px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;}
+.axis-node .node-label{font-size:8px;color:#555;}
 .axis-node.active .node-label{color:#FFE66D;font-weight:600;}
-.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
-.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;flex-shrink:0;}
+.back-link{display:block;text-align:center;padding:5px 0;font-size:11px;color:#555;text-decoration:none;flex-shrink:0;}
 </style>
 </head>
 <body>
-<div class="top-bar"><span class="title">🐹 打地鼠选词</span><div class="score-bar"><span class="score" id="scoreDisplay">⭐ 0</span><span class="timer" id="timerDisplay">⏱ 30s</span></div></div>
-<div class="prompt"><span class="label">找到这个单词！</span><div class="target" id="targetWord">cat</div><div class="meaning" id="targetMeaning">🐱 猫</div></div>
-<div class="game-field" id="field">
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">dog</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">cat</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">mat</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">sat</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">the</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">hat</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">cat</span></div></div>
-  <div class="hole"><div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="word-text">bat</span></div></div>
-</div>
+<div class="top-bar"><span class="title">🐹 打地鼠选词</span><div class="score-bar"><span class="score" id="sD">⭐ 0</span><span class="timer" id="tD">⏱ 30s</span></div></div>
+<div class="prompt"><span class="label">找到这个单词！</span><div class="target" id="tw">cat</div><div class="meaning" id="tm">🐱 猫</div></div>
+<div class="game-field" id="field"></div>
 <div class="combo" id="combo"></div>
-<div class="game-over" id="gameOver"><div class="final-score" id="finalScore">0</div><div class="final-label">最终得分 🏆</div><button class="replay-btn" onclick="startGame()">🔄 再玩一次</button></div>
-<div class="scene-axis">
-  <div class="axis-track"><div class="axis-line"></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
-    <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
-  </div>
+<div class="game-over" id="go"><div class="final-score" id="fs">0</div><div class="final-label">最终得分 🏆</div><button class="replay-btn" onclick="startGame()">🔄 再玩一次</button></div>
+<div class="bottom-axis">
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+  <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
 </div>
 <a class="back-link" href="index.html">← 返回目录</a>
 <script>
-const allWords=['cat','dog','mat','sat','the','hat','bat','on','big','red'];
-const targets=[{word:'cat',meaning:'🐱 猫'},{word:'sat',meaning:'🪑 坐'},{word:'mat',meaning:'🟫 垫子'}];
-let score=0,timeLeft=30,gameTimer,spawnTimer,currentTarget=0,comboCount=0;
+const aw=['cat','dog','mat','sat','the','hat','bat','on','big','red'];
+const tgs=[{w:'cat',m:'🐱 猫'},{w:'sat',m:'🪑 坐'},{w:'mat',m:'🟫 垫子'}];
+let score=0,tl=30,gt,st,ct=0,cc=0;
+// build 12 holes
+const field=document.getElementById('field');
+for(let i=0;i<12;i++){const h=document.createElement('div');h.className='hole';h.innerHTML='<div class="hole-ground"></div><div class="mole" onclick="hitMole(this)"><span class="face">🐹</span><span class="wt">word</span></div>';field.appendChild(h);}
 const moles=document.querySelectorAll('.mole');
-function startGame(){
-  score=0;timeLeft=30;currentTarget=0;comboCount=0;
-  document.getElementById('gameOver').classList.remove('show');
-  document.getElementById('scoreDisplay').textContent='⭐ 0';
-  document.getElementById('timerDisplay').textContent='⏱ 30s';
-  setTarget();
-  moles.forEach(m=>{m.classList.remove('show','hit-correct','hit-wrong');});
-  gameTimer=setInterval(()=>{
-    timeLeft--;document.getElementById('timerDisplay').textContent='⏱ '+timeLeft+'s';
-    if(timeLeft<=0){clearInterval(gameTimer);clearInterval(spawnTimer);endGame();}
-  },1000);
-  spawnTimer=setInterval(spawnMoles,1200);
-  spawnMoles();
-}
-function setTarget(){
-  const t=targets[currentTarget%targets.length];
-  document.getElementById('targetWord').textContent=t.word;
-  document.getElementById('targetMeaning').textContent=t.meaning;
-}
-function spawnMoles(){
-  moles.forEach(m=>{m.classList.remove('show','hit-correct','hit-wrong');
-    const w=allWords[Math.floor(Math.random()*allWords.length)];
-    m.querySelector('.word-text').textContent=w;
-  });
-  const show=new Set();
-  while(show.size<3)show.add(Math.floor(Math.random()*moles.length));
-  const hasTarget=Math.random()>.3;
-  if(hasTarget){const arr=[...show];const pick=arr[Math.floor(Math.random()*arr.length)];moles[pick].querySelector('.word-text').textContent=targets[currentTarget%targets.length].word;}
-  show.forEach(i=>moles[i].classList.add('show'));
-  setTimeout(()=>moles.forEach(m=>m.classList.remove('show')),1800);
-}
-function hitMole(el){
-  if(!el.classList.contains('show'))return;
-  const w=el.querySelector('.word-text').textContent;
-  const target=targets[currentTarget%targets.length].word;
-  if(w===target){
-    el.classList.add('hit-correct');comboCount++;
-    const pts=10*(comboCount>=3?2:1);score+=pts;
-    document.getElementById('scoreDisplay').textContent='⭐ '+score;
-    if(comboCount>=3)showCombo('x'+comboCount+' 🔥');
-    setTimeout(()=>{currentTarget++;setTarget();},400);
-  } else {
-    el.classList.add('hit-wrong');comboCount=0;score=Math.max(0,score-5);
-    document.getElementById('scoreDisplay').textContent='⭐ '+score;
-  }
-  setTimeout(()=>el.classList.remove('show'),300);
-}
-function showCombo(txt){const c=document.getElementById('combo');c.textContent=txt;c.classList.add('show');setTimeout(()=>c.classList.remove('show'),800);}
-function endGame(){document.getElementById('finalScore').textContent=score;document.getElementById('gameOver').classList.add('show');}
+function startGame(){score=0;tl=30;ct=0;cc=0;document.getElementById('go').classList.remove('show');document.getElementById('sD').textContent='⭐ 0';document.getElementById('tD').textContent='⏱ 30s';setTgt();moles.forEach(m=>m.classList.remove('show','hit-correct','hit-wrong'));gt=setInterval(()=>{tl--;document.getElementById('tD').textContent='⏱ '+tl+'s';if(tl<=0){clearInterval(gt);clearInterval(st);endGame();}},1000);st=setInterval(spawnMoles,1100);spawnMoles();}
+function setTgt(){const t=tgs[ct%tgs.length];document.getElementById('tw').textContent=t.w;document.getElementById('tm').textContent=t.m;}
+function spawnMoles(){moles.forEach(m=>{m.classList.remove('show','hit-correct','hit-wrong');m.querySelector('.wt').textContent=aw[Math.floor(Math.random()*aw.length)];});const s=new Set();while(s.size<4)s.add(Math.floor(Math.random()*moles.length));if(Math.random()>.25){const a=[...s];moles[a[Math.floor(Math.random()*a.length)]].querySelector('.wt').textContent=tgs[ct%tgs.length].w;}s.forEach(i=>moles[i].classList.add('show'));setTimeout(()=>moles.forEach(m=>m.classList.remove('show')),1700);}
+function hitMole(el){if(!el.classList.contains('show'))return;const w=el.querySelector('.wt').textContent;if(w===tgs[ct%tgs.length].w){el.classList.add('hit-correct');cc++;const p=10*(cc>=3?2:1);score+=p;document.getElementById('sD').textContent='⭐ '+score;if(cc>=3)showCombo('x'+cc+' 🔥');setTimeout(()=>{ct++;setTgt();},400);}else{el.classList.add('hit-wrong');cc=0;score=Math.max(0,score-5);document.getElementById('sD').textContent='⭐ '+score;}setTimeout(()=>el.classList.remove('show'),300);}
+function showCombo(t){const c=document.getElementById('combo');c.textContent=t;c.classList.add('show');setTimeout(()=>c.classList.remove('show'),800);}
+function endGame(){document.getElementById('fs').textContent=score;document.getElementById('go').classList.add('show');}
 function setScene(el){document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
 startGame();
 </script>

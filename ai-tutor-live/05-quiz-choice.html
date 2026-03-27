@@ -2,121 +2,92 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=430, initial-scale=1.0">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
 <title>选择题 · RAZ伴读营</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
-.top-bar{width:430px;height:44px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
-.top-bar .title{font-size:13px;font-weight:600;}
-.timer-badge{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#FF6B6B;}
-.timer-badge .ring{width:28px;height:28px;border-radius:50%;border:3px solid #333;position:relative;display:flex;align-items:center;justify-content:center;}
-.timer-badge .ring svg{position:absolute;width:28px;height:28px;transform:rotate(-90deg);}
-.timer-badge .ring svg circle{fill:none;stroke:#FF6B6B;stroke-width:3;stroke-dasharray:78.5;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear;}
-.timer-badge .ring .num{font-size:10px;z-index:1;}
-.question-area{flex:1;padding:20px 14px;display:flex;flex-direction:column;}
-.q-header{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
-.q-num{background:rgba(255,107,107,.15);color:#FF6B6B;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;}
-.q-type{font-size:11px;color:#888;}
-.q-text{font-size:20px;font-weight:600;line-height:1.5;margin-bottom:20px;}
-.q-img{width:100%;height:120px;background:linear-gradient(135deg,#2d1b4e,#1a2a4e);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:50px;margin-bottom:16px;}
-.options{display:flex;flex-direction:column;gap:10px;flex:1;}
-.opt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.opt:active{transform:scale(.98);}
-.opt .letter{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;transition:all .2s;}
-.opt .text{font-size:15px;flex:1;}
-.opt .vote-bar{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.03);width:0;transition:width .6s ease-out;}
-.opt.selected{border-color:rgba(255,230,109,.4);background:rgba(255,230,109,.08);}
-.opt.selected .letter{background:#FFE66D;color:#0a0a1a;}
-.opt.correct{border-color:rgba(52,199,89,.4);background:rgba(52,199,89,.08);}
-.opt.correct .letter{background:#34c759;color:#fff;}
-.opt.wrong{border-color:rgba(255,59,48,.4);background:rgba(255,59,48,.08);}
-.opt.wrong .letter{background:#ff3b30;color:#fff;}
-.opt .vote-pct{position:absolute;right:14px;font-size:12px;color:#888;opacity:0;transition:opacity .3s;}
-.opt.revealed .vote-pct{opacity:1;}
-.opt.revealed .vote-bar{display:block;}
-.result-banner{display:none;text-align:center;padding:16px;margin-top:10px;}
-.result-banner.correct-banner{color:#34c759;}
-.result-banner.wrong-banner{color:#ff3b30;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
+.top-bar{width:1194px;height:40px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.top-bar .title{font-size:14px;font-weight:600;}
+.timer-area{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#FF6B6B;}
+.timer-ring{width:30px;height:30px;border-radius:50%;border:3px solid #333;display:flex;align-items:center;justify-content:center;position:relative;}
+.timer-ring svg{position:absolute;width:30px;height:30px;transform:rotate(-90deg);}
+.timer-ring svg circle{fill:none;stroke:#FF6B6B;stroke-width:3;stroke-dasharray:84.8;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear;}
+.timer-ring .num{font-size:11px;z-index:1;}
+.main{display:flex;flex:1;overflow:hidden;}
+.left-question{width:560px;display:flex;flex-direction:column;padding:24px 28px;flex-shrink:0;}
+.q-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.q-num{background:rgba(255,107,107,.12);color:#FF6B6B;font-size:13px;font-weight:700;padding:4px 12px;border-radius:8px;}
+.q-type{font-size:12px;color:#888;}
+.q-img{width:100%;height:180px;background:linear-gradient(135deg,#2d1b4e,#1a2a4e);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:64px;margin-bottom:16px;}
+.q-text{font-size:22px;font-weight:600;line-height:1.5;}
+.result-banner{display:none;text-align:center;padding:16px;margin-top:auto;}
 .result-banner .icon{font-size:40px;}
-.result-banner .msg{font-size:16px;font-weight:600;margin-top:4px;}
-.result-banner .explain{font-size:12px;color:#888;margin-top:6px;}
-.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
-.scene-axis::-webkit-scrollbar{display:none;}
-.axis-track{display:flex;align-items:center;min-width:max-content;position:relative;padding:0 4px;}
-.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;}
-.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
-.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
-.axis-node .node-label{font-size:9px;color:#555;}
+.result-banner .msg{font-size:18px;font-weight:600;margin-top:4px;}
+.result-banner .explain{font-size:12px;color:#888;margin-top:4px;}
+.right-options{flex:1;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.06);padding:20px 24px;gap:12px;}
+.opt{display:flex;align-items:center;gap:14px;padding:16px 18px;background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);border-radius:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.opt:active{transform:scale(.98);}
+.opt .letter{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;transition:all .2s;}
+.opt .text{font-size:16px;flex:1;}
+.opt .vote-bar{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.03);width:0;transition:width .6s ease-out;}
+.opt .vote-pct{position:absolute;right:16px;font-size:12px;color:#888;opacity:0;transition:opacity .3s;}
+.opt.selected{border-color:rgba(255,230,109,.4);background:rgba(255,230,109,.06);}
+.opt.selected .letter{background:#FFE66D;color:#0a0a1a;}
+.opt.correct{border-color:rgba(52,199,89,.4);background:rgba(52,199,89,.06);}
+.opt.correct .letter{background:#34c759;color:#fff;}
+.opt.wrong{border-color:rgba(255,59,48,.4);background:rgba(255,59,48,.06);}
+.opt.wrong .letter{background:#ff3b30;color:#fff;}
+.opt.revealed .vote-pct{opacity:1;}
+.bottom-axis{display:flex;align-items:center;padding:6px 14px;border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
+.bottom-axis::-webkit-scrollbar{display:none;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 8px;cursor:pointer;flex-shrink:0;}
+.axis-node .node-dot{width:8px;height:8px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;}
+.axis-node .node-label{font-size:8px;color:#555;}
 .axis-node.active .node-label{color:#FFE66D;font-weight:600;}
-.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
-.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;flex-shrink:0;}
+.back-link{display:block;text-align:center;padding:5px 0;font-size:11px;color:#555;text-decoration:none;flex-shrink:0;}
 .celebrate{position:fixed;pointer-events:none;z-index:999;font-size:24px;animation:confUp 1.2s ease-out forwards;}
 @keyframes confUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-150px) scale(.4);}}
 </style>
 </head>
 <body>
-<div class="top-bar">
-  <span class="title">✅ 选择题</span>
-  <div class="timer-badge">
-    <div class="ring"><svg><circle cx="14" cy="14" r="12.5" id="timerCircle"/></svg><span class="num" id="timerNum">15</span></div>
+<div class="top-bar"><span class="title">✅ 选择题</span><div class="timer-area"><div class="timer-ring"><svg><circle cx="15" cy="15" r="13.5" id="tc"/></svg><span class="num" id="tn">15</span></div></div></div>
+<div class="main">
+  <div class="left-question">
+    <div class="q-header"><span class="q-num">Q1</span><span class="q-type">单选 · 阅读理解</span></div>
+    <div class="q-img">🐱🪑</div>
+    <p class="q-text">Where did the cat sit?</p>
+    <div class="result-banner" id="correctB" style="color:#34c759"><div class="icon">🎉</div><div class="msg">Correct! 太棒了!</div><div class="explain">The cat sat on the mat. mat = 垫子</div></div>
+    <div class="result-banner" id="wrongB" style="color:#ff3b30"><div class="icon">😅</div><div class="msg">再想想~</div><div class="explain">正确答案是 B · The cat sat on the mat.</div></div>
   </div>
-</div>
-<div class="question-area">
-  <div class="q-header"><span class="q-num">Q1</span><span class="q-type">单选 · 阅读理解</span></div>
-  <div class="q-img">🐱🪑</div>
-  <p class="q-text">Where did the cat sit?</p>
-  <div class="options" id="opts">
+  <div class="right-options" id="opts">
     <div class="opt" onclick="pick(this,0)" data-vote="12"><span class="letter">A</span><span class="text">On the bed 🛏️</span><div class="vote-bar"></div><span class="vote-pct">12%</span></div>
     <div class="opt" onclick="pick(this,1)" data-vote="78"><span class="letter">B</span><span class="text">On the mat 🟫</span><div class="vote-bar"></div><span class="vote-pct">78%</span></div>
     <div class="opt" onclick="pick(this,2)" data-vote="6"><span class="letter">C</span><span class="text">On the chair 🪑</span><div class="vote-bar"></div><span class="vote-pct">6%</span></div>
     <div class="opt" onclick="pick(this,3)" data-vote="4"><span class="letter">D</span><span class="text">On the floor 🟤</span><div class="vote-bar"></div><span class="vote-pct">4%</span></div>
   </div>
-  <div class="result-banner correct-banner" id="correctBanner"><div class="icon">🎉</div><div class="msg">Correct! 太棒了!</div><div class="explain">The cat sat on the mat. mat = 垫子</div></div>
-  <div class="result-banner wrong-banner" id="wrongBanner"><div class="icon">😅</div><div class="msg">再想想~</div><div class="explain">正确答案是 B · The cat sat on the mat.</div></div>
 </div>
-<div class="scene-axis">
-  <div class="axis-track">
-    <div class="axis-line"></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
-    <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
-  </div>
+<div class="bottom-axis">
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+  <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+  <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
 </div>
 <a class="back-link" href="index.html">← 返回目录</a>
 <script>
-let answered=false,countdown=15,timerInterval;
-const correctIdx=1;
-timerInterval=setInterval(()=>{
-  countdown--;document.getElementById('timerNum').textContent=countdown;
-  document.getElementById('timerCircle').style.strokeDashoffset=(78.5*(15-countdown)/15);
-  if(countdown<=5)document.getElementById('timerNum').style.color='#FF6B6B';
-  if(countdown<=0){clearInterval(timerInterval);if(!answered)autoReveal();}
-},1000);
-function pick(el,idx){
-  if(answered)return;answered=true;clearInterval(timerInterval);
-  el.classList.add('selected');
-  setTimeout(()=>{
-    document.querySelectorAll('.opt').forEach((o,i)=>{
-      o.classList.add('revealed');
-      o.querySelector('.vote-bar').style.width=o.dataset.vote+'%';
-      if(i===correctIdx)o.classList.add('correct');
-      else if(i===idx&&idx!==correctIdx)o.classList.add('wrong');
-    });
-    if(idx===correctIdx){document.getElementById('correctBanner').style.display='block';celebrate();}
-    else document.getElementById('wrongBanner').style.display='block';
-  },400);
-}
-function autoReveal(){answered=true;document.querySelectorAll('.opt').forEach((o,i)=>{o.classList.add('revealed');o.querySelector('.vote-bar').style.width=o.dataset.vote+'%';if(i===correctIdx)o.classList.add('correct');});document.getElementById('wrongBanner').style.display='block';}
-function celebrate(){const e=['🎉','⭐','✨','🌟','💫'];for(let i=0;i<10;i++){setTimeout(()=>{const c=document.createElement('div');c.className='celebrate';c.textContent=e[i%5];c.style.left=(50+Math.random()*330)+'px';c.style.top=(300+Math.random()*100)+'px';document.body.appendChild(c);setTimeout(()=>c.remove(),1300);},i*100);}}
+let answered=false,cd=15,ci=1,ti;
+ti=setInterval(()=>{cd--;document.getElementById('tn').textContent=cd;document.getElementById('tc').style.strokeDashoffset=(84.8*(15-cd)/15);if(cd<=5)document.getElementById('tn').style.color='#FF6B6B';if(cd<=0){clearInterval(ti);if(!answered)autoR();}},1000);
+function pick(el,idx){if(answered)return;answered=true;clearInterval(ti);el.classList.add('selected');setTimeout(()=>{document.querySelectorAll('.opt').forEach((o,i)=>{o.classList.add('revealed');o.querySelector('.vote-bar').style.width=o.dataset.vote+'%';if(i===ci)o.classList.add('correct');else if(i===idx&&idx!==ci)o.classList.add('wrong');});if(idx===ci){document.getElementById('correctB').style.display='block';celeb();}else document.getElementById('wrongB').style.display='block';},400);}
+function autoR(){answered=true;document.querySelectorAll('.opt').forEach((o,i)=>{o.classList.add('revealed');o.querySelector('.vote-bar').style.width=o.dataset.vote+'%';if(i===ci)o.classList.add('correct');});document.getElementById('wrongB').style.display='block';}
+function celeb(){const e=['🎉','⭐','✨','🌟','💫'];for(let i=0;i<10;i++){setTimeout(()=>{const c=document.createElement('div');c.className='celebrate';c.textContent=e[i%5];c.style.left=(300+Math.random()*600)+'px';c.style.top=(200+Math.random()*200)+'px';document.body.appendChild(c);setTimeout(()=>c.remove(),1300);},i*100);}}
 function setScene(el){document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
 </script>
 </body>

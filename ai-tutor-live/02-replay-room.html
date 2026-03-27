@@ -2,118 +2,116 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=430, initial-scale=1.0">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
 <title>回放模式 · RAZ伴读营</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
-.top-bar{position:fixed;top:0;width:430px;height:44px;background:rgba(10,10,26,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100;border-bottom:1px solid rgba(255,255,255,.06);left:50%;transform:translateX(-50%);}
-.top-bar .title{font-size:13px;font-weight:600;}
-.top-bar .badge{font-size:11px;color:#4ECDC4;background:rgba(78,205,196,.12);padding:3px 10px;border-radius:10px;}
-.top-bar .exit-btn{font-size:12px;color:#888;background:rgba(255,255,255,.08);border:none;border-radius:12px;padding:4px 12px;cursor:pointer;}
-.video-area{margin-top:44px;width:430px;height:380px;background:linear-gradient(135deg,#1a1a3e,#2d1b4e);position:relative;display:flex;align-items:center;justify-content:center;}
-.video-area .play-icon{font-size:60px;opacity:.6;cursor:pointer;transition:all .2s;}
-.video-area .play-icon:hover{opacity:1;transform:scale(1.1);}
-.video-area .teacher-label{position:absolute;top:12px;left:12px;font-size:12px;background:rgba(0,0,0,.5);padding:3px 10px;border-radius:8px;}
-.video-area .replay-tag{position:absolute;top:12px;right:12px;font-size:10px;background:rgba(78,205,196,.2);color:#4ECDC4;padding:2px 8px;border-radius:6px;}
-.progress-bar{width:430px;padding:8px 14px;background:rgba(10,10,26,.95);}
-.progress-track{width:100%;height:4px;background:#222;border-radius:2px;position:relative;cursor:pointer;}
-.progress-fill{width:35%;height:100%;background:linear-gradient(90deg,#FF6B6B,#FFE66D);border-radius:2px;transition:width .3s;}
-.progress-thumb{position:absolute;top:-5px;left:35%;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 0 6px rgba(255,107,107,.4);transform:translateX(-50%);cursor:grab;}
-.progress-info{display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:#666;}
-.controls{width:430px;padding:8px 14px;display:flex;align-items:center;justify-content:center;gap:16px;}
-.ctrl-btn{background:rgba(255,255,255,.08);border:none;border-radius:10px;padding:8px 16px;font-size:13px;color:#fff;cursor:pointer;transition:all .15s;}
-.ctrl-btn:active{transform:scale(.95);}
-.ctrl-btn.active{background:rgba(255,230,109,.15);color:#FFE66D;}
-.speed-btns{display:flex;gap:6px;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
+.top-bar{width:1194px;height:40px;background:rgba(10,10,26,.92);display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.top-bar .title{font-size:14px;font-weight:600;}
+.top-bar .badge{font-size:12px;color:#4ECDC4;background:rgba(78,205,196,.1);padding:3px 10px;border-radius:10px;}
+.top-bar .exit-btn{font-size:12px;color:#888;background:rgba(255,255,255,.08);border:none;border-radius:12px;padding:4px 14px;cursor:pointer;}
+.main{display:flex;flex:1;overflow:hidden;}
+.video-panel{flex:1;background:linear-gradient(135deg,#1a1a3e,#2d1b4e);position:relative;display:flex;align-items:center;justify-content:center;}
+.video-panel .play-icon{font-size:60px;opacity:.5;cursor:pointer;transition:all .2s;}
+.video-panel .play-icon:hover{opacity:1;transform:scale(1.1);}
+.video-panel .teacher-label{position:absolute;top:12px;left:12px;font-size:13px;background:rgba(0,0,0,.5);padding:3px 10px;border-radius:8px;}
+.video-panel .replay-tag{position:absolute;top:12px;right:12px;font-size:11px;background:rgba(78,205,196,.2);color:#4ECDC4;padding:2px 8px;border-radius:6px;}
+.side-panel{width:400px;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;}
+.controls{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.speed-btns{display:flex;gap:4px;}
 .speed-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:5px 12px;font-size:12px;color:#888;cursor:pointer;}
 .speed-btn.active{background:rgba(78,205,196,.15);color:#4ECDC4;border-color:rgba(78,205,196,.3);}
-.quiz-section{width:430px;padding:14px;flex:1;}
-.quiz-card{background:rgba(255,255,255,.05);border-radius:14px;padding:16px;margin-bottom:10px;}
-.quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.quiz-title{font-size:14px;font-weight:600;}
+.ctrl-btn{background:rgba(255,255,255,.08);border:none;border-radius:8px;padding:6px 14px;font-size:12px;color:#fff;cursor:pointer;}
+.ctrl-btn.active{background:rgba(255,230,109,.12);color:#FFE66D;}
+.quiz-section{flex:1;overflow-y:auto;padding:12px;}
+.quiz-card{background:rgba(255,255,255,.04);border-radius:12px;padding:14px;margin-bottom:10px;}
+.quiz-header{display:flex;justify-content:space-between;margin-bottom:8px;}
+.quiz-title{font-size:13px;font-weight:600;}
 .quiz-time{font-size:11px;color:#888;}
-.quiz-q{font-size:14px;margin-bottom:12px;line-height:1.5;}
-.quiz-opt{padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;margin-bottom:6px;font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;}
+.quiz-q{font-size:14px;margin-bottom:10px;line-height:1.5;}
+.quiz-opt{padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;margin-bottom:5px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;}
 .quiz-opt:hover{background:rgba(255,255,255,.08);}
-.quiz-opt.correct{background:rgba(52,199,89,.12);border-color:rgba(52,199,89,.3);color:#34c759;}
-.quiz-opt.wrong{background:rgba(255,59,48,.1);border-color:rgba(255,59,48,.3);color:#ff3b30;}
-.quiz-opt .check{width:18px;height:18px;border-radius:50%;border:2px solid #444;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;}
+.quiz-opt .check{width:16px;height:16px;border-radius:50%;border:2px solid #444;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+.quiz-opt.correct{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.3);color:#34c759;}
 .quiz-opt.correct .check{border-color:#34c759;background:#34c759;color:#fff;}
+.quiz-opt.wrong{background:rgba(255,59,48,.08);border-color:rgba(255,59,48,.3);color:#ff3b30;}
 .quiz-opt.wrong .check{border-color:#ff3b30;background:#ff3b30;color:#fff;}
-.history-badge{font-size:11px;color:#888;background:rgba(255,255,255,.06);border-radius:8px;padding:4px 10px;margin-top:8px;display:inline-block;}
-.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.scene-axis::-webkit-scrollbar{display:none;}
-.axis-track{display:flex;align-items:center;min-width:max-content;position:relative;padding:0 4px;}
-.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;}
-.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
-.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
-.axis-node .node-label{font-size:9px;color:#555;transition:all .2s;}
+.history-badge{font-size:10px;color:#888;background:rgba(255,255,255,.05);border-radius:6px;padding:3px 8px;margin-top:6px;display:inline-block;}
+.progress-bar{padding:8px 14px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.progress-track{width:100%;height:4px;background:#222;border-radius:2px;position:relative;cursor:pointer;}
+.progress-fill{width:35%;height:100%;background:linear-gradient(90deg,#FF6B6B,#FFE66D);border-radius:2px;transition:width .3s;}
+.progress-thumb{position:absolute;top:-5px;left:35%;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 0 6px rgba(255,107,107,.3);transform:translateX(-50%);}
+.progress-info{display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:#666;}
+.bottom-axis{display:flex;align-items:center;padding:6px 14px;border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;gap:0;}
+.bottom-axis::-webkit-scrollbar{display:none;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:2px;padding:3px 8px;cursor:pointer;flex-shrink:0;}
+.axis-node .node-dot{width:8px;height:8px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 6px rgba(255,230,109,.4);}
+.axis-node .node-label{font-size:8px;color:#555;}
 .axis-node.active .node-label{color:#FFE66D;font-weight:600;}
-.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
-.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;}
+.back-link{display:block;text-align:center;padding:5px 0;font-size:11px;color:#555;text-decoration:none;flex-shrink:0;}
 </style>
 </head>
 <body>
-<div class="top-bar">
-  <span class="title">Level A · The Cat</span>
-  <span class="badge">📼 回放</span>
-  <button class="exit-btn">退出</button>
-</div>
-<div class="video-area">
-  <span class="teacher-label">Miss Chen</span>
-  <span class="replay-tag">回放</span>
-  <span class="play-icon" id="playIcon" onclick="togglePlay()">▶️</span>
-</div>
-<div class="progress-bar">
-  <div class="progress-track" onclick="seekTo(event)">
-    <div class="progress-fill" id="pFill"></div>
-    <div class="progress-thumb" id="pThumb"></div>
+<div class="top-bar"><span class="title">Level A · The Cat</span><span class="badge">📼 回放</span><button class="exit-btn">退出</button></div>
+<div class="main">
+  <div class="video-panel">
+    <span class="teacher-label">Miss Chen</span><span class="replay-tag">回放</span>
+    <span class="play-icon" id="playIcon" onclick="togglePlay()">▶️</span>
   </div>
-  <div class="progress-info"><span>08:24</span><span>24:00</span></div>
-</div>
-<div class="controls">
-  <div class="speed-btns">
-    <button class="speed-btn active" onclick="setSpeed(this)">1x</button>
-    <button class="speed-btn" onclick="setSpeed(this)">1.5x</button>
-    <button class="speed-btn" onclick="setSpeed(this)">2x</button>
-  </div>
-  <button class="ctrl-btn" id="quizMode" onclick="toggleQuiz()">🎯 自测模式</button>
-</div>
-<div class="quiz-section">
-  <div class="quiz-card">
-    <div class="quiz-header"><span class="quiz-title">📝 阅读理解 #1</span><span class="quiz-time">⏱ 08:24</span></div>
-    <p class="quiz-q">Where did the cat sit?</p>
-    <div class="quiz-opt" onclick="selectOpt(this,false)"><span class="check"></span>On the bed</div>
-    <div class="quiz-opt" onclick="selectOpt(this,true)"><span class="check"></span>On the mat</div>
-    <div class="quiz-opt" onclick="selectOpt(this,false)"><span class="check"></span>On the chair</div>
-    <span class="history-badge">📊 上次答题: 正确 ✅ (3/18 直播)</span>
-  </div>
-</div>
-<div class="scene-axis">
-  <div class="axis-track">
-    <div class="axis-line"></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
-    <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
-    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
+  <div class="side-panel">
+    <div class="controls">
+      <div class="speed-btns">
+        <button class="speed-btn active" onclick="setSpeed(this)">1x</button>
+        <button class="speed-btn" onclick="setSpeed(this)">1.5x</button>
+        <button class="speed-btn" onclick="setSpeed(this)">2x</button>
+      </div>
+      <button class="ctrl-btn" id="quizMode" onclick="this.classList.toggle('active')">🎯 自测模式</button>
+    </div>
+    <div class="quiz-section">
+      <div class="quiz-card">
+        <div class="quiz-header"><span class="quiz-title">📝 阅读理解 #1</span><span class="quiz-time">⏱ 08:24</span></div>
+        <p class="quiz-q">Where did the cat sit?</p>
+        <div class="quiz-opt" onclick="selOpt(this,false)"><span class="check"></span>On the bed</div>
+        <div class="quiz-opt" onclick="selOpt(this,true)"><span class="check"></span>On the mat</div>
+        <div class="quiz-opt" onclick="selOpt(this,false)"><span class="check"></span>On the chair</div>
+        <span class="history-badge">📊 上次: 正确 ✅ (3/18直播)</span>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-header"><span class="quiz-title">📝 词汇 #2</span><span class="quiz-time">⏱ 14:30</span></div>
+        <p class="quiz-q">What does "sat" mean?</p>
+        <div class="quiz-opt" onclick="selOpt(this,false)"><span class="check"></span>跑</div>
+        <div class="quiz-opt" onclick="selOpt(this,true)"><span class="check"></span>坐</div>
+        <div class="quiz-opt" onclick="selOpt(this,false)"><span class="check"></span>站</div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-track" onclick="seekTo(event)"><div class="progress-fill" id="pFill"></div><div class="progress-thumb" id="pThumb"></div></div>
+      <div class="progress-info"><span>08:24</span><span>24:00</span></div>
+    </div>
+    <div class="bottom-axis">
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+      <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+      <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
+    </div>
   </div>
 </div>
 <a class="back-link" href="index.html">← 返回目录</a>
 <script>
 let playing=false;
-function togglePlay(){const i=document.getElementById('playIcon');playing=!playing;i.textContent=playing?'⏸️':'▶️';}
+function togglePlay(){playing=!playing;document.getElementById('playIcon').textContent=playing?'⏸️':'▶️';}
 function seekTo(e){const r=e.currentTarget.getBoundingClientRect();const p=Math.max(0,Math.min(100,((e.clientX-r.left)/r.width)*100));document.getElementById('pFill').style.width=p+'%';document.getElementById('pThumb').style.left=p+'%';}
 function setSpeed(el){document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
-function toggleQuiz(){document.getElementById('quizMode').classList.toggle('active');}
-function selectOpt(el,correct){el.classList.add(correct?'correct':'wrong');el.querySelector('.check').textContent=correct?'✓':'✗';}
+function selOpt(el,ok){el.classList.add(ok?'correct':'wrong');el.querySelector('.check').textContent=ok?'✓':'✗';}
 function setScene(el){document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
 </script>
 </body>
