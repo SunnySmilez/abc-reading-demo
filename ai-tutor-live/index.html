@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAZ伴读营 · 伪直播互动课堂 Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:30px 20px;color:#fff;}
+h1{font-size:24px;margin-bottom:6px;}
+.subtitle{color:#888;font-size:13px;margin-bottom:24px;}
+.info{max-width:900px;width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 20px;margin-bottom:24px;font-size:13px;color:#aaa;line-height:1.7;}
+.info strong{color:#fff;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;max-width:900px;width:100%;}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;cursor:pointer;transition:all .2s;text-decoration:none;color:inherit;}
+.card:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);transform:translateY(-2px);}
+.card-icon{font-size:28px;margin-bottom:10px;}
+.card-title{font-size:15px;font-weight:600;color:#fff;margin-bottom:4px;}
+.card-desc{font-size:12px;color:#888;line-height:1.5;}
+.card-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;margin-top:8px;}
+.tag-live{background:rgba(255,59,48,.15);color:#ff3b30;}
+.tag-replay{background:rgba(52,199,89,.15);color:#34c759;}
+.tag-teacher{background:rgba(88,86,214,.15);color:#5856d6;}
+.section-title{font-size:16px;font-weight:600;color:#fff;margin:20px 0 10px;max-width:900px;width:100%;display:flex;align-items:center;gap:8px;}
+</style>
+</head>
+<body>
+<h1>📺 RAZ伴读营 · 伪直播互动课堂</h1>
+<p class="subtitle">产品Demo · 小班直播间 + 互动组件 + 教师工作台</p>
+<div class="info">
+  <strong>产品定位：</strong>预录视频按固定时间播放，模拟直播体验。核心是仪式感+班级感+互动感。<br>
+  <strong>技术架构：</strong>视频播放层 + 互动overlay层 + 实时数据层，互动组件按视频时间戳触发。<br>
+  <strong>交互说明：</strong>点击下方卡片进入对应页面，页面内可点击交互体验。
+</div>
+
+<div class="section-title">📱 学生端 · 直播间</div>
+<div class="grid">
+  <a class="card" href="01-live-room.html">
+    <div class="card-icon">📺</div>
+    <div class="card-title">1. 直播间主页面</div>
+    <div class="card-desc">小班6人布局 · 老师视频+学生视频窗口+互动区+弹幕+积分</div>
+    <span class="card-tag tag-live">直播模式</span>
+  </a>
+  <a class="card" href="02-replay-room.html">
+    <div class="card-icon">🔄</div>
+    <div class="card-title">2. 回放模式</div>
+    <div class="card-desc">可拖进度条+倍速+互动自测模式+历史答题数据</div>
+    <span class="card-tag tag-replay">回放模式</span>
+  </a>
+  <a class="card" href="03-course-entry.html">
+    <div class="card-icon">📋</div>
+    <div class="card-title">3. 课程入口页</div>
+    <div class="card-desc">行课前倒计时→行课中入口→行课后回放，三种状态</div>
+    <span class="card-tag tag-live">入口</span>
+  </a>
+</div>
+
+<div class="section-title">🎮 互动组件 · 教学核心层</div>
+<div class="grid">
+  <a class="card" href="04-reading-followup.html">
+    <div class="card-icon">🎤</div>
+    <div class="card-title">4. 跟读评测</div>
+    <div class="card-desc">跑马灯高亮句子→录音→AI发音评分→鼓励动效</div>
+    <span class="card-tag tag-live">核心组件</span>
+  </a>
+  <a class="card" href="05-quiz-choice.html">
+    <div class="card-icon">✅</div>
+    <div class="card-title">5. 选择题</div>
+    <div class="card-desc">单选/多选+实时投票结果+答对庆祝/答错解析</div>
+    <span class="card-tag tag-live">核心组件</span>
+  </a>
+  <a class="card" href="06-fill-spell.html">
+    <div class="card-icon">✏️</div>
+    <div class="card-title">6. 填空/拼写</div>
+    <div class="card-desc">字母拖拽拼写+即时判断+错误提示</div>
+    <span class="card-tag tag-live">核心组件</span>
+  </a>
+</div>
+
+<div class="section-title">🎮 互动组件 · 游戏化练习层</div>
+<div class="grid">
+  <a class="card" href="07-game-whack.html">
+    <div class="card-icon">🐹</div>
+    <div class="card-title">7. 打地鼠选词</div>
+    <div class="card-desc">快速词汇辨识，限时点击正确单词</div>
+    <span class="card-tag tag-replay">游戏组件</span>
+  </a>
+  <a class="card" href="08-game-bridge.html">
+    <div class="card-icon">🌉</div>
+    <div class="card-title">8. 搭桥连词成句</div>
+    <div class="card-desc">拖拽单词卡片排列成正确句子</div>
+    <span class="card-tag tag-replay">游戏组件</span>
+  </a>
+  <a class="card" href="09-game-flipcard.html">
+    <div class="card-icon">🃏</div>
+    <div class="card-title">9. 翻卡配对</div>
+    <div class="card-desc">记忆翻卡，词图配对强化记忆</div>
+    <span class="card-tag tag-replay">游戏组件</span>
+  </a>
+</div>
+
+<div class="section-title">👩‍🏫 教师端 · 工作台</div>
+<div class="grid">
+  <a class="card" href="10-teacher-console.html">
+    <div class="card-icon">🎛</div>
+    <div class="card-title">10. 班主任工作台</div>
+    <div class="card-desc">节奏控制+在线面板+实时数据+关注提醒+连麦管理</div>
+    <span class="card-tag tag-teacher">教师端</span>
+  </a>
+</div>
+</body>
+</html>

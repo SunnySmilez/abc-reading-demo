@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=430, initial-scale=1.0">
+<title>填空拼写 · RAZ伴读营</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
+.top-bar{width:430px;height:44px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.top-bar .title{font-size:13px;font-weight:600;}
+.top-bar .hint{font-size:11px;color:#4ECDC4;}
+.prompt-area{padding:24px 14px;text-align:center;flex-shrink:0;}
+.prompt-text{font-size:18px;font-weight:600;line-height:1.6;}
+.prompt-img{width:120px;height:120px;background:linear-gradient(135deg,#FFE66D,#FF6B6B);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:56px;margin:16px auto;box-shadow:0 6px 20px rgba(0,0,0,.2);}
+.prompt-hint{font-size:13px;color:#888;margin-top:8px;}
+.spell-area{padding:0 14px;flex-shrink:0;}
+.slot-row{display:flex;justify-content:center;gap:8px;margin-bottom:20px;}
+.slot{width:44px;height:52px;border-radius:10px;border:2px dashed rgba(255,255,255,.2);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;transition:all .2s;}
+.slot.filled{border-style:solid;border-color:#4ECDC4;background:rgba(78,205,196,.08);color:#4ECDC4;}
+.slot.error{border-color:#ff3b30;background:rgba(255,59,48,.08);color:#ff3b30;animation:shake .4s;}
+.slot.correct{border-color:#34c759;background:rgba(52,199,89,.1);color:#34c759;}
+.letter-pool{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 20px;}
+.letter-btn{width:44px;height:44px;border-radius:12px;border:none;background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:600;cursor:pointer;transition:all .15s;}
+.letter-btn:active{transform:scale(.9);}
+.letter-btn.used{opacity:.2;pointer-events:none;}
+.letter-btn:hover{background:rgba(255,255,255,.15);}
+.result-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.result-msg{display:none;font-size:20px;font-weight:700;text-align:center;}
+.result-sub{display:none;font-size:13px;color:#888;}
+.action-row{display:flex;gap:10px;margin-top:12px;}
+.action-row button{padding:10px 24px;border:none;border-radius:12px;font-size:14px;cursor:pointer;display:none;}
+.btn-next{background:linear-gradient(135deg,#4ECDC4,#44b3ab);color:#fff;}
+.btn-retry{background:rgba(255,230,109,.12);color:#FFE66D;}
+.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
+.scene-axis::-webkit-scrollbar{display:none;}
+.axis-track{display:flex;align-items:center;min-width:max-content;position:relative;padding:0 4px;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;}
+.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.axis-node .node-label{font-size:9px;color:#555;}
+.axis-node.active .node-label{color:#FFE66D;font-weight:600;}
+.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
+.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;flex-shrink:0;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+</style>
+</head>
+<body>
+<div class="top-bar"><span class="title">✏️ 拼写练习</span><span class="hint">拖拽字母拼出单词</span></div>
+<div class="prompt-area">
+  <p class="prompt-text">请拼出这个单词 👇</p>
+  <div class="prompt-img">🐱</div>
+  <p class="prompt-hint">提示：The ___ sat on the mat.</p>
+</div>
+<div class="spell-area">
+  <div class="slot-row" id="slots">
+    <div class="slot" data-idx="0"></div>
+    <div class="slot" data-idx="1"></div>
+    <div class="slot" data-idx="2"></div>
+  </div>
+  <div class="letter-pool" id="pool"></div>
+</div>
+<div class="result-area">
+  <div class="result-msg" id="resultMsg"></div>
+  <div class="result-sub" id="resultSub"></div>
+  <div class="action-row">
+    <button class="btn-retry" id="retryBtn" onclick="resetGame()">🔄 再来一次</button>
+    <button class="btn-next" id="nextBtn">➡️ 下一个</button>
+  </div>
+</div>
+<div class="scene-axis">
+  <div class="axis-track">
+    <div class="axis-line"></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
+  </div>
+</div>
+<a class="back-link" href="index.html">← 返回目录</a>
+<script>
+const answer='cat';
+let filled=[];
+function init(){
+  const pool=document.getElementById('pool');
+  const letters=answer.split('').concat(['m','s','t']).sort(()=>Math.random()-.5);
+  pool.innerHTML='';filled=[];
+  document.querySelectorAll('.slot').forEach(s=>{s.textContent='';s.className='slot';});
+  document.getElementById('resultMsg').style.display='none';
+  document.getElementById('resultSub').style.display='none';
+  document.getElementById('retryBtn').style.display='none';
+  document.getElementById('nextBtn').style.display='none';
+  letters.forEach((l,i)=>{
+    const b=document.createElement('button');
+    b.className='letter-btn';b.textContent=l.toUpperCase();b.dataset.letter=l;b.dataset.idx=i;
+    b.onclick=()=>placeLetter(b);
+    pool.appendChild(b);
+  });
+}
+function placeLetter(btn){
+  const nextSlot=document.querySelector('.slot:not(.filled)');
+  if(!nextSlot)return;
+  nextSlot.textContent=btn.textContent;nextSlot.classList.add('filled');
+  btn.classList.add('used');
+  filled.push({slot:nextSlot,btn:btn,letter:btn.dataset.letter});
+  nextSlot.onclick=()=>removeLetter(nextSlot);
+  if(filled.length===answer.length)checkAnswer();
+}
+function removeLetter(slot){
+  const idx=filled.findIndex(f=>f.slot===slot);
+  if(idx===-1)return;
+  const item=filled.splice(idx,1)[0];
+  slot.textContent='';slot.className='slot';slot.onclick=null;
+  item.btn.classList.remove('used');
+}
+function checkAnswer(){
+  const word=filled.map(f=>f.letter).join('');
+  if(word===answer){
+    document.querySelectorAll('.slot').forEach(s=>s.classList.add('correct'));
+    document.getElementById('resultMsg').textContent='🎉 Perfect!';
+    document.getElementById('resultMsg').style.display='block';document.getElementById('resultMsg').style.color='#34c759';
+    document.getElementById('resultSub').textContent='cat = 猫 🐱';
+    document.getElementById('resultSub').style.display='block';
+    document.getElementById('nextBtn').style.display='inline-block';
+  } else {
+    document.querySelectorAll('.slot').forEach(s=>s.classList.add('error'));
+    document.getElementById('resultMsg').textContent='😅 再试试~';
+    document.getElementById('resultMsg').style.display='block';document.getElementById('resultMsg').style.color='#ff3b30';
+    document.getElementById('retryBtn').style.display='inline-block';
+    setTimeout(()=>{filled.forEach(f=>{f.slot.textContent='';f.slot.className='slot';f.btn.classList.remove('used');});filled=[];document.getElementById('resultMsg').style.display='none';document.getElementById('retryBtn').style.display='none';},1200);
+  }
+}
+function resetGame(){init();}
+function setScene(el){document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
+init();
+</script>
+</body>
+</html>

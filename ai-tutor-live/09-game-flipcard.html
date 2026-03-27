@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=430, initial-scale=1.0">
+<title>翻卡配对 · RAZ伴读营</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;display:flex;flex-direction:column;}
+.top-bar{width:430px;height:44px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.top-bar .title{font-size:13px;font-weight:600;}
+.stats{display:flex;gap:12px;font-size:12px;}
+.stats .moves{color:#FFE66D;}
+.stats .pairs{color:#4ECDC4;}
+.instruction{text-align:center;padding:12px;font-size:13px;color:#888;flex-shrink:0;}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px;flex:1;align-content:start;}
+.card{height:130px;perspective:600px;cursor:pointer;}
+.card-inner{width:100%;height:100%;position:relative;transition:transform .5s;transform-style:preserve-3d;}
+.card.flipped .card-inner{transform:rotateY(180deg);}
+.card.matched .card-inner{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;}
+.card-front{background:linear-gradient(135deg,#2a1a4e,#1a2a4e);border:2px solid rgba(255,255,255,.1);}
+.card-front .qmark{font-size:36px;opacity:.4;}
+.card-back{background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.15);transform:rotateY(180deg);}
+.card-back .emoji{font-size:40px;margin-bottom:4px;}
+.card-back .word{font-size:14px;font-weight:600;}
+.card.matched .card-back{border-color:#34c759;background:rgba(52,199,89,.08);}
+.card.matched .card-back .word{color:#34c759;}
+.win-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,26,.92);z-index:200;flex-direction:column;align-items:center;justify-content:center;}
+.win-overlay.show{display:flex;}
+.win-overlay .trophy{font-size:60px;margin-bottom:12px;}
+.win-overlay .msg{font-size:24px;font-weight:800;background:linear-gradient(135deg,#FFE66D,#FF6B6B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.win-overlay .sub{font-size:14px;color:#888;margin-top:8px;}
+.win-overlay .play-again{margin-top:20px;padding:12px 32px;border:none;border-radius:14px;background:linear-gradient(135deg,#4ECDC4,#44b3ab);color:#fff;font-size:15px;font-weight:600;cursor:pointer;}
+.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;flex-shrink:0;}
+.scene-axis::-webkit-scrollbar{display:none;}
+.axis-track{display:flex;align-items:center;min-width:max-content;position:relative;padding:0 4px;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;}
+.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.axis-node .node-label{font-size:9px;color:#555;}
+.axis-node.active .node-label{color:#FFE66D;font-weight:600;}
+.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
+.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="top-bar"><span class="title">🃏 翻卡配对</span><div class="stats"><span class="moves" id="movesDisplay">翻牌 0 次</span><span class="pairs" id="pairsDisplay">配对 0/3</span></div></div>
+<p class="instruction">翻两张牌，找到单词和对应图片的配对！</p>
+<div class="grid" id="grid"></div>
+<div class="win-overlay" id="winOverlay">
+  <div class="trophy">🏆</div>
+  <div class="msg">全部配对成功!</div>
+  <div class="sub" id="winSub">用了 0 次翻牌</div>
+  <button class="play-again" onclick="initGame()">🔄 再玩一次</button>
+</div>
+<div class="scene-axis">
+  <div class="axis-track"><div class="axis-line"></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+    <div class="axis-node active" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+    <div class="axis-node" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
+  </div>
+</div>
+<a class="back-link" href="index.html">← 返回目录</a>
+<script>
+const pairs=[
+  {id:'cat',type:'word',display:'cat',emoji:''},
+  {id:'cat',type:'img',display:'🐱',emoji:'🐱'},
+  {id:'dog',type:'word',display:'dog',emoji:''},
+  {id:'dog',type:'img',display:'🐶',emoji:'🐶'},
+  {id:'mat',type:'word',display:'mat',emoji:''},
+  {id:'mat',type:'img',display:'🟫',emoji:'🟫'},
+];
+let flipped=[],moves=0,matched=0,locked=false;
+function initGame(){
+  flipped=[];moves=0;matched=0;locked=false;
+  document.getElementById('movesDisplay').textContent='翻牌 0 次';
+  document.getElementById('pairsDisplay').textContent='配对 0/3';
+  document.getElementById('winOverlay').classList.remove('show');
+  const grid=document.getElementById('grid');grid.innerHTML='';
+  const shuffled=[...pairs].sort(()=>Math.random()-.5);
+  shuffled.forEach((p,i)=>{
+    const card=document.createElement('div');card.className='card';card.dataset.id=p.id;card.dataset.type=p.type;card.dataset.idx=i;
+    card.innerHTML=`<div class="card-inner"><div class="card-face card-front"><span class="qmark">❓</span></div><div class="card-face card-back">${p.type==='img'?`<span class="emoji">${p.emoji}</span><span class="word">${p.id}</span>`:`<span class="word" style="font-size:22px">${p.display}</span><span class="word" style="font-size:11px;color:#888;margin-top:4px">${p.id==='cat'?'猫':p.id==='dog'?'狗':'垫子'}</span>`}</div></div>`;
+    card.onclick=()=>flipCard(card);
+    grid.appendChild(card);
+  });
+}
+function flipCard(card){
+  if(locked||card.classList.contains('flipped')||card.classList.contains('matched'))return;
+  card.classList.add('flipped');flipped.push(card);moves++;
+  document.getElementById('movesDisplay').textContent='翻牌 '+moves+' 次';
+  if(flipped.length===2){
+    locked=true;
+    const [a,b]=flipped;
+    if(a.dataset.id===b.dataset.id&&a.dataset.type!==b.dataset.type){
+      setTimeout(()=>{a.classList.add('matched');b.classList.add('matched');matched++;
+        document.getElementById('pairsDisplay').textContent='配对 '+matched+'/3';
+        flipped=[];locked=false;
+        if(matched===3){document.getElementById('winSub').textContent='用了 '+moves+' 次翻牌';document.getElementById('winOverlay').classList.add('show');}
+      },500);
+    } else {
+      setTimeout(()=>{a.classList.remove('flipped');b.classList.remove('flipped');flipped=[];locked=false;},900);
+    }
+  }
+}
+function setScene(el){document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
+initGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=430, initial-scale=1.0">
+<title>直播间 · RAZ伴读营</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:430px;height:932px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;position:relative;margin:0 auto;}
+
+/* ===== 顶部信息栏 ===== */
+.top-bar{position:fixed;top:0;left:50%;transform:translateX(-50%);width:430px;height:44px;background:rgba(10,10,26,.92);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;padding:0 14px;z-index:100;border-bottom:1px solid rgba(255,255,255,.06);}
+.top-bar .course-name{font-size:13px;font-weight:600;color:#fff;}
+.top-bar .live-badge{display:flex;align-items:center;gap:5px;font-size:12px;color:#FF6B6B;}
+.top-bar .live-badge .dot{width:7px;height:7px;background:#FF6B6B;border-radius:50%;animation:pulse 1.5s infinite;}
+.top-bar .exit-btn{font-size:12px;color:#888;background:rgba(255,255,255,.08);border:none;border-radius:12px;padding:4px 12px;cursor:pointer;}
+
+/* ===== 老师视频区 ===== */
+.teacher-area{margin-top:44px;width:430px;height:340px;background:linear-gradient(135deg,#1a1a3e,#2d1b4e,#1a2a4e);position:relative;overflow:hidden;}
+.teacher-area .teacher-avatar{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;opacity:.7;}
+.teacher-area .teacher-name{position:absolute;top:12px;left:12px;font-size:13px;background:rgba(0,0,0,.5);padding:3px 10px;border-radius:8px;}
+.teacher-area .hd-tag{position:absolute;top:12px;right:12px;font-size:10px;background:rgba(78,205,196,.3);color:#4ECDC4;padding:2px 8px;border-radius:6px;font-weight:600;}
+.teacher-area .wave{position:absolute;bottom:0;width:100%;height:30px;}
+.teacher-area .wave-inner{width:200%;height:100%;background:repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,.03) 40px,rgba(255,255,255,.03) 80px);animation:waveMove 4s linear infinite;}
+
+/* ===== 学生视频区 ===== */
+.students-area{width:430px;padding:6px 8px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.stu-card{position:relative;height:88px;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,.08);}
+.stu-card .stu-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;}
+.stu-card .stu-name{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:10px;padding:2px 0;background:rgba(0,0,0,.6);}
+.stu-card .mic-icon{position:absolute;top:4px;right:4px;font-size:10px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mic-on{background:rgba(52,199,89,.3);color:#34c759;}
+.mic-off{background:rgba(255,255,255,.1);color:#666;}
+.stu-card.speaking{border-color:#FFE66D;animation:breathe 2s ease-in-out infinite;}
+
+/* ===== 互动内容区 ===== */
+.content-area{width:430px;padding:10px 14px;flex:1;}
+.book-card{display:flex;gap:12px;background:rgba(255,255,255,.05);border-radius:14px;padding:12px;margin-bottom:10px;}
+.book-cover{width:70px;height:90px;border-radius:8px;background:linear-gradient(135deg,#FF6B6B,#FFE66D);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.book-info{display:flex;flex-direction:column;justify-content:center;}
+.book-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.book-level{font-size:11px;color:#4ECDC4;margin-bottom:6px;}
+.book-progress{font-size:11px;color:#888;}
+.sentence-area{background:rgba(255,255,255,.04);border-radius:12px;padding:12px 14px;margin-bottom:10px;min-height:48px;}
+.sentence{font-size:16px;line-height:1.6;letter-spacing:.3px;}
+.sentence .highlight{color:#FFE66D;font-weight:700;text-shadow:0 0 8px rgba(255,230,109,.3);}
+.action-btns{display:flex;gap:10px;}
+.action-btns button{flex:1;padding:10px 0;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-read{background:linear-gradient(135deg,#FF6B6B,#ff8e8e);color:#fff;}
+.btn-hand{background:rgba(255,230,109,.15);color:#FFE66D;border:1px solid rgba(255,230,109,.2) !important;}
+.btn-read:active,.btn-hand:active{transform:scale(.96);}
+
+/* ===== 底部操作栏 ===== */
+.bottom-bar{width:430px;padding:8px 20px;display:flex;justify-content:space-around;align-items:center;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);}
+.bar-btn{width:44px;height:44px;border-radius:50%;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);transition:all .15s;position:relative;}
+.bar-btn:active{transform:scale(.9);}
+.bar-btn.mic-active{background:rgba(52,199,89,.2);box-shadow:0 0 10px rgba(52,199,89,.2);}
+.bar-btn.mic-muted{background:rgba(255,59,48,.15);}
+
+/* ===== 弹幕层 ===== */
+.danmaku-layer{position:fixed;top:200px;left:0;width:430px;height:120px;pointer-events:none;overflow:hidden;z-index:90;}
+.danmaku{position:absolute;white-space:nowrap;font-size:13px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px rgba(0,0,0,.5);animation:danmakuMove 6s linear forwards;}
+
+/* ===== 场景坐标轴 ===== */
+.scene-axis{width:430px;padding:8px 10px;background:rgba(10,10,26,.95);border-top:1px solid rgba(255,255,255,.06);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.scene-axis::-webkit-scrollbar{display:none;}
+.axis-track{display:flex;align-items:center;gap:0;min-width:max-content;position:relative;padding:0 4px;}
+.axis-node{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;flex-shrink:0;position:relative;}
+.axis-node .node-dot{width:10px;height:10px;border-radius:50%;background:#333;border:2px solid #444;transition:all .2s;}
+.axis-node.active .node-dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.axis-node .node-label{font-size:9px;color:#555;transition:all .2s;}
+.axis-node.active .node-label{color:#FFE66D;font-weight:600;}
+.axis-line{position:absolute;top:15px;left:20px;right:20px;height:2px;background:#222;z-index:-1;}
+
+.back-link{display:block;text-align:center;padding:6px 0;font-size:11px;color:#555;text-decoration:none;background:#0a0a1a;}
+.back-link:hover{color:#888;}
+
+/* ===== 飘心动画 ===== */
+.float-heart{position:fixed;font-size:20px;pointer-events:none;z-index:200;animation:floatUp 1.5s ease-out forwards;}
+
+/* ===== 动画 ===== */
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes breathe{0%,100%{border-color:#FFE66D;box-shadow:0 0 6px rgba(255,230,109,.2);}50%{border-color:#ffF0a0;box-shadow:0 0 14px rgba(255,230,109,.4);}}
+@keyframes waveMove{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+@keyframes danmakuMove{0%{transform:translateX(440px);}100%{transform:translateX(-300px);}}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-120px) scale(.5);}}
+</style>
+</head>
+<body>
+
+<!-- 顶部信息栏 -->
+<div class="top-bar">
+  <span class="course-name">Level A · The Cat</span>
+  <span class="live-badge"><span class="dot"></span> 直播中 · 6人在线</span>
+  <button class="exit-btn">退出</button>
+</div>
+
+<!-- 老师视频区 -->
+<div class="teacher-area">
+  <span class="teacher-avatar">👩‍🏫</span>
+  <span class="teacher-name">Miss Chen</span>
+  <span class="hd-tag">HD</span>
+  <div class="wave"><div class="wave-inner"></div></div>
+</div>
+
+<!-- 学生视频区 -->
+<div class="students-area">
+  <div class="stu-card speaking">
+    <div class="stu-bg" style="background:linear-gradient(135deg,#ff9a9e,#fad0c4)">👧</div>
+    <div class="stu-name">Lily</div>
+    <div class="mic-icon mic-on">🎤</div>
+  </div>
+  <div class="stu-card">
+    <div class="stu-bg" style="background:linear-gradient(135deg,#a1c4fd,#c2e9fb)">🧒</div>
+    <div class="stu-name">Tom</div>
+    <div class="mic-icon mic-on">🎤</div>
+  </div>
+  <div class="stu-card">
+    <div class="stu-bg" style="background:linear-gradient(135deg,#fbc2eb,#a6c1ee)">👧</div>
+    <div class="stu-name">Amy</div>
+    <div class="mic-icon mic-off">🔇</div>
+  </div>
+  <div class="stu-card">
+    <div class="stu-bg" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)">👦</div>
+    <div class="stu-name">Jack</div>
+    <div class="mic-icon mic-off">🔇</div>
+  </div>
+  <div class="stu-card">
+    <div class="stu-bg" style="background:linear-gradient(135deg,#ffecd2,#fcb69f)">🧑</div>
+    <div class="stu-name">Mia</div>
+    <div class="mic-icon mic-off">🔇</div>
+  </div>
+  <div class="stu-card">
+    <div class="stu-bg" style="background:linear-gradient(135deg,#a8edea,#fed6e3)">👶</div>
+    <div class="stu-name">Leo</div>
+    <div class="mic-icon mic-off">🔇</div>
+  </div>
+</div>
+
+<!-- 互动内容区 -->
+<div class="content-area">
+  <div class="book-card">
+    <div class="book-cover">📚</div>
+    <div class="book-info">
+      <div class="book-title">The Cat Sat on the Mat</div>
+      <div class="book-level">📘 Level A · RAZ</div>
+      <div class="book-progress">第 3/8 页 · 跟读中</div>
+    </div>
+  </div>
+  <div class="sentence-area">
+    <p class="sentence">The <span class="highlight">cat</span> sat on the mat.</p>
+  </div>
+  <div class="action-btns">
+    <button class="btn-read">📖 跟读</button>
+    <button class="btn-hand">✋ 举手</button>
+  </div>
+</div>
+
+<!-- 底部操作栏 -->
+<div class="bottom-bar">
+  <button class="bar-btn mic-active" id="micBtn" onclick="toggleMic()">🎤</button>
+  <button class="bar-btn" onclick="this.style.transform='scale(1.2)';setTimeout(()=>this.style.transform='',200)">👋</button>
+  <button class="bar-btn" id="heartBtn" onclick="spawnHearts()">❤️</button>
+  <button class="bar-btn">💬</button>
+  <button class="bar-btn">📊</button>
+</div>
+
+<!-- 弹幕层 -->
+<div class="danmaku-layer" id="danmakuLayer"></div>
+
+<!-- 场景坐标轴 -->
+<div class="scene-axis">
+  <div class="axis-track">
+    <div class="axis-line"></div>
+    <div class="axis-node" data-scene="等候" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">等候</span></div>
+    <div class="axis-node" data-scene="暖场" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">暖场</span></div>
+    <div class="axis-node active" data-scene="带读" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">带读</span></div>
+    <div class="axis-node" data-scene="选择题" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">选择题</span></div>
+    <div class="axis-node" data-scene="打地鼠" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">打地鼠</span></div>
+    <div class="axis-node" data-scene="翻卡" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">翻卡</span></div>
+    <div class="axis-node" data-scene="连词" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">连词</span></div>
+    <div class="axis-node" data-scene="开口" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">开口</span></div>
+    <div class="axis-node" data-scene="检测" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">检测</span></div>
+    <div class="axis-node" data-scene="总结" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">总结</span></div>
+    <div class="axis-node" data-scene="复习" onclick="setScene(this)"><div class="node-dot"></div><span class="node-label">复习</span></div>
+  </div>
+</div>
+
+<a class="back-link" href="index.html">← 返回目录</a>
+
+<script>
+// 麦克风切换
+let micOn = true;
+function toggleMic(){
+  micOn = !micOn;
+  const btn = document.getElementById('micBtn');
+  if(micOn){btn.className='bar-btn mic-active';btn.textContent='🎤';}
+  else{btn.className='bar-btn mic-muted';btn.textContent='🔇';}
+}
+
+// 飘心
+function spawnHearts(){
+  const emojis = ['❤️','💖','💕','🧡','💛'];
+  for(let i=0;i<5;i++){
+    setTimeout(()=>{
+      const h = document.createElement('div');
+      h.className='float-heart';
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.left = (180 + Math.random()*60) + 'px';
+      h.style.top = '750px';
+      document.body.appendChild(h);
+      setTimeout(()=>h.remove(),1600);
+    }, i*120);
+  }
+}
+
+// 弹幕
+const danmakuTexts = ["I can read it! 🎉","好棒! 👏","The cat! 🐱","加油! 💪","🌟🌟🌟 Great!","Miss Chen好好看","我也会读啦~","cat cat cat!"];
+let danmakuIdx = 0;
+function launchDanmaku(){
+  const layer = document.getElementById('danmakuLayer');
+  const d = document.createElement('div');
+  d.className = 'danmaku';
+  d.textContent = danmakuTexts[danmakuIdx % danmakuTexts.length];
+  d.style.top = (Math.random()*90) + 'px';
+  d.style.fontSize = (12 + Math.random()*4) + 'px';
+  layer.appendChild(d);
+  danmakuIdx++;
+  setTimeout(()=>d.remove(), 6200);
+}
+setInterval(launchDanmaku, 2200);
+setTimeout(launchDanmaku, 500);
+
+// 场景坐标轴切换
+function setScene(el){
+  document.querySelectorAll('.axis-node').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
