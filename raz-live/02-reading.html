@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
+<title>绘本带读 · RAZ伴学师1V6</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
+.top{height:42px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);}
+.top .title{font-size:14px;font-weight:600;}
+.top .pg{font-size:12px;color:#888;}
+.content{display:flex;height:calc(100% - 42px - 50px);}
+/* 左：绘本大图 */
+.book-area{flex:1;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a1a2e,#16213e);position:relative;padding:30px;}
+.page-card{width:480px;height:360px;background:linear-gradient(135deg,#fff8e1,#ffe0b2);border-radius:20px;box-shadow:0 12px 40px rgba(0,0,0,.4);display:flex;overflow:hidden;position:relative;}
+.page-card .illust{width:55%;display:flex;align-items:center;justify-content:center;font-size:120px;background:linear-gradient(135deg,#ffecb3,#ffe082);}
+.page-card .text-side{width:45%;display:flex;flex-direction:column;justify-content:center;padding:24px;background:#fff;}
+.page-card .text-side .en-text{font-size:26px;font-weight:800;color:#333;line-height:1.4;margin-bottom:12px;}
+.page-card .text-side .en-text .hl{color:#FF6B6B;background:rgba(255,107,107,.08);padding:0 2px;border-radius:4px;}
+.page-card .text-side .cn-text{font-size:14px;color:#888;margin-bottom:16px;}
+.page-card .text-side .phonetic{font-size:12px;color:#4ECDC4;background:rgba(78,205,196,.08);padding:6px 10px;border-radius:8px;display:inline-block;}
+.page-nav{position:absolute;bottom:20px;display:flex;gap:12px;}
+.page-nav button{width:44px;height:44px;border-radius:50%;border:none;font-size:18px;cursor:pointer;transition:all .15s;}
+.page-nav .prev{background:rgba(255,255,255,.1);color:#aaa;}
+.page-nav .next{background:linear-gradient(135deg,#4ECDC4,#44a8a0);color:#fff;}
+.page-nav button:active{transform:scale(.9);}
+.page-dots{position:absolute;bottom:76px;display:flex;gap:6px;}
+.page-dots .d{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);}
+.page-dots .d.active{background:#FFE66D;box-shadow:0 0 6px rgba(255,230,109,.4);}
+/* 右：跟读面板 */
+.read-panel{width:380px;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);}
+.rp-header{padding:16px;border-bottom:1px solid rgba(255,255,255,.04);}
+.rp-header h3{font-size:15px;margin-bottom:6px;}
+.rp-header p{font-size:11px;color:#888;}
+/* 跟读句子 */
+.sentence-read{padding:16px;flex:1;display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+.sr-line{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);cursor:pointer;transition:all .2s;}
+.sr-line:hover{background:rgba(255,255,255,.06);}
+.sr-line.current{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);}
+.sr-line .play-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.sr-line.current .play-icon{background:linear-gradient(135deg,#FF6B6B,#ff8e8e);color:#fff;}
+.sr-line .play-icon{background:rgba(255,255,255,.08);}
+.sr-line .sr-text{flex:1;}
+.sr-line .sr-en{font-size:14px;font-weight:600;margin-bottom:2px;}
+.sr-line .sr-cn{font-size:11px;color:#888;}
+.sr-line .score-tag{font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600;}
+.sr-line .score-tag.excellent{background:rgba(78,205,196,.15);color:#4ECDC4;}
+.sr-line .score-tag.good{background:rgba(255,230,109,.15);color:#FFE66D;}
+.sr-line .score-tag.try{background:rgba(255,255,255,.06);color:#888;}
+/* 录音按钮 */
+.record-area{padding:16px;border-top:1px solid rgba(255,255,255,.04);display:flex;flex-direction:column;align-items:center;gap:10px;}
+.rec-btn{width:64px;height:64px;border-radius:50%;border:none;font-size:28px;cursor:pointer;transition:all .2s;background:linear-gradient(135deg,#FF6B6B,#ff8e8e);color:#fff;box-shadow:0 4px 16px rgba(255,107,107,.3);}
+.rec-btn:active{transform:scale(.9);}
+.rec-btn.recording{background:linear-gradient(135deg,#ff4444,#ff6666);animation:recPulse 1s infinite;}
+.rec-hint{font-size:11px;color:#888;}
+.rec-result{display:none;text-align:center;}
+.rec-result .score-big{font-size:48px;font-weight:800;background:linear-gradient(135deg,#4ECDC4,#FFE66D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.rec-result .score-label{font-size:13px;color:#4ECDC4;margin-top:4px;}
+/* 底部坐标轴 */
+.scene-axis{height:50px;display:flex;align-items:center;padding:0 20px;border-top:1px solid rgba(255,255,255,.06);background:rgba(10,10,26,.95);}
+.ax{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;flex-shrink:0;}
+.ax .dot{width:10px;height:10px;border-radius:50%;background:#222;border:2px solid #333;transition:all .25s;}
+.ax.active .dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.ax.done .dot{background:#4ECDC4;border-color:#4ECDC4;}
+.ax .al{font-size:9px;color:#555;white-space:nowrap;}
+.ax.active .al{color:#FFE66D;font-weight:700;}
+.ax.done .al{color:#4ECDC4;}
+@keyframes recPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.4);}50%{box-shadow:0 0 0 12px rgba(255,107,107,0);}}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">📖 绘本带读 · The Cat Sat on the Mat</span>
+  <span class="pg">Level A · 第3/8页</span>
+</div>
+<div class="content">
+  <div class="book-area">
+    <div class="page-card">
+      <div class="illust">🐱</div>
+      <div class="text-side">
+        <div class="en-text">The <span class="hl">cat</span> sat on the mat.</div>
+        <div class="cn-text">小猫坐在垫子上。</div>
+        <span class="phonetic">/ðə kæt sæt ɒn ðə mæt/</span>
+      </div>
+    </div>
+    <div class="page-dots">
+      <div class="d"></div><div class="d"></div><div class="d active"></div>
+      <div class="d"></div><div class="d"></div><div class="d"></div><div class="d"></div><div class="d"></div>
+    </div>
+    <div class="page-nav">
+      <button class="prev">←</button>
+      <button class="next">→</button>
+    </div>
+  </div>
+  <div class="read-panel">
+    <div class="rp-header">
+      <h3>🎤 跟读练习</h3>
+      <p>听老师读一遍，然后跟着读</p>
+    </div>
+    <div class="sentence-read">
+      <div class="sr-line">
+        <div class="play-icon">▶</div>
+        <div class="sr-text"><div class="sr-en">I see a cat.</div><div class="sr-cn">我看到一只猫。</div></div>
+        <span class="score-tag excellent">98分</span>
+      </div>
+      <div class="sr-line">
+        <div class="play-icon">▶</div>
+        <div class="sr-text"><div class="sr-en">The cat is big.</div><div class="sr-cn">这只猫很大。</div></div>
+        <span class="score-tag good">85分</span>
+      </div>
+      <div class="sr-line current">
+        <div class="play-icon">🔊</div>
+        <div class="sr-text"><div class="sr-en">The cat sat on the mat.</div><div class="sr-cn">小猫坐在垫子上。</div></div>
+        <span class="score-tag try">待跟读</span>
+      </div>
+      <div class="sr-line">
+        <div class="play-icon">▶</div>
+        <div class="sr-text"><div class="sr-en">The mat is red.</div><div class="sr-cn">垫子是红色的。</div></div>
+        <span class="score-tag try">待跟读</span>
+      </div>
+    </div>
+    <div class="record-area">
+      <button class="rec-btn" id="recBtn" onclick="toggleRec()">🎤</button>
+      <span class="rec-hint" id="recHint">点击开始跟读</span>
+      <div class="rec-result" id="recResult">
+        <div class="score-big">92</div>
+        <div class="score-label">发音优秀！+3⭐</div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="scene-axis">
+  <div class="ax done"><div class="dot"></div><span class="al">等候</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">暖场</span></div>
+  <div class="ax active"><div class="dot"></div><span class="al">带读</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">选择题</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">打地鼠</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">翻卡</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">连词</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">开口</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">检测</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">总结</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">复习</span></div>
+</div>
+<script>
+let recording=false;
+function toggleRec(){const b=document.getElementById('recBtn'),h=document.getElementById('recHint'),r=document.getElementById('recResult');
+if(!recording){recording=true;b.className='rec-btn recording';b.textContent='⏹';h.textContent='录音中...';r.style.display='none';
+setTimeout(()=>{recording=false;b.className='rec-btn';b.textContent='🎤';h.textContent='再试一次？';r.style.display='block';},3000);
+}else{recording=false;b.className='rec-btn';b.textContent='🎤';h.textContent='点击开始跟读';}}
+</script>
+</body>
+</html>

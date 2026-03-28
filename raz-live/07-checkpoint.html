@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
+<title>闭环检测 · RAZ伴学师1V6</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
+.top{height:42px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);}
+.top .title{font-size:14px;font-weight:600;}
+.top .progress{font-size:13px;color:#888;}
+.body-area{display:flex;height:calc(100% - 42px - 50px);}
+/* 左：测试结果 */
+.result-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:40px;}
+.score-ring{width:200px;height:200px;position:relative;display:flex;align-items:center;justify-content:center;}
+.score-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.score-ring .ring-bg{fill:none;stroke:rgba(255,255,255,.06);stroke-width:12;}
+.score-ring .ring-fill{fill:none;stroke:url(#scoreGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;animation:ringFill 2s ease-out forwards;}
+.score-center{text-align:center;z-index:1;}
+.score-center .big{font-size:56px;font-weight:800;background:linear-gradient(135deg,#4ECDC4,#FFE66D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.score-center .label{font-size:14px;color:#888;}
+.stars{display:flex;gap:8px;font-size:36px;}
+.stars .star{animation:starPop .5s ease-out backwards;}
+.stars .star:nth-child(2){animation-delay:.2s;}
+.stars .star:nth-child(3){animation-delay:.4s;}
+.stars .star:nth-child(4){animation-delay:.6s;}
+.stars .star:nth-child(5){animation-delay:.8s;}
+.result-details{display:flex;gap:24px;}
+.rd-item{text-align:center;padding:16px 24px;background:rgba(255,255,255,.03);border-radius:12px;}
+.rd-item .rd-val{font-size:28px;font-weight:700;}
+.rd-item .rd-label{font-size:11px;color:#888;margin-top:4px;}
+.rd-item.green .rd-val{color:#4ECDC4;}
+.rd-item.yellow .rd-val{color:#FFE66D;}
+.rd-item.red .rd-val{color:#FF6B6B;}
+/* 右：学情小结 */
+.summary-panel{width:380px;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;background:rgba(255,255,255,.02);overflow-y:auto;}
+.sp-header{padding:16px;border-bottom:1px solid rgba(255,255,255,.04);}
+.sp-header h3{font-size:15px;margin-bottom:4px;}
+.sp-section{padding:12px 16px;}
+.sp-section .sp-title{font-size:12px;color:#888;margin-bottom:8px;}
+.word-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.word-tag{padding:4px 12px;border-radius:8px;font-size:12px;}
+.word-tag.mastered{background:rgba(78,205,196,.1);color:#4ECDC4;border:1px solid rgba(78,205,196,.2);}
+.word-tag.learning{background:rgba(255,230,109,.1);color:#FFE66D;border:1px solid rgba(255,230,109,.2);}
+.word-tag.weak{background:rgba(255,107,107,.1);color:#FF6B6B;border:1px solid rgba(255,107,107,.2);}
+.skill-bars{display:flex;flex-direction:column;gap:8px;}
+.sk-row{display:flex;flex-direction:column;gap:4px;}
+.sk-label{font-size:11px;display:flex;justify-content:space-between;}
+.sk-track{height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden;}
+.sk-fill{height:100%;border-radius:4px;transition:width 1.5s ease;}
+.encourage{padding:16px;margin:12px 16px;background:linear-gradient(135deg,rgba(78,205,196,.08),rgba(255,230,109,.08));border-radius:12px;border:1px solid rgba(78,205,196,.1);font-size:13px;line-height:1.6;text-align:center;}
+.encourage .big-emoji{font-size:36px;display:block;margin-bottom:8px;}
+.scene-axis{height:50px;display:flex;align-items:center;padding:0 20px;border-top:1px solid rgba(255,255,255,.06);background:rgba(10,10,26,.95);}
+.ax{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;flex-shrink:0;}
+.ax .dot{width:10px;height:10px;border-radius:50%;background:#222;border:2px solid #333;}
+.ax.active .dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.ax.done .dot{background:#4ECDC4;border-color:#4ECDC4;}
+.ax .al{font-size:9px;color:#555;white-space:nowrap;}
+.ax.active .al{color:#FFE66D;font-weight:700;}
+.ax.done .al{color:#4ECDC4;}
+@keyframes ringFill{to{stroke-dashoffset:85;}}
+@keyframes starPop{0%{opacity:0;transform:scale(0) rotate(-30deg);}100%{opacity:1;transform:scale(1) rotate(0);}}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">✅ 闭环检测 · 课后小结</span>
+  <span class="progress">The Cat Sat on the Mat · Level A</span>
+</div>
+<div class="body-area">
+  <div class="result-area">
+    <div class="score-ring">
+      <svg width="200" height="200"><defs><linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#4ECDC4"/><stop offset="100%" style="stop-color:#FFE66D"/></linearGradient></defs><circle class="ring-bg" cx="100" cy="100" r="90"/><circle class="ring-fill" cx="100" cy="100" r="90"/></svg>
+      <div class="score-center"><div class="big">85</div><div class="label">综合得分</div></div>
+    </div>
+    <div class="stars">
+      <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span><span class="star" style="opacity:.3">⭐</span>
+    </div>
+    <div class="result-details">
+      <div class="rd-item green"><div class="rd-val">92</div><div class="rd-label">跟读发音</div></div>
+      <div class="rd-item yellow"><div class="rd-val">80</div><div class="rd-label">词汇理解</div></div>
+      <div class="rd-item green"><div class="rd-val">88</div><div class="rd-label">句型运用</div></div>
+      <div class="rd-item yellow"><div class="rd-val">75</div><div class="rd-label">开口表达</div></div>
+    </div>
+  </div>
+  <div class="summary-panel">
+    <div class="sp-header"><h3>📊 本课学情小结</h3></div>
+    <div class="sp-section">
+      <div class="sp-title">🔤 词汇掌握</div>
+      <div class="word-tags">
+        <span class="word-tag mastered">✅ cat</span>
+        <span class="word-tag mastered">✅ mat</span>
+        <span class="word-tag mastered">✅ sat</span>
+        <span class="word-tag learning">📝 the</span>
+        <span class="word-tag learning">📝 on</span>
+        <span class="word-tag weak">⚠️ hat</span>
+      </div>
+    </div>
+    <div class="sp-section">
+      <div class="sp-title">📈 能力维度</div>
+      <div class="skill-bars">
+        <div class="sk-row"><div class="sk-label"><span>发音准确度</span><span style="color:#4ECDC4">92%</span></div><div class="sk-track"><div class="sk-fill" style="width:92%;background:linear-gradient(90deg,#4ECDC4,#6ee7de)"></div></div></div>
+        <div class="sk-row"><div class="sk-label"><span>词汇识别</span><span style="color:#FFE66D">80%</span></div><div class="sk-track"><div class="sk-fill" style="width:80%;background:linear-gradient(90deg,#FFE66D,#fff0a0)"></div></div></div>
+        <div class="sk-row"><div class="sk-label"><span>句型理解</span><span style="color:#4ECDC4">88%</span></div><div class="sk-track"><div class="sk-fill" style="width:88%;background:linear-gradient(90deg,#4ECDC4,#6ee7de)"></div></div></div>
+        <div class="sk-row"><div class="sk-label"><span>口语表达</span><span style="color:#FFE66D">75%</span></div><div class="sk-track"><div class="sk-fill" style="width:75%;background:linear-gradient(90deg,#FFE66D,#fff0a0)"></div></div></div>
+        <div class="sk-row"><div class="sk-label"><span>课堂参与</span><span style="color:#4ECDC4">95%</span></div><div class="sk-track"><div class="sk-fill" style="width:95%;background:linear-gradient(90deg,#4ECDC4,#6ee7de)"></div></div></div>
+      </div>
+    </div>
+    <div class="encourage">
+      <span class="big-emoji">🌟</span>
+      <strong>Lily 今天表现很棒！</strong><br>
+      跟读发音进步明显，特别是 /æ/ 音掌握得很好。<br>
+      建议多练习 "hat" 的发音哦~<br>
+      <span style="color:#4ECDC4;font-weight:600;margin-top:8px;display:inline-block;">+15⭐ 本课获得</span>
+    </div>
+  </div>
+</div>
+<div class="scene-axis">
+  <div class="ax done"><div class="dot"></div><span class="al">等候</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">暖场</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">带读</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">选择题</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">打地鼠</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">翻卡</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">连词</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">开口</span></div>
+  <div class="ax active"><div class="dot"></div><span class="al">检测</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">总结</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">复习</span></div>
+</div>
+</body>
+</html>

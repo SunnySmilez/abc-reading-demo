@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
+<title>打地鼠选词 · RAZ伴学师1V6</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
+.top{height:42px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);}
+.top .title{font-size:14px;font-weight:600;}
+.top .score-display{font-size:16px;font-weight:700;color:#FFE66D;}
+.top .timer{font-size:20px;font-weight:800;color:#FF6B6B;}
+.game-area{height:calc(100% - 42px - 50px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(180deg,#0a0a1a 0%,#1a2a1a 100%);position:relative;}
+.prompt{font-size:24px;font-weight:700;text-align:center;}
+.prompt .target{color:#FFE66D;font-size:32px;display:block;margin-top:8px;}
+.holes{display:flex;gap:80px;margin-top:20px;}
+.hole{width:160px;height:200px;position:relative;cursor:pointer;}
+.hole .ground{position:absolute;bottom:0;width:160px;height:60px;background:radial-gradient(ellipse,#4a7c59,#2d5a3a);border-radius:50%;z-index:2;}
+.hole .mole{position:absolute;bottom:30px;left:50%;transform:translateX(-50%) translateY(100%);width:100px;height:120px;border-radius:50% 50% 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .3s;z-index:1;font-size:16px;font-weight:700;text-align:center;}
+.hole .mole .mole-emoji{font-size:48px;margin-bottom:4px;}
+.hole .mole .mole-word{background:rgba(0,0,0,.6);padding:4px 12px;border-radius:8px;font-size:16px;}
+.hole .mole.up{transform:translateX(-50%) translateY(0);}
+.hole .mole.hit{transform:translateX(-50%) translateY(0) scale(.8);opacity:.5;}
+.hole .mole.correct-hit{transform:translateX(-50%) translateY(-20px) scale(1.2);}
+.feedback{font-size:36px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:200;opacity:0;transition:all .3s;}
+.feedback.show{opacity:1;}
+.score-popup{position:fixed;font-size:20px;font-weight:800;color:#FFE66D;pointer-events:none;z-index:100;animation:scoreUp 1s ease-out forwards;}
+.combo{font-size:14px;color:#4ECDC4;margin-top:8px;}
+.scene-axis{height:50px;display:flex;align-items:center;padding:0 20px;border-top:1px solid rgba(255,255,255,.06);background:rgba(10,10,26,.95);}
+.ax{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;flex-shrink:0;}
+.ax .dot{width:10px;height:10px;border-radius:50%;background:#222;border:2px solid #333;}
+.ax.active .dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.ax.done .dot{background:#4ECDC4;border-color:#4ECDC4;}
+.ax .al{font-size:9px;color:#555;white-space:nowrap;}
+.ax.active .al{color:#FFE66D;font-weight:700;}
+.ax.done .al{color:#4ECDC4;}
+@keyframes scoreUp{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-60px);}}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">🔨 打地鼠选词</span>
+  <span class="score-display" id="scoreD">⭐ 0</span>
+  <span class="timer" id="timer">30</span>
+</div>
+<div class="game-area">
+  <div class="prompt">点击正确的单词！<span class="target" id="targetWord">🐱 cat</span></div>
+  <div class="combo" id="combo"></div>
+  <div class="holes">
+    <div class="hole" onclick="whack(0)"><div class="mole" id="m0"><span class="mole-emoji">🐱</span><span class="mole-word" id="w0">cat</span></div><div class="ground"></div></div>
+    <div class="hole" onclick="whack(1)"><div class="mole" id="m1"><span class="mole-emoji">🐕</span><span class="mole-word" id="w1">dog</span></div><div class="ground"></div></div>
+    <div class="hole" onclick="whack(2)"><div class="mole" id="m2"><span class="mole-emoji">🐦</span><span class="mole-word" id="w2">bird</span></div><div class="ground"></div></div>
+  </div>
+  <div class="feedback" id="fb"></div>
+</div>
+<div class="scene-axis">
+  <div class="ax done"><div class="dot"></div><span class="al">等候</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">暖场</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">带读</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">选择题</span></div>
+  <div class="ax active"><div class="dot"></div><span class="al">打地鼠</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">翻卡</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">连词</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">开口</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">检测</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">总结</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">复习</span></div>
+</div>
+<script>
+const words=[{w:'cat',e:'🐱'},{w:'dog',e:'🐕'},{w:'bird',e:'🐦'},{w:'fish',e:'🐟'},{w:'mat',e:'🟫'},{w:'sat',e:'🪑'},{w:'hat',e:'🎩'},{w:'bat',e:'🦇'}];
+let score=0,combo=0,t=30,target=0,round=0;
+const moles=[document.getElementById('m0'),document.getElementById('m1'),document.getElementById('m2')];
+const wds=[document.getElementById('w0'),document.getElementById('w1'),document.getElementById('w2')];
+const fb=document.getElementById('fb');
+function newRound(){
+  round++;
+  const pool=[...words].sort(()=>Math.random()-.5);
+  target=Math.floor(Math.random()*3);
+  const chosen=pool.slice(0,3);
+  const tgt=pool[Math.floor(Math.random()*pool.length)];
+  chosen[target]=tgt;
+  document.getElementById('targetWord').textContent=tgt.e+' '+tgt.w;
+  moles.forEach((m,i)=>{m.className='mole';m.querySelector('.mole-emoji').textContent=chosen[i].e;wds[i].textContent=chosen[i].w;});
+  setTimeout(()=>{const up=[0,1,2].sort(()=>Math.random()-.5).slice(0,2+Math.floor(Math.random()*2));up.forEach((i,d)=>setTimeout(()=>moles[i].classList.add('up'),d*200));},300);
+}
+function whack(idx){
+  if(idx===target){score+=10*(1+Math.min(combo,3));combo++;
+  moles[idx].classList.add('correct-hit');
+  showFb('✅ +'+10*(1+Math.min(combo-1,3)));
+  document.getElementById('scoreD').textContent='⭐ '+score;
+  document.getElementById('combo').textContent=combo>1?'🔥 连击×'+combo:'';
+  setTimeout(newRound,800);
+  }else{combo=0;moles[idx].classList.add('hit');showFb('❌');document.getElementById('combo').textContent='';}
+}
+function showFb(txt){fb.textContent=txt;fb.classList.add('show');setTimeout(()=>fb.classList.remove('show'),600);}
+newRound();
+const ti=setInterval(()=>{t--;document.getElementById('timer').textContent=t;if(t<=0){clearInterval(ti);showFb('⏰ 时间到！得分：'+score);}},1000);
+</script>
+</body>
+</html>

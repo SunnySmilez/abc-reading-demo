@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
+<title>选择题互动 · RAZ伴学师1V6</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
+.top{height:42px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);}
+.top .title{font-size:14px;font-weight:600;}
+.top .timer{font-size:24px;font-weight:800;color:#FF6B6B;}
+.body-area{display:flex;height:calc(100% - 42px - 50px);}
+/* 左：题目 */
+.quiz-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:30px;}
+.question-card{text-align:center;}
+.q-emoji{font-size:80px;margin-bottom:16px;}
+.q-text{font-size:28px;font-weight:700;margin-bottom:8px;}
+.q-sub{font-size:14px;color:#888;}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:500px;}
+.opt{padding:20px;border-radius:16px;border:2px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;transition:all .2s;text-align:center;position:relative;}
+.opt:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);}
+.opt .opt-letter{font-size:12px;color:#888;margin-bottom:4px;}
+.opt .opt-text{font-size:20px;font-weight:600;}
+.opt .opt-bar{position:absolute;bottom:0;left:0;height:4px;border-radius:0 0 14px 14px;transition:width .5s ease;}
+.opt.selected{border-color:#4ECDC4;background:rgba(78,205,196,.08);}
+.opt.correct{border-color:#4ECDC4;background:rgba(78,205,196,.12);animation:correctPop .5s;}
+.opt.wrong{border-color:#FF6B6B;background:rgba(255,107,107,.08);animation:shake .4s;}
+.opt .vote-pct{position:absolute;top:8px;right:12px;font-size:11px;color:#888;opacity:0;transition:opacity .3s;}
+.show-votes .opt .vote-pct{opacity:1;}
+/* 右：投票结果 */
+.vote-panel{width:300px;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;padding:20px;background:rgba(255,255,255,.02);}
+.vp-title{font-size:13px;color:#888;margin-bottom:16px;}
+.vote-bars{display:flex;flex-direction:column;gap:12px;flex:1;}
+.vb-row{display:flex;flex-direction:column;gap:4px;}
+.vb-label{font-size:12px;display:flex;justify-content:space-between;}
+.vb-track{height:24px;background:rgba(255,255,255,.04);border-radius:8px;overflow:hidden;position:relative;}
+.vb-fill{height:100%;border-radius:8px;transition:width 1s ease;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;}
+.vb-fill.a{background:linear-gradient(90deg,#FF6B6B,#ff8e8e);}
+.vb-fill.b{background:linear-gradient(90deg,#4ECDC4,#6ee7de);}
+.vb-fill.c{background:linear-gradient(90deg,#FFE66D,#fff0a0);}
+.vb-fill.d{background:linear-gradient(90deg,#a78bfa,#c4b5fd);}
+.avatars-row{display:flex;gap:4px;margin-top:4px;}
+.avatars-row .av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;border:1px solid rgba(255,255,255,.1);}
+.celebrate{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:64px;z-index:200;animation:celebPop .8s ease-out forwards;}
+.scene-axis{height:50px;display:flex;align-items:center;padding:0 20px;border-top:1px solid rgba(255,255,255,.06);background:rgba(10,10,26,.95);}
+.ax{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;flex-shrink:0;}
+.ax .dot{width:10px;height:10px;border-radius:50%;background:#222;border:2px solid #333;transition:all .25s;}
+.ax.active .dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.ax.done .dot{background:#4ECDC4;border-color:#4ECDC4;}
+.ax .al{font-size:9px;color:#555;white-space:nowrap;}
+.ax.active .al{color:#FFE66D;font-weight:700;}
+.ax.done .al{color:#4ECDC4;}
+@keyframes correctPop{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+@keyframes celebPop{0%{opacity:1;transform:translate(-50%,-50%) scale(0);}50%{transform:translate(-50%,-50%) scale(1.3);}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5);}}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">❓ 选择题 · 听音选词</span>
+  <span class="timer" id="timer">15</span>
+</div>
+<div class="body-area">
+  <div class="quiz-main" id="quizMain">
+    <div class="question-card">
+      <div class="q-emoji">🔊</div>
+      <div class="q-text">Which word did you hear?</div>
+      <div class="q-sub">听一听，选出你听到的单词</div>
+    </div>
+    <div class="options" id="opts">
+      <div class="opt" onclick="pick(this,0)"><div class="opt-letter">A</div><div class="opt-text">🐱 cat</div><div class="opt-bar"></div><span class="vote-pct"></span></div>
+      <div class="opt" onclick="pick(this,1)"><div class="opt-letter">B</div><div class="opt-text">🐕 dog</div><div class="opt-bar"></div><span class="vote-pct"></span></div>
+      <div class="opt" onclick="pick(this,2)"><div class="opt-letter">C</div><div class="opt-text">🐦 bird</div><div class="opt-bar"></div><span class="vote-pct"></span></div>
+      <div class="opt" onclick="pick(this,3)"><div class="opt-letter">D</div><div class="opt-text">🐟 fish</div><div class="opt-bar"></div><span class="vote-pct"></span></div>
+    </div>
+  </div>
+  <div class="vote-panel">
+    <div class="vp-title">📊 实时投票 (6人)</div>
+    <div class="vote-bars" id="voteBars">
+      <div class="vb-row"><div class="vb-label"><span>A. cat</span><span id="va">0人</span></div><div class="vb-track"><div class="vb-fill a" id="ba" style="width:0%"></div></div><div class="avatars-row" id="ava"></div></div>
+      <div class="vb-row"><div class="vb-label"><span>B. dog</span><span id="vb">0人</span></div><div class="vb-track"><div class="vb-fill b" id="bb" style="width:0%"></div></div><div class="avatars-row" id="avb"></div></div>
+      <div class="vb-row"><div class="vb-label"><span>C. bird</span><span id="vc">0人</span></div><div class="vb-track"><div class="vb-fill c" id="bc" style="width:0%"></div></div><div class="avatars-row" id="avc"></div></div>
+      <div class="vb-row"><div class="vb-label"><span>D. fish</span><span id="vd">0人</span></div><div class="vb-track"><div class="vb-fill d" id="bd" style="width:0%"></div></div><div class="avatars-row" id="avd"></div></div>
+    </div>
+  </div>
+</div>
+<div class="celebrate" id="celeb">🎉</div>
+<div class="scene-axis">
+  <div class="ax done"><div class="dot"></div><span class="al">等候</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">暖场</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">带读</span></div>
+  <div class="ax active"><div class="dot"></div><span class="al">选择题</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">打地鼠</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">翻卡</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">连词</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">开口</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">检测</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">总结</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">复习</span></div>
+</div>
+<script>
+const correct=0;let picked=false;let t=15;
+const stus=['👧','🧒','👧','👦','🧑','👶'];
+const names=['Lily','Tom','Amy','Jack','Mia','Leo'];
+let votes=[0,0,0,0];let voted=[];
+// 模拟其他学生投票
+setTimeout(()=>{addVote(0,'👧');},2000);
+setTimeout(()=>{addVote(0,'🧒');},3500);
+setTimeout(()=>{addVote(1,'👦');},4000);
+setTimeout(()=>{addVote(0,'🧑');},5500);
+setTimeout(()=>{addVote(0,'👶');},7000);
+function addVote(idx,emoji){votes[idx]++;updateVoteUI();const r=document.getElementById(['ava','avb','avc','avd'][idx]);const a=document.createElement('div');a.className='av';a.textContent=emoji;r.appendChild(a);}
+function updateVoteUI(){const total=votes.reduce((a,b)=>a+b,0)||1;['a','b','c','d'].forEach((l,i)=>{document.getElementById('v'+l).textContent=votes[i]+'人';document.getElementById('b'+l).style.width=(votes[i]/6*100)+'%';});}
+function pick(el,idx){if(picked)return;picked=true;el.classList.add('selected');
+addVote(idx,'👧');
+setTimeout(()=>{const opts=document.querySelectorAll('.opt');opts[correct].classList.add('correct');if(idx!==correct)el.classList.add('wrong');
+document.getElementById('quizMain').classList.add('show-votes');
+opts.forEach((o,i)=>{o.querySelector('.vote-pct').textContent=Math.round(votes[i]/6*100)+'%';});
+if(idx===correct){const c=document.getElementById('celeb');c.style.display='block';setTimeout(()=>c.style.display='none',1000);}
+},800);}
+const ti=setInterval(()=>{t--;document.getElementById('timer').textContent=t;if(t<=5)document.getElementById('timer').style.color='#FF4757';if(t<=0){clearInterval(ti);if(!picked){picked=true;document.querySelectorAll('.opt')[correct].classList.add('correct');}}},1000);
+</script>
+</body>
+</html>
