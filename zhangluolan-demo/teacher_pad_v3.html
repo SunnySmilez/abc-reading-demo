@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAZ伴学师 - 教师端(Pad)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .ipad-frame {
+            width: 1024px;
+            height: 768px;
+            background: #000;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            margin: 0 auto;
+        }
+        .ipad-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .video-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .btn-control { transition: all 0.2s ease; }
+        .btn-control:active { transform: scale(0.95); }
+        .btn-control.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .student-video { transition: all 0.3s ease; }
+        .student-video.speaking { border: 3px solid #10B981; box-shadow: 0 0 20px rgba(16,185,129,0.3); }
+        .student-video.hand-up::after {
+            content: '✋';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 16px;
+            animation: wave 0.5s ease-in-out infinite;
+        }
+        @keyframes wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } }
+        .ranking-item:nth-child(1) { background: linear-gradient(90deg, #fef3c7, #fff); }
+        .ranking-item:nth-child(2) { background: linear-gradient(90deg, #f3f4f6, #fff); }
+        .ranking-item:nth-child(3) { background: linear-gradient(90deg, #fef3c7, #fff); opacity: 0.9; }
+        .phase-btn { transition: all 0.2s ease; }
+        .phase-btn:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-gray-200 min-h-screen flex flex-col items-center justify-center p-4">
+    
+    <div class="ipad-frame">
+        <div class="ipad-screen flex flex-col">
+            
+            <!-- 顶部 -->
+            <header class="bg-white px-4 py-2 flex items-center justify-between border-b shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                        <i class="ri-user-star-line text-lg text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-gray-800 font-bold text-sm">RAZ伴学师 - 教师端</h1>
+                        <p class="text-gray-500 text-xs">张罗兰 | 授课中</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-purple-50 px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <span class="text-xs text-gray-600">环节：</span>
+                        <span id="currentPhase" class="text-sm font-medium text-purple-600">暖场</span>
+                        <span class="text-gray-400">|</span>
+                        <span id="timer" class="font-mono text-base font-bold text-orange-500">18:32</span>
+                        <span class="text-gray-400">/</span>
+                        <span class="font-mono text-sm text-gray-500">30:00</span>
+                    </div>
+                    <button class="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs hover:bg-red-600">结束课程</button>
+                </div>
+            </header>
+
+            <div class="flex-1 flex overflow-hidden">
+                <!-- 左侧：课件区 -->
+                <main class="flex-1 p-3 flex flex-col">
+                    <!-- 课件内容 -->
+                    <div class="flex-1 bg-white rounded-2xl shadow-sm overflow-hidden relative">
+                        <div id="coursewareView" class="absolute inset-0">
+                            
+                            <!-- 环节1: 暖场 -->
+                            <div id="phase1Content" class="h-full flex flex-col items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50">
+                                <i class="ri-music-2-line text-5xl text-orange-400 mb-3"></i>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">字母歌</h3>
+                                <p class="text-gray-600 mb-4 text-sm">播放字母歌，带领孩子们一起唱</p>
+                                <div class="flex gap-3">
+                                    <button onclick="togglePlay()" id="playBtn" class="px-6 py-2 bg-orange-500 text-white rounded-full flex items-center gap-2 hover:bg-orange-600 text-sm">
+                                        <i class="ri-play-fill text-lg"></i><span>播放</span>
+                                    </button>
+                                    <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm hover:bg-gray-200">暂停</button>
+                                </div>
+                            </div>
+
+                            <!-- 环节2: 绘本带读 -->
+                            <div id="phase2Content" class="h-full hidden flex-col bg-gradient-to-br from-red-50 to-pink-50">
+                                <div class="flex-1 flex items-center justify-center p-6">
+                                    <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+                                        <div class="text-7xl mb-4">🍎</div>
+                                        <h2 class="text-3xl font-bold text-gray-800 mb-2">An apple</h2>
+                                        <p class="text-gray-500">一个红苹果</p>
+                                        <div class="flex gap-2 justify-center mt-3">
+                                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">red</span>
+                                            <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">apple</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-center gap-4 pb-4">
+                                    <button class="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
+                                        <i class="ri-arrow-left-line"></i> 上一页
+                                    </button>
+                                    <span class="px-4 py-2 bg-gray-50 rounded-lg text-sm text-gray-500">3 / 12</span>
+                                    <button class="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">
+                                        下一页 <i class="ri-arrow-right-line"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 环节3: 互动练习 -->
+                            <div id="phase3Content" class="h-full hidden flex-col bg-gradient-to-br from-purple-50 to-indigo-50 items-center justify-center">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">拼图游戏</h3>
+                                <p class="text-gray-600 mb-4 text-sm">引导学生完成拼图</p>
+                                <div class="bg-white p-4 rounded-xl shadow-md">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div class="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">A</div>
+                                        <div class="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">B</div>
+                                        <div class="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">C</div>
+                                        <div class="w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">D</div>
+                                    </div>
+                                </div>
+                                <button onclick="startInteraction()" class="mt-4 px-6 py-2 bg-purple-500 text-white rounded-full text-sm hover:bg-purple-600">
+                                    发起互动
+                                </button>
+                            </div>
+
+                            <!-- 环节4: 开口输出 -->
+                            <div id="phase4Content" class="h-full hidden flex-col bg-gradient-to-br from-green-50 to-teal-50 items-center justify-center">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">跟读模式</h3>
+                                <p class="text-gray-600 mb-4 text-sm">点击学生头像让其跟读</p>
+                                <div class="bg-white rounded-xl shadow-md p-6 mb-4">
+                                    <div class="text-2xl font-bold text-gray-800">"An apple"</div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="px-4 py-2 bg-green-500 text-white rounded-lg text-sm">开始跟读</button>
+                                    <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm">结束跟读</button>
+                                </div>
+                            </div>
+
+                            <!-- 环节5: 闭环检测 -->
+                            <div id="phase5Content" class="h-full hidden flex-col bg-gradient-to-br from-blue-50 to-indigo-50 items-center justify-center p-6">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4">小测验</h3>
+                                <p class="text-gray-600 mb-4 text-sm">哪个是苹果？</p>
+                                <div class="grid grid-cols-2 gap-3 max-w-xs w-full mb-4">
+                                    <div class="h-20 bg-white rounded-xl text-3xl flex items-center justify-center shadow-md">🍎</div>
+                                    <div class="h-20 bg-white rounded-xl text-3xl flex items-center justify-center shadow-md">🍌</div>
+                                    <div class="h-20 bg-white rounded-xl text-3xl flex items-center justify-center shadow-md">🍇</div>
+                                    <div class="h-20 bg-white rounded-xl text-3xl flex items-center justify-center shadow-md">🍊</div>
+                                </div>
+                                <button onclick="showResult()" class="px-6 py-2 bg-blue-500 text-white rounded-full text-sm">查看答题结果</button>
+                            </div>
+
+                            <!-- 环节6: 总结激励 -->
+                            <div id="phase6Content" class="h-full hidden flex-col bg-gradient-to-br from-yellow-50 to-orange-50 items-center justify-center">
+                                <i class="ri-trophy-line text-5xl text-yellow-500 mb-3"></i>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">课程总结</h3>
+                                <div class="bg-white rounded-xl shadow-lg p-5 mb-3 w-64">
+                                    <p class="text-sm text-gray-600 mb-2">今日学习单词：</p>
+                                    <p class="text-lg font-bold text-gray-800">apple, red</p>
+                                    <div class="mt-3 pt-3 border-t">
+                                        <p class="text-xs text-gray-500">全班平均掌握度：85%</p>
+                                    </div>
+                                </div>
+                                <button onclick="giveReward()" class="px-6 py-2 bg-yellow-500 text-white rounded-full text-sm hover:bg-yellow-600">
+                                    发放奖励
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 环节切换 -->
+                    <div class="mt-3 bg-white rounded-xl p-2 shadow-sm flex gap-1">
+                        <button onclick="switchPhase(1)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-purple-600 text-white" data-phase="1">暖场</button>
+                        <button onclick="switchPhase(2)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="2">带读</button>
+                        <button onclick="switchPhase(3)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="3">互动</button>
+                        <button onclick="switchPhase(4)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="4">跟读</button>
+                        <button onclick="switchPhase(5)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="5">测验</button>
+                        <button onclick="switchPhase(6)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="6">总结</button>
+                    </div>
+                </main>
+
+                <!-- 右侧：视频区（老师+6学生+积分墙） -->
+                <aside class="w-64 p-3 pr-4 flex flex-col gap-3 bg-gray-50">
+                    
+                    <!-- 老师视频 -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm relative">
+                        <div class="aspect-video flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-500 relative">
+                            <div class="text-center">
+                                <i class="ri-user-3-line text-3xl text-white"></i>
+                                <p class="text-white text-sm font-bold mt-1">我（老师）</p>
+                            </div>
+                            <div class="absolute top-2 right-2 px-2 py-1 bg-green-500 rounded-full text-xs text-white flex items-center gap-1">
+                                <i class="ri-mic-line"></i> 主讲
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 积分墙 -->
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-yellow-200">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2 text-sm">
+                            <i class="ri-trophy-line text-yellow-500"></i>积分排行
+                        </h4>
+                        <div id="rankingList" class="space-y-1.5">
+                            <div class="ranking-item flex items-center justify-between p-1.5 rounded-lg cursor-pointer hover:bg-yellow-100" onclick="addPoints('小红')">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-white">1</span>
+                                    <span class="text-xs text-gray-700">小红</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold text-orange-500">52</span>
+                                    <button class="w-5 h-5 bg-yellow-400 rounded-full text-xs text-white hover:bg-yellow-500">+</button>
+                                </div>
+                            </div>
+                            <div class="ranking-item flex items-center justify-between p-1.5 rounded-lg cursor-pointer hover:bg-gray-100" onclick="addPoints('小芳')">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-white">2</span>
+                                    <span class="text-xs text-gray-700">小芳</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold text-orange-500">48</span>
+                                    <button class="w-5 h-5 bg-yellow-400 rounded-full text-xs text-white hover:bg-yellow-500">+</button>
+                                </div>
+                            </div>
+                            <div class="ranking-item flex items-center justify-between p-1.5 rounded-lg cursor-pointer hover:bg-yellow-100" onclick="addPoints('小丽')">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-orange-300 rounded-full flex items-center justify-center text-xs font-bold text-white">3</span>
+                                    <span class="text-xs text-gray-700">小丽</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold text-orange-500">45</span>
+                                    <button class="w-5 h-5 bg-yellow-400 rounded-full text-xs text-white hover:bg-yellow-500">+</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-1.5 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="addPoints('小明')">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center text-xs text-gray-500">4</span>
+                                    <span class="text-xs text-gray-600">小明</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs text-gray-500">41</span>
+                                    <button class="w-5 h-5 bg-yellow-400 rounded-full text-xs text-white hover:bg-yellow-500">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学生视频（6个） -->
+                    <div class="flex-1 grid grid-cols-2 gap-2 overflow-y-auto">
+                        <div id="student1" class="student-video bg-white rounded-lg overflow-hidden shadow-sm relative cursor-pointer" onclick="selectStudent('student1', '小红')">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-pink-400 to-pink-500">
+                                <span class="text-white text-lg font-bold">红</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小红</span>
+                            <div class="absolute top-1 right-1 hidden hand-icon">✋</div>
+                        </div>
+                        <div id="student2" class="student-video bg-white rounded-lg overflow-hidden shadow-sm relative cursor-pointer" onclick="selectStudent('student2', '小芳')">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-teal-400 to-teal-500">
+                                <span class="text-white text-lg font-bold">芳</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小芳</span>
+                            <div class="absolute top-1 right-1 hidden hand-icon">✋</div>
+                        </div>
+                        <div id="student3" class="student-video bg-white rounded-lg overflow-hidden shadow-sm relative cursor-pointer" onclick="selectStudent('student3', '小丽')">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-500">
+                                <span class="text-white text-lg font-bold">丽</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小丽</span>
+                            <div class="absolute top-1 right-1 hidden hand-icon">✋</div>
+                        </div>
+                        <div id="student4" class="student-video bg-white rounded-lg overflow-hidden shadow-sm relative cursor-pointer" onclick="selectStudent('student4', '小明')">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-500">
+                                <span class="text-white text-lg font-bold">明</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小明</span>
+                            <div class="absolute top-1 right-1 hidden hand-icon">✋</div>
+                        </div>
+                        <div id="student5" class="student-video bg-white rounded-lg overflow-hidden shadow-sm relative cursor-pointer" onclick="selectStudent('student5', '小华')">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-green-400 to-green-500">
+                                <span class="text-white text-lg font-bold">华</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小华</span>
+                            <div class="absolute top-1 right-1 hidden hand-icon">✋</div>
+                        </div>
+                        <div id="student6" class="student-video bg-white rounded-lg overflow-hidden shadow-sm relative cursor-pointer" onclick="selectStudent('student6', '小强')">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500">
+                                <span class="text-white text-lg font-bold">强</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小强</span>
+                            <div class="absolute top-1 right-1 hidden hand-icon">✋</div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- 底部工具栏 -->
+            <div class="bg-white px-4 py-3 border-t shadow-sm">
+                <div class="flex items-center justify-center gap-4">
+                    <button onclick="startInteraction()" class="btn-control px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium hover:bg-purple-200 flex items-center gap-2">
+                        <i class="ri-gamepad-line"></i>发起互动
+                    </button>
+                    <button onclick="muteAll()" class="btn-control px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center gap-2">
+                        <i class="ri-mic-off-line"></i>全员静音
+                    </button>
+                    <button onclick="toggleSettings()" class="btn-control px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 flex items-center gap-2">
+                        <i class="ri-settings-3-line"></i>课堂设置
+                    </button>
+                    <button onclick="randomHand()" class="btn-control px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 flex items-center gap-2">
+                        <i class="ri-shuffle-line"></i>随机点名
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo导航 -->
+    <div class="mt-6 bg-white rounded-2xl shadow-lg p-5 max-w-4xl w-full">
+        <p class="text-sm text-gray-500 mb-3 text-center">📋 Demo环节导航（不在产品中）</p>
+        <div class="flex items-center justify-center gap-2">
+            <button onclick="switchPhase(1)" class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-xl border border-green-200 hover:bg-green-100 transition">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
+                <span class="text-xs text-gray-700">暖场 2'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(2)" class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-xl border border-blue-400 hover:bg-blue-100 transition">
+                <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">2</div>
+                <span class="text-xs text-gray-800">带读 8'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(3)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">3</div>
+                <span class="text-xs text-gray-600">互动 8'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(4)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">4</div>
+                <span class="text-xs text-gray-600">跟读 6'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(5)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">5</div>
+                <span class="text-xs text-gray-600">测验 4'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(6)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">6</div>
+                <span class="text-xs text-gray-600">总结 2'</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPhase = 1;
+        let selectedStudent = null;
+        const phaseNames = ['', '暖场', '绘本带读', '互动练习', '开口输出', '闭环检测', '总结激励'];
+        let studentPoints = { '小红': 52, '小芳': 48, '小丽': 45, '小明': 41, '小华': 38, '小强': 35 };
+
+        function switchPhase(phase) {
+            currentPhase = phase;
+            document.getElementById('currentPhase').textContent = phaseNames[phase];
+            document.querySelectorAll('.phase-btn').forEach(btn => {
+                const btnPhase = parseInt(btn.dataset.phase);
+                if (btnPhase === phase) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-600');
+                    btn.classList.add('bg-purple-600', 'text-white');
+                } else {
+                    btn.classList.remove('bg-purple-600', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                }
+            });
+            for (let i = 1; i <= 6; i++) {
+                const content = document.getElementById(`phase${i}Content`);
+                if (content) {
+                    content.classList.add('hidden');
+                    content.classList.remove('flex');
+                }
+            }
+            const currentContent = document.getElementById(`phase${phase}Content`);
+            if (currentContent) {
+                currentContent.classList.remove('hidden');
+                currentContent.classList.add('flex');
+            }
+        }
+
+        function selectStudent(id, name) {
+            document.querySelectorAll('.student-video').forEach(s => s.classList.remove('speaking'));
+            document.getElementById(id).classList.add('speaking');
+            selectedStudent = name;
+            setTimeout(() => {
+                document.getElementById(id).classList.remove('speaking');
+            }, 5000);
+        }
+
+        function addPoints(name) {
+            studentPoints[name] += 5;
+            alert(`✅ 给 ${name} 加了5分！当前积分：${studentPoints[name]}`);
+        }
+
+        function randomHand() {
+            const students = ['student1', 'student2', 'student3', 'student4', 'student5', 'student6'];
+            const randomId = students[Math.floor(Math.random() * students.length)];
+            const handIcon = document.querySelector(`#${randomId} .hand-icon`);
+            handIcon.classList.remove('hidden');
+            setTimeout(() => handIcon.classList.add('hidden'), 3000);
+        }
+
+        function startInteraction() {
+            alert('🎮 已发起互动环节，学生端已同步');
+        }
+
+        function muteAll() {
+            alert('🔇 全员已静音');
+        }
+
+        function toggleSettings() {
+            alert('⚙️ 课堂设置面板');
+        }
+
+        function togglePlay() {
+            const btn = document.getElementById('playBtn');
+            const isPlaying = btn.innerHTML.includes('暂停');
+            btn.innerHTML = isPlaying ? '<i class="ri-play-fill text-lg"></i><span>播放</span>' : '<i class="ri-pause-fill text-lg"></i><span>暂停</span>';
+        }
+
+        function showResult() {
+            alert('📊 答题结果：\n小红：正确 ✓\n小芳：正确 ✓\n小丽：正确 ✓\n小明：错误 ✗\n小华：正确 ✓\n小强：正确 ✓');
+        }
+
+        function giveReward() {
+            alert('🎁 奖励已发放给全班同学！');
+        }
+    </script>
+</body>
+</html>

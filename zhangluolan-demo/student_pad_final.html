@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAZ伴学师 - 学生端(Pad)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .ipad-frame {
+            width: 1024px;
+            height: 768px;
+            background: #000;
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            margin: 0 auto;
+        }
+        .ipad-screen {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .btn-tool { transition: all 0.2s ease; }
+        .btn-tool:active { transform: scale(0.95); }
+        .btn-tool.active { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        @keyframes hand-wave { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-20deg); } 75% { transform: rotate(20deg); } }
+        .hand-raising { animation: hand-wave 0.5s ease-in-out infinite; }
+        @keyframes emoji-float { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.2); opacity: 0; } }
+        .emoji-anim { animation: emoji-float 1.5s ease-out forwards; position: absolute; }
+        .answer-btn { transition: all 0.2s ease; }
+        .answer-btn:hover { transform: translateY(-2px); }
+        .answer-btn.correct { background: linear-gradient(135deg, #10B981, #059669) !important; }
+        .answer-btn.wrong { background: linear-gradient(135deg, #EF4444, #DC2626) !important; }
+        .ranking-item:nth-child(1) { background: linear-gradient(90deg, #fef3c7, #fff); }
+        .ranking-item:nth-child(2) { background: linear-gradient(90deg, #f3f4f6, #fff); }
+        .ranking-item:nth-child(3) { background: linear-gradient(90deg, #fef3c7, #fff); opacity: 0.9; }
+        .video-card { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    </style>
+</head>
+<body class="bg-gray-200 min-h-screen flex flex-col items-center justify-center p-4">
+    
+    <div class="ipad-frame">
+        <div class="ipad-screen flex flex-col">
+            
+            <!-- 顶部 -->
+            <header class="bg-white px-4 py-2 flex items-center justify-between border-b shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="ri-book-open-line text-lg text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-gray-800 font-bold text-sm">aa级别 - An Apple</h1>
+                        <p class="text-gray-500 text-xs">伴读直播课</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-50 px-3 py-1.5 rounded-full flex items-center gap-2">
+                        <span class="text-xs text-gray-600">环节：</span>
+                        <span id="currentPhase" class="text-sm font-medium text-blue-600">暖场</span>
+                        <span class="text-gray-400">|</span>
+                        <span id="countdown" class="font-mono text-base font-bold text-orange-500">01:58</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex-1 flex overflow-hidden">
+                <!-- 左侧：纯课件区 -->
+                <main class="flex-1 p-3 flex flex-col">
+                    <!-- 课件内容 -->
+                    <div class="flex-1 bg-white rounded-2xl shadow-sm overflow-hidden relative">
+                        <div id="coursewareView" class="absolute inset-0">
+                            
+                            <!-- 环节1: 暖场 -->
+                            <div id="phase1Content" class="h-full flex flex-col items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-50">
+                                <i class="ri-music-2-line text-5xl text-orange-400 mb-3"></i>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">字母歌</h3>
+                                <p class="text-gray-600 mb-4 text-sm">让我们一起唱字母歌！</p>
+                                <button onclick="togglePlay()" id="playBtn" class="px-6 py-2 bg-orange-500 text-white rounded-full flex items-center gap-2 hover:bg-orange-600 text-sm">
+                                    <i class="ri-play-fill text-lg"></i><span>播放</span>
+                                </button>
+                            </div>
+
+                            <!-- 环节2: 绘本带读 -->
+                            <div id="phase2Content" class="h-full hidden flex-col bg-gradient-to-br from-red-50 to-pink-50">
+                                <div class="flex-1 flex items-center justify-center p-6">
+                                    <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+                                        <div class="text-7xl mb-4">🍎</div>
+                                        <h2 class="text-3xl font-bold text-gray-800 mb-2">An apple</h2>
+                                        <p class="text-gray-500">一个红苹果</p>
+                                        <div class="flex gap-2 justify-center mt-3">
+                                            <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">red</span>
+                                            <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs">apple</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 环节3: 互动练习 -->
+                            <div id="phase3Content" class="h-full hidden flex-col bg-gradient-to-br from-purple-50 to-indigo-50 items-center justify-center">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">拼图游戏</h3>
+                                <p class="text-gray-600 mb-4 text-sm">点击两个方块交换位置</p>
+                                <div id="puzzleContainer" class="grid grid-cols-2 gap-2 bg-white p-3 rounded-xl shadow-md"></div>
+                            </div>
+
+                            <!-- 环节4: 开口输出 -->
+                            <div id="phase4Content" class="h-full hidden flex-col bg-gradient-to-br from-green-50 to-teal-50 items-center justify-center">
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">轮到你了！</h3>
+                                <p class="text-gray-600 mb-4 text-sm">请跟读："An apple"</p>
+                                <div class="bg-white rounded-xl shadow-md p-6 mb-4">
+                                    <div class="text-2xl font-bold text-gray-800">"An apple"</div>
+                                </div>
+                                <button onclick="startRecording()" class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center hover:bg-red-600 shadow-lg">
+                                    <i class="ri-mic-line text-2xl text-white"></i>
+                                </button>
+                            </div>
+
+                            <!-- 环节5: 闭环检测 -->
+                            <div id="phase5Content" class="h-full hidden flex-col bg-gradient-to-br from-blue-50 to-indigo-50 items-center justify-center p-6">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4">哪个是苹果？</h3>
+                                <div class="grid grid-cols-2 gap-3 max-w-xs w-full">
+                                    <button onclick="answerQuiz(this, 'A')" class="answer-btn h-20 bg-white rounded-xl text-3xl shadow-md hover:shadow-lg">🍎</button>
+                                    <button onclick="answerQuiz(this, 'B')" class="answer-btn h-20 bg-white rounded-xl text-3xl shadow-md hover:shadow-lg">🍌</button>
+                                    <button onclick="answerQuiz(this, 'C')" class="answer-btn h-20 bg-white rounded-xl text-3xl shadow-md hover:shadow-lg">🍇</button>
+                                    <button onclick="answerQuiz(this, 'D')" class="answer-btn h-20 bg-white rounded-xl text-3xl shadow-md hover:shadow-lg">🍊</button>
+                                </div>
+                            </div>
+
+                            <!-- 环节6: 总结激励 -->
+                            <div id="phase6Content" class="h-full hidden flex-col bg-gradient-to-br from-yellow-50 to-orange-50 items-center justify-center">
+                                <i class="ri-trophy-line text-5xl text-yellow-500 mb-3"></i>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">课程完成！</h3>
+                                <div class="bg-white rounded-xl shadow-lg p-5 mb-3">
+                                    <div class="flex justify-center gap-1 mb-2">
+                                        <i class="ri-star-fill text-2xl text-yellow-400"></i>
+                                        <i class="ri-star-fill text-2xl text-yellow-400"></i>
+                                        <i class="ri-star-fill text-2xl text-yellow-400"></i>
+                                        <i class="ri-star-fill text-2xl text-yellow-400"></i>
+                                        <i class="ri-star-fill text-2xl text-yellow-400"></i>
+                                    </div>
+                                    <p class="text-base font-medium text-gray-800">获得 50 积分！</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="emojiContainer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                    </div>
+
+                    <!-- 环节切换 -->
+                    <div class="mt-3 bg-white rounded-xl p-2 shadow-sm flex gap-1">
+                        <button onclick="switchPhase(1)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-blue-600 text-white" data-phase="1">暖场</button>
+                        <button onclick="switchPhase(2)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="2">带读</button>
+                        <button onclick="switchPhase(3)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="3">互动</button>
+                        <button onclick="switchPhase(4)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="4">跟读</button>
+                        <button onclick="switchPhase(5)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="5">测验</button>
+                        <button onclick="switchPhase(6)" class="phase-btn flex-1 py-2 rounded-lg text-xs font-medium transition bg-gray-100 text-gray-600" data-phase="6">总结</button>
+                    </div>
+                </main>
+
+                <!-- 右侧：视频区（老师+6学生+积分墙） -->
+                <aside class="w-60 p-3 pr-4 flex flex-col gap-3 bg-gray-50">
+                    
+                    <!-- 老师视频 -->
+                    <div class="video-card bg-white rounded-xl overflow-hidden relative">
+                        <div class="aspect-video flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-500 relative">
+                            <div class="text-center">
+                                <i class="ri-user-3-line text-2xl text-white"></i>
+                                <p class="text-white text-xs font-bold mt-1">张罗兰老师</p>
+                            </div>
+                            <div class="absolute top-2 right-2 px-2 py-0.5 bg-green-500 rounded-full text-xs text-white flex items-center gap-1">
+                                <i class="ri-mic-line text-xs"></i> 主讲
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 积分墙 -->
+                    <div class="bg-white rounded-xl p-3 shadow-sm border border-yellow-200">
+                        <h4 class="font-bold text-gray-800 mb-2 flex items-center gap-2 text-sm">
+                            <i class="ri-trophy-line text-yellow-500"></i>积分排行
+                        </h4>
+                        <div id="rankingList" class="space-y-1.5">
+                            <div class="ranking-item flex items-center justify-between p-1.5 rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-white">1</span>
+                                    <span class="text-xs text-gray-700">小红</span>
+                                </div>
+                                <span class="text-xs font-bold text-orange-500">52</span>
+                            </div>
+                            <div class="ranking-item flex items-center justify-between p-1.5 rounded-lg" style="background: #f9fafb;">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-xs font-bold text-white">2</span>
+                                    <span class="text-xs text-gray-700">小芳</span>
+                                </div>
+                                <span class="text-xs font-bold text-orange-500">48</span>
+                            </div>
+                            <div class="ranking-item flex items-center justify-between p-1.5 rounded-lg" style="background: #fef3c7; opacity: 0.9;">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-orange-300 rounded-full flex items-center justify-center text-xs font-bold text-white">3</span>
+                                    <span class="text-xs text-gray-700">我</span>
+                                </div>
+                                <span class="text-xs font-bold text-orange-500">45</span>
+                            </div>
+                            <div class="flex items-center justify-between p-1.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center text-xs text-gray-500">4</span>
+                                    <span class="text-xs text-gray-600">小丽</span>
+                                </div>
+                                <span class="text-xs text-gray-500">41</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 学生视频（6个） -->
+                    <div class="flex-1 grid grid-cols-2 gap-2 overflow-y-auto">
+                        <div class="video-card bg-white rounded-lg overflow-hidden relative border-2 border-pink-400">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-pink-400 to-pink-500">
+                                <span class="text-white text-base font-bold">我</span>
+                            </div>
+                            <div class="absolute bottom-1 left-1 right-1 flex items-center justify-between">
+                                <span class="text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">我自己</span>
+                                <div id="myHandIcon" class="text-sm hidden hand-raising">✋</div>
+                            </div>
+                        </div>
+                        <div class="video-card bg-white rounded-lg overflow-hidden relative">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-blue-400 to-blue-500">
+                                <span class="text-white text-base font-bold">明</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小明</span>
+                        </div>
+                        <div class="video-card bg-white rounded-lg overflow-hidden relative">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-green-400 to-green-500">
+                                <span class="text-white text-base font-bold">华</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小华</span>
+                        </div>
+                        <div class="video-card bg-white rounded-lg overflow-hidden relative">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-purple-400 to-purple-500">
+                                <span class="text-white text-base font-bold">丽</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小丽</span>
+                        </div>
+                        <div class="video-card bg-white rounded-lg overflow-hidden relative">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500">
+                                <span class="text-white text-base font-bold">强</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小强</span>
+                        </div>
+                        <div class="video-card bg-white rounded-lg overflow-hidden relative">
+                            <div class="aspect-square flex items-center justify-center bg-gradient-to-br from-teal-400 to-teal-500">
+                                <span class="text-white text-base font-bold">芳</span>
+                            </div>
+                            <span class="absolute bottom-1 left-1 text-white text-xs bg-black/50 px-1.5 py-0.5 rounded">小芳</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- 底部工具栏 -->
+            <div class="bg-white px-4 py-3 border-t shadow-sm">
+                <div class="flex items-center justify-center gap-6">
+                    <button id="handBtn" onclick="toggleHand()" class="btn-tool w-14 h-14 bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-0.5 hover:bg-gray-200">
+                        <i class="ri-hand-line text-xl text-gray-600"></i>
+                        <span class="text-xs text-gray-500">举手</span>
+                    </button>
+
+                    <div class="relative">
+                        <button onclick="toggleEmojiPanel()" class="btn-tool w-14 h-14 bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-0.5 hover:bg-gray-200">
+                            <i class="ri-emotion-happy-line text-xl text-gray-600"></i>
+                            <span class="text-xs text-gray-500">表情</span>
+                        </button>
+                        <div id="emojiPanel" class="absolute bottom-16 left-1/2 -translate-x-1/2 bg-white rounded-xl p-2 shadow-lg hidden flex gap-2 border">
+                            <button onclick="sendEmoji('👍')" class="text-2xl hover:scale-125 transition">👍</button>
+                            <button onclick="sendEmoji('❤️')" class="text-2xl hover:scale-125 transition">❤️</button>
+                            <button onclick="sendEmoji('🎉')" class="text-2xl hover:scale-125 transition">🎉</button>
+                            <button onclick="sendEmoji('👏')" class="text-2xl hover:scale-125 transition">👏</button>
+                        </div>
+                    </div>
+
+                    <button id="rushBtn" onclick="rushAnswer()" class="btn-tool w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex flex-col items-center justify-center gap-0.5 text-white shadow-lg">
+                        <i class="ri-flashlight-line text-2xl"></i>
+                        <span class="text-xs font-bold">抢答</span>
+                    </button>
+
+                    <button class="btn-tool w-14 h-14 bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-0.5 hover:bg-gray-200">
+                        <i class="ri-more-line text-xl text-gray-600"></i>
+                        <span class="text-xs text-gray-500">更多</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo导航 -->
+    <div class="mt-6 bg-white rounded-2xl shadow-lg p-5 max-w-4xl w-full">
+        <p class="text-sm text-gray-500 mb-3 text-center">📋 Demo环节导航</p>
+        <div class="flex items-center justify-center gap-2">
+            <button onclick="switchPhase(1)" class="flex items-center gap-2 bg-green-50 px-3 py-2 rounded-xl border border-green-200 hover:bg-green-100 transition">
+                <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-white text-xs">✓</div>
+                <span class="text-xs text-gray-700">暖场 2'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(2)" class="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-xl border border-blue-400 hover:bg-blue-100 transition">
+                <div class="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold">2</div>
+                <span class="text-xs text-gray-800">带读 8'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(3)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">3</div>
+                <span class="text-xs text-gray-600">互动 8'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(4)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">4</div>
+                <span class="text-xs text-gray-600">跟读 6'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(5)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">5</div>
+                <span class="text-xs text-gray-600">测验 4'</span>
+            </button>
+            <span class="text-gray-300">→</span>
+            <button onclick="switchPhase(6)" class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 hover:bg-purple-50 transition">
+                <div class="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center text-white text-xs">6</div>
+                <span class="text-xs text-gray-600">总结 2'</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPhase = 1, isHandRaised = false, countdown = 118, selectedPuzzlePiece = null, puzzleOrder = ['C', 'A', 'D', 'B'];
+        const phaseNames = ['', '暖场', '绘本带读', '互动练习', '开口输出', '闭环检测', '总结激励'];
+
+        setInterval(() => {
+            countdown--;
+            if (countdown < 0) countdown = 0;
+            const m = Math.floor(countdown / 60).toString().padStart(2, '0');
+            const s = (countdown % 60).toString().padStart(2, '0');
+            document.getElementById('countdown').textContent = `${m}:${s}`;
+        }, 1000);
+
+        function switchPhase(phase) {
+            currentPhase = phase;
+            document.getElementById('currentPhase').textContent = phaseNames[phase];
+            document.querySelectorAll('.phase-btn').forEach(btn => {
+                const btnPhase = parseInt(btn.dataset.phase);
+                if (btnPhase === phase) {
+                    btn.classList.remove('bg-gray-100', 'text-gray-600');
+                    btn.classList.add('bg-blue-600', 'text-white');
+                } else {
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                }
+            });
+            for (let i = 1; i <= 6; i++) {
+                const content = document.getElementById(`phase${i}Content`);
+                if (content) {
+                    content.classList.add('hidden');
+                    content.classList.remove('flex');
+                }
+            }
+            const currentContent = document.getElementById(`phase${phase}Content`);
+            if (currentContent) {
+                currentContent.classList.remove('hidden');
+                currentContent.classList.add('flex');
+            }
+            if (phase === 3) initPuzzle();
+            countdown = 120;
+        }
+
+        function toggleHand() {
+            isHandRaised = !isHandRaised;
+            const btn = document.getElementById('handBtn');
+            const handIcon = document.getElementById('myHandIcon');
+            if (isHandRaised) {
+                btn.classList.add('active');
+                handIcon.classList.remove('hidden');
+            } else {
+                btn.classList.remove('active');
+                handIcon.classList.add('hidden');
+            }
+        }
+
+        function toggleEmojiPanel() {
+            document.getElementById('emojiPanel').classList.toggle('hidden');
+        }
+
+        function sendEmoji(emoji) {
+            const container = document.getElementById('emojiContainer');
+            const el = document.createElement('div');
+            el.textContent = emoji;
+            el.className = 'emoji-anim text-4xl';
+            el.style.left = Math.random() * 70 + 15 + '%';
+            el.style.bottom = '10%';
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 1500);
+            toggleEmojiPanel();
+        }
+
+        function rushAnswer() {
+            const btn = document.getElementById('rushBtn');
+            btn.innerHTML = '<i class="ri-loader-4-line text-xl animate-spin"></i>';
+            setTimeout(() => {
+                alert(Math.random() > 0.3 ? '🎉 抢答成功！' : '😅 再试一次');
+                btn.innerHTML = '<i class="ri-flashlight-line text-2xl"></i><span class="text-xs font-bold">抢答</span>';
+            }, 800);
+        }
+
+        function initPuzzle() {
+            const container = document.getElementById('puzzleContainer');
+            container.innerHTML = puzzleOrder.map((letter, index) => `
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-xl font-bold text-white cursor-pointer hover:scale-105 transition" 
+                     onclick="selectPuzzle(${index})">${letter}</div>
+            `).join('');
+        }
+
+        function selectPuzzle(index) {
+            if (selectedPuzzlePiece === null) {
+                selectedPuzzlePiece = index;
+            } else {
+                const temp = puzzleOrder[selectedPuzzlePiece];
+                puzzleOrder[selectedPuzzlePiece] = puzzleOrder[index];
+                puzzleOrder[index] = temp;
+                selectedPuzzlePiece = null;
+                initPuzzle();
+            }
+        }
+
+        function answerQuiz(btn, answer) {
+            document.querySelectorAll('.answer-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+            if (answer === 'A') {
+                btn.classList.add('correct');
+                setTimeout(() => alert('✅ 正确！+10分'), 200);
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(() => alert('❌ 再想想看'), 200);
+            }
+        }
+
+        function togglePlay() {
+            const btn = document.getElementById('playBtn');
+            const isPlaying = btn.innerHTML.includes('暂停');
+            btn.innerHTML = isPlaying ? '<i class="ri-play-fill text-lg"></i><span>播放</span>' : '<i class="ri-pause-fill text-lg"></i><span>暂停</span>';
+        }
+
+        function startRecording() {
+            alert('🎤 录音中...');
+            setTimeout(() => alert('✅ 完成！95分'), 1500);
+        }
+
+        initPuzzle();
+    </script>
+</body>
+</html>
