@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent生产矩阵 V5</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.status-running{animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.progress-bar{transition:width .8s ease}
+.card-hover{transition:all .2s}
+.card-hover:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.08)}
+/* 全局双列 */
+.dual-row{display:grid;grid-template-columns:1fr 1fr;min-height:0}
+/* 左列：深色科技风 */
+.col-l{padding:28px 36px;background:#0f172a;color:#e2e8f0;border-bottom:1px solid #1e293b}
+.col-l h3{color:#f8fafc}
+.col-l .sub{color:#94a3b8}
+.col-l .card-dark{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:12px}
+.col-l .badge{background:#334155;color:#94a3b8;font-size:11px;padding:2px 8px;border-radius:4px}
+/* 右列：亮色温暖 */
+.col-r{padding:28px 36px;background:#fffbf5;border-bottom:1px solid #fde68a;border-left:3px solid #f59e0b}
+.col-r h3{color:#92400e}
+.col-r .sub{color:#b45309}
+.col-r .card-warm{background:#fff;border:1px solid #fde68a;border-radius:10px;padding:12px}
+.layer-num{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+</style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<!-- Header -->
+<header style="background:linear-gradient(135deg,#667eea,#764ba2)" class="text-white py-5 px-8">
+<div class="max-w-[1400px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="text-3xl">&#x1f99e;</span>
+<div><h1 class="text-xl font-bold">OpenClaw Agent 生产矩阵</h1>
+<p class="text-purple-200 text-sm">统一能力体系 · 前置预生产 + 实时生产 · 个性化教学方案</p></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-white/20 px-3 py-1.5 rounded-lg text-sm flex items-center gap-2"><div class="w-2 h-2 bg-green-400 rounded-full status-running"></div>运行中</div>
+<button onclick="startProduction()" class="bg-white text-purple-600 px-5 py-1.5 rounded-lg text-sm font-semibold">+ 新建任务</button>
+</div>
+</div></header>
+
+<!-- 双列表头 -->
+<div class="max-w-[1400px] mx-auto dual-row" style="border-bottom:none">
+<div style="padding:14px 36px;background:#0f172a;border-bottom:2px solid #3b82f6">
+<p class="text-base font-bold text-blue-400">&#x1f4a1; 通用能力体系</p>
+<p class="text-xs text-slate-400">平台级架构，适用于任何课程品类</p></div>
+<div style="padding:14px 36px;background:#fffbf5;border-bottom:2px solid #f59e0b;border-left:3px solid #f59e0b">
+<p class="text-base font-bold text-amber-700">&#x1f4d6; RAZ伴学师 · 第一个样板间</p>
+<p class="text-xs text-amber-500">具体怎么用，一看就懂</p></div>
+</div>
+
+<div class="max-w-[1400px] mx-auto">
+
+<!-- Row 1: 输入层 -->
+<div class="dual-row">
+<div class="col-l">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-blue-900 text-blue-300">1</span><h3 class="font-semibold">输入层</h3></div>
+<p class="sub text-xs mb-4">三类素材输入 → 自动解析 → 触发生产</p>
+<div class="flex gap-3">
+<div class="card-dark flex-1 text-center"><div class="text-lg mb-1">&#x1f5bc;&#xfe0f;</div><p class="text-xs text-slate-300">课程图片</p></div>
+<div class="card-dark flex-1 text-center"><div class="text-lg mb-1">&#x1f4dd;</div><p class="text-xs text-slate-300">课程文本</p></div>
+<div class="card-dark flex-1 text-center"><div class="text-lg mb-1">&#x1f4cb;</div><p class="text-xs text-slate-300">教研大纲</p></div>
+</div>
+</div>
+<div class="col-r">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-amber-100 text-amber-700">1</span><h3 class="font-semibold text-amber-900">本次输入</h3></div>
+<div class="card-warm">
+<div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-bold">Level A</span><span class="text-sm font-bold text-gray-800">The Cat Sat on the Mat</span></div>
+<div class="flex gap-2 flex-wrap">
+<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">&#x1f5bc;&#xfe0f; 8页绘本图 ✓</span>
+<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">&#x1f4dd; 28词文本 ✓</span>
+<span class="px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded">&#x1f4cb; 核心词 cat/mat/sat ✓</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Row 2: 能力层 (Agent + Skill) -->
+<div class="dual-row">
+<div class="col-l">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-blue-900 text-blue-300">2</span><h3 class="font-semibold">能力层 · Agent + Skill</h3></div>
+<p class="sub text-xs mb-3">统一能力池，前置和实时共用同一套</p>
+
+<p class="text-xs text-blue-400 font-semibold mb-2">&#x1f916; Agent（按课程环节拆分）</p>
+<div class="grid grid-cols-3 gap-2 mb-4" id="agentGrid">
+<div class="agent-card card-dark flex items-center gap-2 card-hover"><span class="w-5 h-5 bg-blue-500 rounded flex items-center justify-center text-white" style="font-size:10px">&#x1f4cb;</span><span class="text-xs">教案</span><div class="hidden progress-container flex-1 ml-1"><div class="h-1 bg-slate-600 rounded"><div class="progress-bar h-full bg-blue-400 rounded" style="width:0"></div></div></div><span class="output-preview hidden text-xs text-green-400 ml-1">✓</span></div>
+<div class="agent-card card-dark flex items-center gap-2 card-hover"><span class="w-5 h-5 bg-green-500 rounded flex items-center justify-center text-white" style="font-size:10px">&#x1f4d6;</span><span class="text-xs">带读</span><div class="hidden progress-container flex-1 ml-1"><div class="h-1 bg-slate-600 rounded"><div class="progress-bar h-full bg-green-400 rounded" style="width:0"></div></div></div><span class="output-preview hidden text-xs text-green-400 ml-1">✓</span></div>
+<div class="agent-card card-dark flex items-center gap-2 card-hover"><span class="w-5 h-5 bg-orange-500 rounded flex items-center justify-center text-white" style="font-size:10px">&#x1f3ae;</span><span class="text-xs">互动</span><div class="hidden progress-container flex-1 ml-1"><div class="h-1 bg-slate-600 rounded"><div class="progress-bar h-full bg-orange-400 rounded" style="width:0"></div></div></div><span class="output-preview hidden text-xs text-green-400 ml-1">✓</span></div>
+<div class="agent-card card-dark flex items-center gap-2 card-hover"><span class="w-5 h-5 bg-purple-500 rounded flex items-center justify-center text-white" style="font-size:10px">&#x1f5e3;&#xfe0f;</span><span class="text-xs">口语</span><div class="hidden progress-container flex-1 ml-1"><div class="h-1 bg-slate-600 rounded"><div class="progress-bar h-full bg-purple-400 rounded" style="width:0"></div></div></div><span class="output-preview hidden text-xs text-green-400 ml-1">✓</span></div>
+<div class="agent-card card-dark flex items-center gap-2 card-hover"><span class="w-5 h-5 bg-pink-500 rounded flex items-center justify-center text-white" style="font-size:10px">&#x1f0cf;</span><span class="text-xs">单词</span><div class="hidden progress-container flex-1 ml-1"><div class="h-1 bg-slate-600 rounded"><div class="progress-bar h-full bg-pink-400 rounded" style="width:0"></div></div></div><span class="output-preview hidden text-xs text-green-400 ml-1">✓</span></div>
+<div class="agent-card card-dark flex items-center gap-2 card-hover"><span class="w-5 h-5 bg-cyan-500 rounded flex items-center justify-center text-white" style="font-size:10px">&#x2705;</span><span class="text-xs">检测</span><div class="hidden progress-container flex-1 ml-1"><div class="h-1 bg-slate-600 rounded"><div class="progress-bar h-full bg-cyan-400 rounded" style="width:0"></div></div></div><span class="output-preview hidden text-xs text-green-400 ml-1">✓</span></div>
+</div>
+
+<p class="text-xs text-purple-400 font-semibold mb-2">&#x1f9e0; Skill（底层可复用能力）</p>
+<div class="space-y-2">
+<div class="card-dark flex items-center gap-3"><span class="w-7 h-7 bg-purple-600 rounded-lg flex items-center justify-center text-sm">&#x1f50d;</span><div><p class="text-xs font-semibold text-slate-200">学情诊断</p><p class="text-xs text-slate-400">数据 → 画像 → 薄弱点</p></div></div>
+<div class="card-dark flex items-center gap-3"><span class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-sm">&#x1f4da;</span><div><p class="text-xs font-semibold text-slate-200">课程推荐</p><p class="text-xs text-slate-400">匹配 → 适配 → 路径</p></div></div>
+<div class="card-dark flex items-center gap-3"><span class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-sm">&#x1f393;</span><div><p class="text-xs font-semibold text-slate-200">课程教学</p><p class="text-xs text-slate-400">调节 → 生成 → 反馈</p></div></div>
+</div>
+</div>
+<div class="col-r">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-amber-100 text-amber-700">2</span><h3 class="font-semibold text-amber-900">RAZ课程包产出</h3></div>
+<p class="sub text-xs mb-3">6个Agent 3.2分钟并行完成 &#x2193;</p>
+<div class="card-warm mb-3">
+<div class="flex flex-wrap gap-2 mb-3">
+<span class="px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">&#x1f4cb; 30min教案</span>
+<span class="px-2 py-1 bg-green-50 text-green-700 text-xs rounded">&#x1f4d6; 带读8页</span>
+<span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded">&#x2753; 选择题×4</span>
+<span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded">&#x1f528; 打地鼠×2</span>
+<span class="px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded">&#x1f0cf; 翻卡×1</span>
+<span class="px-2 py-1 bg-purple-50 text-purple-700 text-xs rounded">&#x1f3a4; 口语×6人</span>
+<span class="px-2 py-1 bg-cyan-50 text-cyan-700 text-xs rounded">&#x2705; 检测×1套</span>
+</div>
+<div class="flex items-center justify-between"><span class="text-xs text-gray-400">耗时 <b class="text-gray-800">3.2min</b></span><span class="px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">✓ 预生产完成</span></div>
+</div>
+<p class="sub text-xs mb-2">课中Skill实时补位 &#x2193;</p>
+<div class="card-warm" style="border-color:#fca5a5">
+<p class="text-xs text-red-600 font-semibold mb-2">&#x26a1; 实时触发场景</p>
+<div class="space-y-1.5 text-xs">
+<div class="flex items-start gap-2"><span class="text-red-400">&#x2022;</span><span class="text-gray-600">Amy选择题连错2道 → <b>学情诊断</b>识别cat/mat混淆 → <b>课程教学</b>实时降1级出简单题</span></div>
+<div class="flex items-start gap-2"><span class="text-red-400">&#x2022;</span><span class="text-gray-600">Lily全部满分 → <b>课程推荐</b>推送Level B预习 → 开口环节加难度句型</span></div>
+<div class="flex items-start gap-2"><span class="text-red-400">&#x2022;</span><span class="text-gray-600">Jack跟读得分低 → 实时生成额外发音练习片段</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Row 3: 运行模式 -->
+<div class="dual-row">
+<div class="col-l">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-blue-900 text-blue-300">3</span><h3 class="font-semibold">运行模式</h3></div>
+<p class="sub text-xs mb-4">同一套能力，两种触发时机</p>
+<div class="space-y-3">
+<div class="card-dark" style="border-left:3px solid #3b82f6">
+<p class="text-sm font-semibold text-blue-300">&#x23f0; 前置预生产</p>
+<p class="text-xs text-slate-400 mt-1">课前批量 · Agent并行调Skill · 产出标准课程包 · 教研审核发布</p>
+<p class="text-xs text-slate-500 mt-1">目标：效率，把能确定的全做好</p>
+</div>
+<div class="card-dark" style="border-left:3px solid #a855f7">
+<p class="text-sm font-semibold text-purple-300">&#x26a1; 实时生产</p>
+<p class="text-xs text-slate-400 mt-1">课中按需 · Skill被服务直接调用 · 动态生成补位内容</p>
+<p class="text-xs text-slate-500 mt-1">目标：兜底，覆盖预生产不到的个性化场景</p>
+</div>
+</div>
+<div class="card-dark mt-3 text-center">
+<p class="text-xs text-slate-300">&#x1f3af; <b>最终输出：每个学生拿到个性化教学方案</b></p>
+</div>
+</div>
+<div class="col-r">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-amber-100 text-amber-700">3</span><h3 class="font-semibold text-amber-900">1V6 个性化结果</h3></div>
+<p class="sub text-xs mb-3">同一节课，6个学生各不相同</p>
+<div class="grid grid-cols-2 gap-3">
+<div class="card-warm card-hover" style="border-left:3px solid #10b981;padding:10px">
+<div class="flex items-center gap-2 mb-1.5"><span class="text-lg">&#x1f467;</span><div><p class="text-xs font-bold">Lily</p><span class="px-1.5 py-0.5 bg-green-100 text-green-700 rounded" style="font-size:10px">发音优秀</span></div></div>
+<div class="space-y-1 text-xs text-gray-500">
+<p>&#x1f3ae; 互动题+1级</p>
+<p>&#x1f4f9; 课后推送Level B预习视频</p>
+<p>&#x1f4d6; 替换高阶绘本 <i>Big Cat</i></p>
+</div></div>
+
+<div class="card-warm card-hover" style="border-left:3px solid #10b981;padding:10px">
+<div class="flex items-center gap-2 mb-1.5"><span class="text-lg">&#x1f9d2;</span><div><p class="text-xs font-bold">Tom</p><span class="px-1.5 py-0.5 bg-green-100 text-green-700 rounded" style="font-size:10px">表达积极</span></div></div>
+<div class="space-y-1 text-xs text-gray-500">
+<p>&#x1f3a4; 开口时间+30秒</p>
+<p>&#x1f4f9; 推送口语示范视频</p>
+<p>&#x1f5e3;&#xfe0f; 加挑战句型 "I see a big cat"</p>
+</div></div>
+
+<div class="card-warm card-hover" style="border-left:3px solid #eab308;padding:10px">
+<div class="flex items-center gap-2 mb-1.5"><span class="text-lg">&#x1f467;</span><div><p class="text-xs font-bold">Amy</p><span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded" style="font-size:10px">词汇待强</span></div></div>
+<div class="space-y-1 text-xs text-gray-500">
+<p>&#x1f0cf; 额外单词卡×2（cat/mat强化）</p>
+<p>&#x1f4f9; 推送单词动画短片</p>
+<p>&#x1f4d6; 加配同级绘本 <i>Cat Nap</i> 巩固</p>
+</div></div>
+
+<div class="card-warm card-hover" style="border-left:3px solid #eab308;padding:10px">
+<div class="flex items-center gap-2 mb-1.5"><span class="text-lg">&#x1f466;</span><div><p class="text-xs font-bold">Jack</p><span class="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 rounded" style="font-size:10px">跟读偏慢</span></div></div>
+<div class="space-y-1 text-xs text-gray-500">
+<p>&#x1f50a; 跟读语速0.8x放慢</p>
+<p>&#x1f4f9; 推送发音教学视频(短元音/ae/)</p>
+<p>&#x1f3ae; 替换为发音类游戏练习</p>
+</div></div>
+
+<div class="card-warm card-hover" style="border-left:3px solid #ef4444;padding:10px">
+<div class="flex items-center gap-2 mb-1.5"><span class="text-lg">&#x1f9d1;</span><div><p class="text-xs font-bold">Mia</p><span class="px-1.5 py-0.5 bg-red-100 text-red-700 rounded" style="font-size:10px">基础薄弱</span></div></div>
+<div class="space-y-1 text-xs text-gray-500">
+<p>&#x1f3ae; 互动题-1级</p>
+<p>&#x1f4f9; 推送字母认知视频(aa级)</p>
+<p>&#x1f4d6; 加配简单绘本 <i>I Like</i> 过渡</p>
+</div></div>
+
+<div class="card-warm card-hover" style="border-left:3px solid #10b981;padding:10px">
+<div class="flex items-center gap-2 mb-1.5"><span class="text-lg">&#x1f476;</span><div><p class="text-xs font-bold">Leo</p><span class="px-1.5 py-0.5 bg-green-100 text-green-700 rounded" style="font-size:10px">全面均衡</span></div></div>
+<div class="space-y-1 text-xs text-gray-500">
+<p>&#x1f3ae; 标准难度</p>
+<p>&#x1f4f9; 标准课后复习视频</p>
+<p>&#x1f4d6; 推荐阅读 <i>The Hat</i> 拓展</p>
+</div></div>
+</div>
+</div>
+</div>
+
+<!-- Row 4: 数据 -->
+<div class="dual-row">
+<div class="col-l" style="border-bottom:none">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-blue-900 text-blue-300">4</span><h3 class="font-semibold">生产效率</h3></div>
+<div class="grid grid-cols-2 gap-3">
+<div class="card-dark text-center"><p class="text-2xl font-bold text-blue-300">3.2<span class="text-sm text-slate-400">min</span></p><p class="text-xs text-slate-400">平均耗时</p><p class="text-xs text-green-400">比人工快98%</p></div>
+<div class="card-dark text-center"><p class="text-2xl font-bold text-blue-300">99.2%</p><p class="text-xs text-slate-400">成功率</p><p class="text-xs text-slate-500">近7天</p></div>
+</div>
+</div>
+<div class="col-r" style="border-bottom:none">
+<div class="flex items-center gap-2 mb-3"><span class="layer-num bg-amber-100 text-amber-700">4</span><h3 class="font-semibold text-amber-900">RAZ生产进度</h3></div>
+<div class="card-warm">
+<div class="flex justify-between text-xs mb-1"><span class="text-gray-500">MVP 64套</span><span class="font-bold text-amber-700">37.5%</span></div>
+<div class="h-2.5 bg-gray-200 rounded-full"><div class="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full" style="width:37.5%"></div></div>
+<div class="flex justify-between text-xs text-gray-400 mt-1"><span>已完成24套</span><span>剩余40套</span></div>
+</div>
+<div class="grid grid-cols-3 gap-2 mt-3">
+<div class="card-warm text-center" style="padding:8px"><p class="text-lg font-bold text-green-600">24</p><p style="font-size:10px" class="text-gray-400">今日产出</p></div>
+<div class="card-warm text-center" style="padding:8px"><p class="text-lg font-bold text-orange-600">8</p><p style="font-size:10px" class="text-gray-400">待审核</p></div>
+<div class="card-warm text-center" style="padding:8px"><p class="text-lg font-bold text-blue-600">24</p><p style="font-size:10px" class="text-gray-400">日均产能</p></div>
+</div>
+</div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+function startProduction(){
+var agents=document.querySelectorAll(".agent-card");
+agents.forEach(function(a,i){
+var pc=a.querySelector(".progress-container");
+var pb=a.querySelector(".progress-bar");
+var op=a.querySelector(".output-preview");
+if(pc)pc.classList.remove("hidden");
+var p=0;var iv=setInterval(function(){
+p+=Math.random()*20;if(p>=100){p=100;clearInterval(iv);if(op)op.classList.remove("hidden");}
+if(pb)pb.style.width=p+"%";
+},120+i*60);});
+}
+</script>
+</body></html>
