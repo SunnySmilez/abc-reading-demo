@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
+<title>翻卡配对 · RAZ伴学师1V6</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
+.top{height:42px;background:rgba(10,10,26,.95);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);}
+.top .title{font-size:14px;font-weight:600;}
+.top .info{font-size:13px;color:#888;display:flex;gap:16px;}
+.game-wrap{height:calc(100% - 42px - 50px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.hint{font-size:18px;color:#888;}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:20px;}
+.card{width:160px;height:180px;perspective:800px;cursor:pointer;}
+.card-inner{width:100%;height:100%;position:relative;transition:transform .5s;transform-style:preserve-3d;}
+.card.flipped .card-inner{transform:rotateY(180deg);}
+.card.matched .card-inner{transform:rotateY(180deg);}
+.card.matched{opacity:.7;pointer-events:none;}
+.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.card-front{background:linear-gradient(135deg,#4ECDC4,#44a8a0);box-shadow:0 4px 16px rgba(78,205,196,.2);}
+.card-front .q-mark{font-size:48px;}
+.card-back{transform:rotateY(180deg);background:linear-gradient(135deg,#1a1a3e,#2d1b4e);border:2px solid rgba(255,255,255,.1);box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.card-back .cb-emoji{font-size:56px;margin-bottom:8px;}
+.card-back .cb-text{font-size:18px;font-weight:600;}
+.match-result{font-size:28px;height:40px;display:flex;align-items:center;justify-content:center;}
+.pairs-done{font-size:14px;color:#4ECDC4;}
+.scene-axis{height:50px;display:flex;align-items:center;padding:0 20px;border-top:1px solid rgba(255,255,255,.06);background:rgba(10,10,26,.95);}
+.ax{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;flex-shrink:0;}
+.ax .dot{width:10px;height:10px;border-radius:50%;background:#222;border:2px solid #333;}
+.ax.active .dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.ax.done .dot{background:#4ECDC4;border-color:#4ECDC4;}
+.ax .al{font-size:9px;color:#555;white-space:nowrap;}
+.ax.active .al{color:#FFE66D;font-weight:700;}
+.ax.done .al{color:#4ECDC4;}
+</style>
+</head>
+<body>
+<div class="top">
+  <span class="title">🃏 翻卡配对 · 词图配对</span>
+  <div class="info"><span id="moves">翻牌: 0次</span><span id="pairs">配对: 0/4</span></div>
+</div>
+<div class="game-wrap">
+  <div class="hint">翻开两张卡片，找到单词和图片的配对！</div>
+  <div class="cards" id="board"></div>
+  <div class="match-result" id="matchRes"></div>
+  <div class="pairs-done" id="pairsDone"></div>
+</div>
+<div class="scene-axis">
+  <div class="ax done"><div class="dot"></div><span class="al">等候</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">暖场</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">带读</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">选择题</span></div>
+  <div class="ax done"><div class="dot"></div><span class="al">打地鼠</span></div>
+  <div class="ax active"><div class="dot"></div><span class="al">翻卡</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">连词</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">开口</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">检测</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">总结</span></div>
+  <div class="ax"><div class="dot"></div><span class="al">复习</span></div>
+</div>
+<script>
+const pairs=[{id:'cat',emoji:'🐱',word:'cat'},{id:'mat',emoji:'🟫',word:'mat'},{id:'hat',emoji:'🎩',word:'hat'},{id:'sat',emoji:'🪑',word:'sat'}];
+let cards=[];
+pairs.forEach(p=>{cards.push({id:p.id,type:'emoji',display:p.emoji,text:''});cards.push({id:p.id,type:'word',display:'',text:p.word});});
+cards.sort(()=>Math.random()-.5);
+const board=document.getElementById('board');
+let flipped=[],matched=0,moves=0,lock=false;
+cards.forEach((c,i)=>{
+  const el=document.createElement('div');el.className='card';el.dataset.idx=i;
+  el.innerHTML='<div class="card-inner"><div class="card-face card-front"><div class="q-mark">❓</div></div><div class="card-face card-back"><div class="cb-emoji">'+(c.type==='emoji'?c.display:'📝')+'</div><div class="cb-text">'+(c.type==='word'?c.text:'')+'</div></div></div>';
+  el.onclick=()=>flip(el,i);
+  board.appendChild(el);
+});
+function flip(el,idx){
+  if(lock||el.classList.contains('flipped')||el.classList.contains('matched'))return;
+  el.classList.add('flipped');flipped.push({el,idx,id:cards[idx].id});moves++;
+  document.getElementById('moves').textContent='翻牌: '+moves+'次';
+  if(flipped.length===2){lock=true;
+    setTimeout(()=>{
+      if(flipped[0].id===flipped[1].id){
+        flipped.forEach(f=>f.el.classList.add('matched'));matched++;
+        document.getElementById('pairs').textContent='配对: '+matched+'/4';
+        document.getElementById('matchRes').textContent='✅ 配对成功！';
+        if(matched===4)document.getElementById('pairsDone').textContent='🎉 全部配对完成！太棒了！';
+      }else{
+        flipped.forEach(f=>f.el.classList.remove('flipped'));
+        document.getElementById('matchRes').textContent='❌ 再试试~';
+      }
+      setTimeout(()=>document.getElementById('matchRes').textContent='',800);
+      flipped=[];lock=false;
+    },800);
+  }
+}
+</script>
+</body>
+</html>

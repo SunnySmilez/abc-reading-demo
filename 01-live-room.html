@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1194, initial-scale=1.0">
+<title>直播间 · RAZ伴学师1V6</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1194px;height:834px;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a1a;color:#fff;margin:0 auto;}
+/* 顶部信息栏 */
+.top-bar{height:42px;background:rgba(10,10,26,.95);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid rgba(255,255,255,.06);z-index:100;}
+.top-bar .course{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.top-bar .live-dot{width:8px;height:8px;background:#FF4757;border-radius:50%;animation:pulse 1.5s infinite;}
+.top-bar .meta{font-size:13px;color:#888;display:flex;align-items:center;gap:12px;}
+.top-bar .exit{font-size:12px;color:#888;background:rgba(255,255,255,.08);border:none;border-radius:14px;padding:6px 16px;cursor:pointer;color:#aaa;}
+.top-bar .exit:hover{background:rgba(255,59,48,.15);color:#FF4757;}
+
+/* 主布局：左(老师+内容) 右(侧边栏) */
+.main{display:flex;height:calc(100% - 42px - 50px);}
+
+/* 左侧区域 */
+.left{flex:1;display:flex;flex-direction:column;}
+
+/* 上方：老师视频 + 共享内容区 */
+.upper{display:flex;height:55%;border-bottom:1px solid rgba(255,255,255,.06);}
+
+/* 老师视频 */
+.teacher-video{width:45%;position:relative;background:linear-gradient(135deg,#1a1a3e 0%,#2d1b4e 50%,#1a2a4e 100%);overflow:hidden;}
+.teacher-video .avatar{position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);font-size:80px;}
+.teacher-video .name-tag{position:absolute;bottom:50px;left:16px;background:rgba(0,0,0,.6);padding:4px 14px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:6px;}
+.teacher-video .name-tag .role{font-size:10px;color:#4ECDC4;background:rgba(78,205,196,.15);padding:2px 6px;border-radius:4px;}
+.teacher-video .voice-wave{position:absolute;bottom:0;left:0;right:0;height:40px;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding-bottom:8px;}
+.teacher-video .voice-wave .bar{width:3px;background:linear-gradient(to top,#4ECDC4,#45b7aa);border-radius:2px;animation:voiceBar 0.8s ease-in-out infinite alternate;}
+.teacher-video .hd{position:absolute;top:12px;right:12px;font-size:10px;background:rgba(78,205,196,.25);color:#4ECDC4;padding:3px 8px;border-radius:6px;font-weight:700;}
+
+/* 共享内容区(绘本/题目/互动素材) */
+.shared-content{flex:1;position:relative;background:rgba(255,255,255,.02);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.shared-content .content-label{position:absolute;top:10px;left:14px;font-size:11px;color:#666;display:flex;align-items:center;gap:6px;}
+.shared-content .content-label .badge{background:rgba(255,230,109,.12);color:#FFE66D;padding:2px 8px;border-radius:4px;font-size:10px;}
+.book-display{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.book-page{width:320px;height:200px;background:linear-gradient(135deg,#ffecd2,#fcb69f);border-radius:16px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.book-page .page-content{font-size:14px;color:#333;text-align:center;padding:20px;line-height:1.8;}
+.book-page .page-content .en{font-size:22px;font-weight:700;color:#222;display:block;margin-bottom:8px;}
+.book-page .page-content .highlight{color:#FF6B6B;text-decoration:underline;text-underline-offset:4px;}
+.book-page .page-num{position:absolute;bottom:8px;right:14px;font-size:11px;color:#999;}
+.book-page .book-img{position:absolute;top:14px;left:14px;font-size:40px;}
+.sentence-bar{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.sentence-bar .word{padding:4px 10px;border-radius:6px;font-size:14px;cursor:pointer;transition:all .2s;}
+.sentence-bar .word.active{background:rgba(255,107,107,.2);color:#FF6B6B;font-weight:700;transform:scale(1.08);}
+.sentence-bar .word.done{color:#4ECDC4;}
+.sentence-bar .word.pending{color:#555;}
+
+/* 下方：6个学生视频 2排×3 */
+.students{height:45%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4px;padding:6px 8px;}
+.stu{position:relative;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.06);transition:all .3s;}
+.stu .bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.stu .info{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:4px 10px;background:linear-gradient(transparent,rgba(0,0,0,.7));}
+.stu .info .sname{font-size:11px;}
+.stu .info .mic{font-size:10px;}
+.stu .star{position:absolute;top:6px;left:8px;font-size:10px;color:#FFE66D;background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;}
+.stu .hand{position:absolute;top:6px;right:8px;font-size:16px;animation:handWave 1s ease-in-out infinite;display:none;}
+.stu.speaking{border-color:#4ECDC4;box-shadow:0 0 12px rgba(78,205,196,.25);}
+.stu.hand-up .hand{display:block;}
+
+/* 右侧边栏 */
+.sidebar{width:220px;display:flex;flex-direction:column;border-left:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);}
+.sidebar-section{padding:12px;border-bottom:1px solid rgba(255,255,255,.04);}
+.sidebar-title{font-size:11px;color:#666;margin-bottom:8px;display:flex;align-items:center;gap:4px;}
+
+/* 积分排行 */
+.rank-list{display:flex;flex-direction:column;gap:6px;}
+.rank-item{display:flex;align-items:center;gap:8px;font-size:12px;}
+.rank-item .rank-num{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.rank-item:nth-child(1) .rank-num{background:linear-gradient(135deg,#FFE66D,#f0c030);color:#333;}
+.rank-item:nth-child(2) .rank-num{background:linear-gradient(135deg,#c0c0c0,#a0a0a0);color:#333;}
+.rank-item:nth-child(3) .rank-num{background:linear-gradient(135deg,#cd7f32,#a0622e);color:#fff;}
+.rank-item:nth-child(n+4) .rank-num{background:rgba(255,255,255,.08);color:#888;}
+.rank-item .rank-name{flex:1;}
+.rank-item .rank-score{color:#FFE66D;font-weight:600;}
+
+/* 弹幕/聊天区 */
+.chat-area{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:6px;}
+.chat-area::-webkit-scrollbar{width:2px;}
+.chat-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:1px;}
+.chat-msg{font-size:11px;line-height:1.4;}
+.chat-msg .cname{color:#4ECDC4;font-weight:600;margin-right:4px;}
+.chat-msg .sys{color:#888;font-style:italic;}
+.chat-msg .reward{color:#FFE66D;}
+
+/* 互动按钮区 */
+.interact-btns{padding:10px 12px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.04);}
+.ibtn{border:none;border-radius:10px;padding:8px 0;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:4px;}
+.ibtn:active{transform:scale(.96);}
+.ibtn-primary{background:linear-gradient(135deg,#FF6B6B,#ff8e8e);color:#fff;}
+.ibtn-secondary{background:rgba(78,205,196,.12);color:#4ECDC4;border:1px solid rgba(78,205,196,.2);}
+.ibtn-ghost{background:rgba(255,255,255,.06);color:#aaa;}
+
+/* 底部场景坐标轴 */
+.scene-axis{height:50px;display:flex;align-items:center;padding:0 20px;gap:0;border-top:1px solid rgba(255,255,255,.06);background:rgba(10,10,26,.95);overflow-x:auto;}
+.scene-axis::-webkit-scrollbar{display:none;}
+.axis-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 12px;cursor:pointer;flex-shrink:0;position:relative;}
+.axis-item::after{content:'';position:absolute;top:12px;right:-1px;width:24px;height:2px;background:rgba(255,255,255,.06);}
+.axis-item:last-child::after{display:none;}
+.axis-item .dot{width:10px;height:10px;border-radius:50%;background:#222;border:2px solid #333;transition:all .25s;}
+.axis-item.active .dot{background:#FFE66D;border-color:#FFE66D;box-shadow:0 0 8px rgba(255,230,109,.4);}
+.axis-item.done .dot{background:#4ECDC4;border-color:#4ECDC4;}
+.axis-item .alabel{font-size:9px;color:#555;transition:all .2s;white-space:nowrap;}
+.axis-item.active .alabel{color:#FFE66D;font-weight:700;}
+.axis-item.done .alabel{color:#4ECDC4;}
+
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes voiceBar{0%{height:4px;}100%{height:var(--h,20px);}}
+@keyframes handWave{0%,100%{transform:rotate(0);}25%{transform:rotate(15deg);}75%{transform:rotate(-15deg);}}
+</style>
+</head>
+<body>
+<!-- 顶部信息栏 -->
+<div class="top-bar">
+  <div class="course"><span class="live-dot"></span> Level A · The Cat Sat on the Mat</div>
+  <div class="meta"><span>🟢 6人在线</span><span>⏱ 12:35</span></div>
+  <button class="exit">退出课堂</button>
+</div>
+
+<div class="main">
+  <!-- 左侧 -->
+  <div class="left">
+    <!-- 上方：老师+内容 -->
+    <div class="upper">
+      <!-- 老师视频 -->
+      <div class="teacher-video">
+        <span class="avatar">👩‍🏫</span>
+        <div class="name-tag"><span class="role">伴学师</span> Miss Chen</div>
+        <span class="hd">HD</span>
+        <div class="voice-wave">
+          <div class="bar" style="--h:12px;animation-delay:0s"></div>
+          <div class="bar" style="--h:20px;animation-delay:0.1s"></div>
+          <div class="bar" style="--h:16px;animation-delay:0.2s"></div>
+          <div class="bar" style="--h:24px;animation-delay:0.15s"></div>
+          <div class="bar" style="--h:18px;animation-delay:0.25s"></div>
+          <div class="bar" style="--h:14px;animation-delay:0.05s"></div>
+          <div class="bar" style="--h:22px;animation-delay:0.3s"></div>
+          <div class="bar" style="--h:10px;animation-delay:0.18s"></div>
+        </div>
+      </div>
+      <!-- 共享内容区 -->
+      <div class="shared-content">
+        <div class="content-label">📚 绘本带读 <span class="badge">第3/8页</span></div>
+        <div class="book-display">
+          <div class="book-page">
+            <span class="book-img">🐱</span>
+            <div class="page-content">
+              <span class="en">The <span class="highlight">cat</span> sat on the mat.</span>
+              小猫坐在垫子上。
+            </div>
+            <span class="page-num">3/8</span>
+          </div>
+          <div class="sentence-bar">
+            <span class="word done">The</span>
+            <span class="word active">cat</span>
+            <span class="word pending">sat</span>
+            <span class="word pending">on</span>
+            <span class="word pending">the</span>
+            <span class="word pending">mat.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 下方：6学生 2排×3 -->
+    <div class="students">
+      <div class="stu speaking">
+        <div class="bg" style="background:linear-gradient(135deg,#ff9a9e,#fad0c4)">👧</div>
+        <div class="star">⭐×12</div>
+        <div class="info"><span class="sname">Lily</span><span class="mic">🎤</span></div>
+      </div>
+      <div class="stu">
+        <div class="bg" style="background:linear-gradient(135deg,#a1c4fd,#c2e9fb)">🧒</div>
+        <div class="star">⭐×10</div>
+        <div class="info"><span class="sname">Tom</span><span class="mic">🎤</span></div>
+      </div>
+      <div class="stu hand-up">
+        <div class="bg" style="background:linear-gradient(135deg,#fbc2eb,#a6c1ee)">👧</div>
+        <div class="star">⭐×8</div>
+        <span class="hand">✋</span>
+        <div class="info"><span class="sname">Amy</span><span class="mic">🔇</span></div>
+      </div>
+      <div class="stu">
+        <div class="bg" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)">👦</div>
+        <div class="star">⭐×9</div>
+        <div class="info"><span class="sname">Jack</span><span class="mic">🔇</span></div>
+      </div>
+      <div class="stu">
+        <div class="bg" style="background:linear-gradient(135deg,#ffecd2,#fcb69f)">🧑</div>
+        <div class="star">⭐×7</div>
+        <div class="info"><span class="sname">Mia</span><span class="mic">🔇</span></div>
+      </div>
+      <div class="stu">
+        <div class="bg" style="background:linear-gradient(135deg,#a8edea,#fed6e3)">👶</div>
+        <div class="star">⭐×6</div>
+        <div class="info"><span class="sname">Leo</span><span class="mic">🔇</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 右侧边栏 -->
+  <div class="sidebar">
+    <!-- 积分排行 -->
+    <div class="sidebar-section">
+      <div class="sidebar-title">🏆 积分排行</div>
+      <div class="rank-list">
+        <div class="rank-item"><span class="rank-num">1</span><span class="rank-name">Lily</span><span class="rank-score">12⭐</span></div>
+        <div class="rank-item"><span class="rank-num">2</span><span class="rank-name">Tom</span><span class="rank-score">10⭐</span></div>
+        <div class="rank-item"><span class="rank-num">3</span><span class="rank-name">Jack</span><span class="rank-score">9⭐</span></div>
+        <div class="rank-item"><span class="rank-num">4</span><span class="rank-name">Amy</span><span class="rank-score">8⭐</span></div>
+        <div class="rank-item"><span class="rank-num">5</span><span class="rank-name">Mia</span><span class="rank-score">7⭐</span></div>
+        <div class="rank-item"><span class="rank-num">6</span><span class="rank-name">Leo</span><span class="rank-score">6⭐</span></div>
+      </div>
+    </div>
+    <!-- 聊天弹幕 -->
+    <div class="chat-area" id="chatArea">
+      <div class="chat-msg"><span class="sys">🎬 课程开始</span></div>
+      <div class="chat-msg"><span class="cname">Lily:</span> Hello Miss Chen! 👋</div>
+      <div class="chat-msg"><span class="cname">Tom:</span> 我准备好了！</div>
+      <div class="chat-msg"><span class="sys">📖 进入绘本带读</span></div>
+      <div class="chat-msg"><span class="cname">Amy:</span> cat! cat! 🐱</div>
+      <div class="chat-msg"><span class="reward">🌟 Lily 跟读满分 +3⭐</span></div>
+      <div class="chat-msg"><span class="cname">Jack:</span> the cat sat on the mat~</div>
+      <div class="chat-msg"><span class="cname">Mia:</span> 好可爱的猫!</div>
+      <div class="chat-msg"><span class="reward">🌟 Tom 发音优秀 +2⭐</span></div>
+      <div class="chat-msg"><span class="cname">Leo:</span> mat怎么读？</div>
+      <div class="chat-msg"><span class="sys">👩‍🏫 Miss Chen: 跟我读 m-a-t, mat!</span></div>
+    </div>
+    <!-- 互动按钮 -->
+    <div class="interact-btns">
+      <button class="ibtn ibtn-primary" onclick="alert('📖 开始跟读练习')">📖 跟读</button>
+      <button class="ibtn ibtn-secondary" onclick="alert('✋ 举手成功！老师会叫你')">✋ 举手发言</button>
+      <button class="ibtn ibtn-ghost" onclick="spawnHearts()">❤️ 点赞</button>
+    </div>
+  </div>
+</div>
+
+<!-- 底部场景坐标轴 -->
+<div class="scene-axis">
+  <div class="axis-item done" onclick="setScene(this)"><div class="dot"></div><span class="alabel">等候</span></div>
+  <div class="axis-item done" onclick="setScene(this)"><div class="dot"></div><span class="alabel">暖场</span></div>
+  <div class="axis-item active" onclick="setScene(this)"><div class="dot"></div><span class="alabel">带读</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">选择题</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">打地鼠</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">翻卡</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">连词</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">开口</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">检测</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">总结</span></div>
+  <div class="axis-item" onclick="setScene(this)"><div class="dot"></div><span class="alabel">复习</span></div>
+</div>
+
+<script>
+function setScene(el){document.querySelectorAll('.axis-item').forEach(n=>n.classList.remove('active'));el.classList.add('active');}
+function spawnHearts(){const e=['❤️','💖','💕','🧡','💛'];for(let i=0;i<5;i++){setTimeout(()=>{const h=document.createElement('div');h.style.cssText='position:fixed;font-size:22px;pointer-events:none;z-index:200;animation:floatUp 1.5s ease-out forwards;left:'+(900+Math.random()*80)+'px;top:600px;';h.textContent=e[Math.floor(Math.random()*e.length)];document.body.appendChild(h);setTimeout(()=>h.remove(),1600);},i*120);}}
+// 自动滚动聊天
+const chat=document.getElementById('chatArea');
+const msgs=["Good job everyone! 🎉","我也会读了~","cat cat cat 🐱","Miss Chen好温柔","加油加油！💪","mat mat mat~","🌟 Amy 跟读进步 +2⭐","好好玩！","I like the cat!","😊😊😊"];
+let mi=0;
+setInterval(()=>{const d=document.createElement('div');d.className='chat-msg';const isReward=Math.random()>0.7;d.innerHTML=isReward?'<span class="reward">'+msgs[mi%msgs.length]+'</span>':'<span class="cname">'+['Lily','Tom','Amy','Jack','Mia','Leo'][Math.floor(Math.random()*6)]+':</span> '+msgs[mi%msgs.length];chat.appendChild(d);chat.scrollTop=chat.scrollHeight;mi++;},3500);
+// 跟读高亮动画
+const words=document.querySelectorAll('.sentence-bar .word');
+let wi=1;
+setInterval(()=>{words.forEach(w=>w.classList.remove('active'));words.forEach((w,i)=>{if(i<wi)w.classList.add('done');});if(wi<words.length){words[wi].classList.add('active');words[wi].classList.remove('pending','done');wi++;}else{wi=0;words.forEach(w=>{w.classList.remove('done','active');w.classList.add('pending');});}},2000);
+</script>
+<style>@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-120px) scale(.4);}}</style>
+</body>
+</html>
